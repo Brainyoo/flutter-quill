@@ -103,4 +103,5 @@ class VideoEmbedBuilderWeb implements EmbedBuilder {
 List<EmbedBuilder> get defaultEmbedBuildersWeb => [
       ImageEmbedBuilderWeb(),
       VideoEmbedBuilderWeb(),
+      FormulaEmbedBuilder(),
     ];
