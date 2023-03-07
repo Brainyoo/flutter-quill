@@ -376,6 +376,15 @@ class _TextLineState extends State<TextLine> {
       res = res.merge(TextStyle(backgroundColor: backgroundColor));
     }
 
+    final crib = textNode.style.attributes[Attribute.crib.key];
+    if (crib != null && crib.value != null) {
+      res = res.merge(TextStyle(
+          background: Paint()
+            ..color = Colors.black
+            ..strokeWidth = 1
+            ..style = PaintingStyle.stroke));
+    }
+
     res = _applyCustomAttributes(res, textNode.style.attributes);
     return res;
   }

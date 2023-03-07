@@ -87,6 +87,7 @@ class QuillToolbar extends StatelessWidget implements PreferredSizeWidget {
     bool showListBullets = true,
     bool showListCheck = true,
     bool showCodeBlock = true,
+    bool showCribButton = true,
     bool showQuote = true,
     bool showIndent = true,
     bool showLink = true,
@@ -414,7 +415,16 @@ class QuillToolbar extends StatelessWidget implements PreferredSizeWidget {
           ToggleStyleButton(
             attribute: Attribute.codeBlock,
             controller: controller,
-            icon: Icons.code,
+            icon: Icons.border_outer,
+            iconSize: toolbarIconSize,
+            iconTheme: iconTheme,
+            afterButtonPressed: afterButtonPressed,
+          ),
+        if (showCribButton)
+          ToggleStyleButton(
+            attribute: Attribute.crib,
+            controller: controller,
+            icon: Icons.space_bar,
             iconSize: toolbarIconSize,
             iconTheme: iconTheme,
             afterButtonPressed: afterButtonPressed,

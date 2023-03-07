@@ -68,6 +68,8 @@ class Attribute<T> {
 
   static const PlaceholderAttribute placeholder = PlaceholderAttribute();
 
+  static const CribAttribute crib = CribAttribute('');
+
   static const HeaderAttribute header = HeaderAttribute();
 
   static const IndentAttribute indent = IndentAttribute();
@@ -293,6 +295,10 @@ class BackgroundAttribute extends Attribute<String?> {
 class PlaceholderAttribute extends Attribute<bool> {
   const PlaceholderAttribute()
       : super('placeholder', AttributeScope.INLINE, true);
+}
+
+class CribAttribute extends Attribute<String> {
+  const CribAttribute(String val) : super('crib', AttributeScope.INLINE, val);
 }
 
 class HeaderAttribute extends Attribute<int?> {
