@@ -240,6 +240,7 @@ class _HomePageState extends State<HomePage> {
         // mediaPickSettingSelector: _selectMediaPickSetting,
         // uncomment to provide a custom "pick from" dialog.
         // cameraPickSettingSelector: _selectCameraPickSetting,
+        showFormulaButton: true,
       ),
       showAlignmentButtons: true,
       afterButtonPressed: _focusNode.requestFocus,
@@ -250,6 +251,7 @@ class _HomePageState extends State<HomePage> {
         embedButtons: FlutterQuillEmbeds.buttons(
           onImagePickCallback: _onImagePickCallback,
           webImagePickImpl: _webImagePickImpl,
+          showFormulaButton: true,
         ),
         showAlignmentButtons: true,
         afterButtonPressed: _focusNode.requestFocus,
@@ -261,6 +263,7 @@ class _HomePageState extends State<HomePage> {
         embedButtons: FlutterQuillEmbeds.buttons(
           onImagePickCallback: _onImagePickCallback,
           filePickImpl: openFileSystemPickerForDesktop,
+          showFormulaButton: true,
         ),
         showAlignmentButtons: true,
         afterButtonPressed: _focusNode.requestFocus,

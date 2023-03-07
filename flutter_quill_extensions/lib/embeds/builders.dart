@@ -1,15 +1,14 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_quill/extensions.dart' as base;
 import 'package:flutter_quill/flutter_quill.dart' hide Text;
 import 'package:flutter_quill/translations.dart';
 import 'package:gallery_saver/gallery_saver.dart';
-import 'package:math_keyboard/math_keyboard.dart';
 import 'package:tuple/tuple.dart';
 
 import 'utils.dart';
+import 'widgets/formula.dart';
 import 'widgets/image.dart';
 import 'widgets/image_resizer.dart';
 import 'widgets/video_app.dart';
@@ -187,24 +186,11 @@ class FormulaEmbedBuilder implements EmbedBuilder {
     base.Embed node,
     bool readOnly,
   ) {
-    assert(!kIsWeb, 'Please provide formula EmbedBuilder for Web');
-
-    final mathController = MathFieldEditingController();
-    return Focus(
-      onFocusChange: (hasFocus) {
-        if (hasFocus) {
-          // If the MathField is tapped, hides the built in keyboard
-          SystemChannels.textInput.invokeMethod('TextInput.hide');
-          debugPrint(mathController.currentEditingValue());
-        }
-      },
-      child: MathField(
-        controller: mathController,
-        variables: const ['x', 'y', 'z'],
-        onChanged: (value) {},
-        onSubmitted: (value) {},
-      ),
-    );
+    return Formula(
+        node: node,
+        context: context,
+        readOnly: readOnly,
+        controller: controller);
   }
 }
 
