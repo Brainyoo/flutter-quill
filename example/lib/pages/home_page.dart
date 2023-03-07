@@ -84,6 +84,11 @@ class _HomePageState extends State<HomePage> {
             onPressed: () => _addEditNote(context),
             icon: const Icon(Icons.note_add),
           ),
+          IconButton(
+            onPressed: () =>
+                debugPrint(_controller!.document.toDelta().toString()),
+            icon: const Icon(Icons.print),
+          ),
         ],
       ),
       drawer: Container(
@@ -224,7 +229,10 @@ class _HomePageState extends State<HomePage> {
                 null),
             sizeSmall: const TextStyle(fontSize: 9),
           ),
-          embedBuilders: defaultEmbedBuildersWeb,
+          embedBuilders: [
+            ...defaultEmbedBuildersWeb,
+            CribEmbedBuilder(addEditCrib: _addEditCrib)
+          ],
         ),
       );
     }
@@ -255,6 +263,12 @@ class _HomePageState extends State<HomePage> {
         ),
         showAlignmentButtons: true,
         afterButtonPressed: _focusNode.requestFocus,
+        customButtons: [
+          QuillCustomButton(
+            icon: Icons.space_bar_outlined,
+            onTap: () => _addEditCrib(context),
+          ),
+        ],
       );
     }
     if (_isDesktop()) {
@@ -486,6 +500,58 @@ class _HomePageState extends State<HomePage> {
       controller.replaceText(index, length, block, null);
     }
   }
+
+  Future<void> _addEditCrib(BuildContext context, {Document? document}) async {
+    final isEditing = document != null;
+    final quillEditorController = QuillController(
+      document: Document(),
+      selection: const TextSelection.collapsed(offset: 0),
+    );
+
+    final textController = TextEditingController(text: document?.toPlainText());
+
+    await showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        titlePadding: const EdgeInsets.only(left: 16, top: 8),
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text('${isEditing ? 'Edit' : 'Add'} crib'),
+            IconButton(
+              onPressed: () => Navigator.of(context).pop(),
+              icon: const Icon(Icons.close),
+            )
+          ],
+        ),
+        content: TextField(
+          controller: textController,
+        ),
+      ),
+    );
+
+    quillEditorController.replaceText(0, 0, textController.text, null);
+
+    if (quillEditorController.document.isEmpty()) return;
+
+    quillEditorController.formatText(0, quillEditorController.document.length,
+        const IdAttribute('SuperTolleSuperID'));
+
+    final block = BlockEmbed.custom(
+      CribBlockEmbed.fromDocument(quillEditorController.document),
+    );
+    final controller = _controller!;
+    final index = controller.selection.baseOffset;
+    final length = controller.selection.extentOffset - index;
+
+    if (isEditing) {
+      final offset = getEmbedNode(controller, controller.selection.start).item1;
+      controller.replaceText(
+          offset, 1, block, TextSelection.collapsed(offset: offset));
+    } else {
+      controller.replaceText(index, length, block, null);
+    }
+  }
 }
 
 class NotesEmbedBuilder implements EmbedBuilder {
@@ -531,6 +597,54 @@ class NotesBlockEmbed extends CustomBlockEmbed {
 
   static NotesBlockEmbed fromDocument(Document document) =>
       NotesBlockEmbed(jsonEncode(document.toDelta().toJson()));
+
+  Document get document => Document.fromJson(jsonDecode(data));
+}
+
+class CribEmbedBuilder implements EmbedBuilder {
+  CribEmbedBuilder({required this.addEditCrib});
+
+  Future<void> Function(BuildContext context, {Document? document}) addEditCrib;
+
+  @override
+  String get key => 'cribEmbed';
+
+  @override
+  Widget build(
+    BuildContext context,
+    QuillController controller,
+    Embed node,
+    bool readOnly,
+  ) {
+    final notes = NotesBlockEmbed(node.value.data).document;
+
+    return Material(
+      color: Colors.transparent,
+      child: Padding(
+        padding: const EdgeInsets.only(bottom: 2),
+        child: OutlinedButton(
+          style: OutlinedButton.styleFrom(
+            minimumSize: Size(0, 0),
+            padding: EdgeInsets.symmetric(horizontal: 2),
+          ),
+          child: Text(
+            notes.toPlainText().replaceAll('\n', ' '),
+            style: DefaultStyles.getInstance(context).paragraph!.style,
+          ),
+          onPressed: () => addEditCrib(context, document: notes),
+        ),
+      ),
+    );
+  }
+}
+
+class CribBlockEmbed extends CustomBlockEmbed {
+  const CribBlockEmbed(String value) : super(noteType, value);
+
+  static const String noteType = 'cribEmbed';
+
+  static CribBlockEmbed fromDocument(Document document) =>
+      CribBlockEmbed(jsonEncode(document.toDelta().toJson()));
 
   Document get document => Document.fromJson(jsonDecode(data));
 }

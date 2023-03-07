@@ -92,6 +92,8 @@ class Attribute<T> {
 
   static const TokenAttribute token = TokenAttribute('');
 
+  static const IdAttribute id = IdAttribute('');
+
   static const ScriptAttribute script = ScriptAttribute('');
 
   static const String mobileWidth = 'mobileWidth';
@@ -345,6 +347,10 @@ class HeightAttribute extends Attribute<String?> {
 class StyleAttribute extends Attribute<String?> {
   const StyleAttribute(String? val)
       : super('style', AttributeScope.IGNORE, val);
+}
+
+class IdAttribute extends Attribute<String> {
+  const IdAttribute(String val) : super('id', AttributeScope.INLINE, val);
 }
 
 class TokenAttribute extends Attribute<String> {
