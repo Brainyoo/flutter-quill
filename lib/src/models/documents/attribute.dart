@@ -23,6 +23,8 @@ class Attribute<T> {
     Attribute.small.key: Attribute.small,
     Attribute.underline.key: Attribute.underline,
     Attribute.strikeThrough.key: Attribute.strikeThrough,
+    Attribute.superscripts.key: Attribute.superscripts,
+    Attribute.subscripts.key: Attribute.subscripts,
     Attribute.inlineCode.key: Attribute.inlineCode,
     Attribute.font.key: Attribute.font,
     Attribute.size.key: Attribute.size,
@@ -53,6 +55,10 @@ class Attribute<T> {
   static const UnderlineAttribute underline = UnderlineAttribute();
 
   static const StrikeThroughAttribute strikeThrough = StrikeThroughAttribute();
+
+  static const SuperscriptsAttribute superscripts = SuperscriptsAttribute();
+
+  static const SubscriptsAttribute subscripts = SubscriptsAttribute();
 
   static const InlineCodeAttribute inlineCode = InlineCodeAttribute();
 
@@ -265,6 +271,16 @@ class UnderlineAttribute extends Attribute<bool> {
 
 class StrikeThroughAttribute extends Attribute<bool> {
   const StrikeThroughAttribute() : super('strike', AttributeScope.INLINE, true);
+}
+
+class SuperscriptsAttribute extends Attribute<bool> {
+  const SuperscriptsAttribute()
+      : super('superscripts', AttributeScope.INLINE, true);
+}
+
+class SubscriptsAttribute extends Attribute<bool> {
+  const SubscriptsAttribute()
+      : super('subscripts', AttributeScope.INLINE, true);
 }
 
 class InlineCodeAttribute extends Attribute<bool> {

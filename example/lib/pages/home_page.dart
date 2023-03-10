@@ -616,7 +616,7 @@ class CribEmbedBuilder implements EmbedBuilder {
     Embed node,
     bool readOnly,
   ) {
-    final notes = NotesBlockEmbed(node.value.data).document;
+    final notes = CribBlockEmbed(node.value.data).document;
 
     return Material(
       color: Colors.transparent,

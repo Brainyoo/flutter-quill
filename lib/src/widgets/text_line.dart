@@ -343,6 +343,22 @@ class _TextLineState extends State<TextLine> {
       res = res.merge(TextStyle(fontFamily: font.value));
     }
 
+    final subscript = textNode.style.attributes[Attribute.subscripts.key];
+    if (subscript != null) {
+      res = res.merge(const TextStyle(
+          color: Colors.transparent,
+          fontSize: 10,
+          shadows: [Shadow(offset: Offset(0, 4))]));
+    }
+
+    final superscripts = textNode.style.attributes[Attribute.superscripts.key];
+    if (superscripts != null) {
+      res = res.merge(const TextStyle(
+          color: Colors.transparent,
+          fontSize: 10,
+          shadows: [Shadow(offset: Offset(0, -4))]));
+    }
+
     final size = textNode.style.attributes[Attribute.size.key];
     if (size != null && size.value != null) {
       switch (size.value) {
