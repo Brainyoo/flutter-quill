@@ -74,7 +74,7 @@ class Attribute<T> {
 
   static const PlaceholderAttribute placeholder = PlaceholderAttribute();
 
-  static const CribAttribute crib = CribAttribute('');
+  static const ClozeAttribute cloze = ClozeAttribute('');
 
   static const HeaderAttribute header = HeaderAttribute();
 
@@ -315,8 +315,8 @@ class PlaceholderAttribute extends Attribute<bool> {
       : super('placeholder', AttributeScope.INLINE, true);
 }
 
-class CribAttribute extends Attribute<String> {
-  const CribAttribute(String val) : super('crib', AttributeScope.INLINE, val);
+class ClozeAttribute extends Attribute<String> {
+  const ClozeAttribute(String val) : super('cloze', AttributeScope.INLINE, val);
 }
 
 class HeaderAttribute extends Attribute<int?> {

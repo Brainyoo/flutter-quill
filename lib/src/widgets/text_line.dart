@@ -392,8 +392,8 @@ class _TextLineState extends State<TextLine> {
       res = res.merge(TextStyle(backgroundColor: backgroundColor));
     }
 
-    final crib = textNode.style.attributes[Attribute.crib.key];
-    if (crib != null && crib.value != null) {
+    final cloze = textNode.style.attributes[Attribute.cloze.key];
+    if (cloze != null && cloze.value != null) {
       res = res.merge(TextStyle(
           background: Paint()
             ..color = Colors.black

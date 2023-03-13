@@ -231,7 +231,7 @@ class _HomePageState extends State<HomePage> {
           ),
           embedBuilders: [
             ...defaultEmbedBuildersWeb,
-            CribEmbedBuilder(addEditCrib: _addEditCrib)
+            ClozeEmbedBuilder(addEditCloze: _addEditCloze)
           ],
         ),
       );
@@ -266,7 +266,7 @@ class _HomePageState extends State<HomePage> {
         customButtons: [
           QuillCustomButton(
             icon: Icons.space_bar_outlined,
-            onTap: () => _addEditCrib(context),
+            onTap: () => _addEditCloze(context),
           ),
         ],
       );
@@ -501,7 +501,7 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  Future<void> _addEditCrib(BuildContext context, {Document? document}) async {
+  Future<void> _addEditCloze(BuildContext context, {Document? document}) async {
     final isEditing = document != null;
     final quillEditorController = QuillController(
       document: Document(),
@@ -517,7 +517,7 @@ class _HomePageState extends State<HomePage> {
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text('${isEditing ? 'Edit' : 'Add'} crib'),
+            Text('${isEditing ? 'Edit' : 'Add'} cloze'),
             IconButton(
               onPressed: () => Navigator.of(context).pop(),
               icon: const Icon(Icons.close),
@@ -538,7 +538,7 @@ class _HomePageState extends State<HomePage> {
         const IdAttribute('SuperTolleSuperID'));
 
     final block = BlockEmbed.custom(
-      CribBlockEmbed.fromDocument(quillEditorController.document),
+      ClozeBlockEmbed.fromDocument(quillEditorController.document),
     );
     final controller = _controller!;
     final index = controller.selection.baseOffset;
@@ -601,13 +601,13 @@ class NotesBlockEmbed extends CustomBlockEmbed {
   Document get document => Document.fromJson(jsonDecode(data));
 }
 
-class CribEmbedBuilder implements EmbedBuilder {
-  CribEmbedBuilder({required this.addEditCrib});
+class ClozeEmbedBuilder implements EmbedBuilder {
+  ClozeEmbedBuilder({required this.addEditCloze});
 
-  Future<void> Function(BuildContext context, {Document? document}) addEditCrib;
+  Future<void> Function(BuildContext context, {Document? document}) addEditCloze;
 
   @override
-  String get key => 'cribEmbed';
+  String get key => 'clozeEmbed';
 
   @override
   Widget build(
@@ -616,7 +616,7 @@ class CribEmbedBuilder implements EmbedBuilder {
     Embed node,
     bool readOnly,
   ) {
-    final notes = CribBlockEmbed(node.value.data).document;
+    final notes = ClozeBlockEmbed(node.value.data).document;
 
     return Material(
       color: Colors.transparent,
@@ -631,20 +631,20 @@ class CribEmbedBuilder implements EmbedBuilder {
             notes.toPlainText().replaceAll('\n', ' '),
             style: DefaultStyles.getInstance(context).paragraph!.style,
           ),
-          onPressed: () => addEditCrib(context, document: notes),
+          onPressed: () => addEditCloze(context, document: notes),
         ),
       ),
     );
   }
 }
 
-class CribBlockEmbed extends CustomBlockEmbed {
-  const CribBlockEmbed(String value) : super(noteType, value);
+class ClozeBlockEmbed extends CustomBlockEmbed {
+  const ClozeBlockEmbed(String value) : super(noteType, value);
 
   static const String noteType = 'cribEmbed';
 
-  static CribBlockEmbed fromDocument(Document document) =>
-      CribBlockEmbed(jsonEncode(document.toDelta().toJson()));
+  static ClozeBlockEmbed fromDocument(Document document) =>
+      ClozeBlockEmbed(jsonEncode(document.toDelta().toJson()));
 
   Document get document => Document.fromJson(jsonDecode(data));
 }
