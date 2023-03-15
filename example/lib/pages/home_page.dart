@@ -641,7 +641,7 @@ class ClozeEmbedBuilder implements EmbedBuilder {
 class ClozeBlockEmbed extends CustomBlockEmbed {
   const ClozeBlockEmbed(String value) : super(noteType, value);
 
-  static const String noteType = 'cribEmbed';
+  static const String noteType = 'clozeEmbed';
 
   static ClozeBlockEmbed fromDocument(Document document) =>
       ClozeBlockEmbed(jsonEncode(document.toDelta().toJson()));
