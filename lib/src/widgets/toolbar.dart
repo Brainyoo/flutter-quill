@@ -36,17 +36,17 @@ export 'toolbar/select_header_style_button.dart';
 export 'toolbar/toggle_check_list_button.dart';
 export 'toolbar/toggle_style_button.dart';
 
-// The default size of the icon of a button.
+/// The default size of the icon of a button.
 const double kDefaultIconSize = 18;
 
-// The factor of how much larger the button is in relation to the icon.
-const double kIconButtonFactor = 1.77;
+/// The default size of a button.
+const double kDefaultButtonSize = 36;
 
 class QuillToolbar extends StatelessWidget implements PreferredSizeWidget {
   const QuillToolbar({
     required this.children,
     this.axis = Axis.horizontal,
-    this.toolbarSize = 36,
+    this.toolbarSize = kDefaultButtonSize,
     this.toolbarIconAlignment = WrapAlignment.center,
     this.toolbarIconCrossAlignment = WrapCrossAlignment.center,
     this.toolbarSectionSpacing = 4,
@@ -62,6 +62,7 @@ class QuillToolbar extends StatelessWidget implements PreferredSizeWidget {
     required QuillController controller,
     Axis axis = Axis.horizontal,
     double toolbarIconSize = kDefaultIconSize,
+    double toolbarButtonSize = kDefaultButtonSize,
     double toolbarSectionSpacing = 4,
     WrapAlignment toolbarIconAlignment = WrapAlignment.center,
     WrapCrossAlignment toolbarIconCrossAlignment = WrapCrossAlignment.center,
@@ -177,7 +178,7 @@ class QuillToolbar extends StatelessWidget implements PreferredSizeWidget {
       key: key,
       axis: axis,
       color: color,
-      toolbarSize: toolbarIconSize * 2,
+      toolbarSize: toolbarButtonSize,
       toolbarSectionSpacing: toolbarSectionSpacing,
       toolbarIconAlignment: toolbarIconAlignment,
       toolbarIconCrossAlignment: toolbarIconCrossAlignment,
@@ -485,7 +486,7 @@ class QuillToolbar extends StatelessWidget implements PreferredSizeWidget {
           QuillIconButton(
             highlightElevation: 0,
             hoverElevation: 0,
-            size: toolbarIconSize * kIconButtonFactor,
+            size: toolbarButtonSize,
             icon: Icon(customButton.icon, size: toolbarIconSize),
             borderRadius: iconTheme?.borderRadius ?? 2,
             onPressed: customButton.onTap,

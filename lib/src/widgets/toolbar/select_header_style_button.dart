@@ -11,6 +11,7 @@ class SelectHeaderStyleButton extends StatefulWidget {
   const SelectHeaderStyleButton({
     required this.controller,
     this.axis = Axis.horizontal,
+    this.buttonSize = kDefaultButtonSize,
     this.iconSize = kDefaultIconSize,
     this.iconTheme,
     this.attributes = const [
@@ -26,6 +27,7 @@ class SelectHeaderStyleButton extends StatefulWidget {
   final QuillController controller;
   final Axis axis;
   final double iconSize;
+  final double buttonSize;
   final QuillIconTheme? iconTheme;
   final List<Attribute> attributes;
   final VoidCallback? afterButtonPressed;
@@ -76,8 +78,8 @@ class _SelectHeaderStyleButtonState extends State<SelectHeaderStyleButton> {
         padding: EdgeInsets.symmetric(horizontal: !kIsWeb ? 1.0 : 5.0),
         child: ConstrainedBox(
           constraints: BoxConstraints.tightFor(
-            width: widget.iconSize * kIconButtonFactor,
-            height: widget.iconSize * kIconButtonFactor,
+            width: widget.buttonSize,
+            height: widget.buttonSize,
           ),
           child: RawMaterialButton(
             hoverElevation: 0,

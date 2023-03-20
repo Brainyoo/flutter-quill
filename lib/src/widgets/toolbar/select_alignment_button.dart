@@ -10,6 +10,7 @@ import '../toolbar.dart';
 class SelectAlignmentButton extends StatefulWidget {
   const SelectAlignmentButton({
     required this.controller,
+    this.buttonSize = kDefaultButtonSize,
     this.iconSize = kDefaultIconSize,
     this.iconTheme,
     this.showLeftAlignment,
@@ -22,6 +23,7 @@ class SelectAlignmentButton extends StatefulWidget {
 
   final QuillController controller;
   final double iconSize;
+  final double buttonSize;
 
   final QuillIconTheme? iconTheme;
   final bool? showLeftAlignment;
@@ -90,8 +92,8 @@ class _SelectAlignmentButtonState extends State<SelectAlignmentButton> {
           padding: EdgeInsets.symmetric(horizontal: !kIsWeb ? 1.0 : 5.0),
           child: ConstrainedBox(
             constraints: BoxConstraints.tightFor(
-              width: widget.iconSize * kIconButtonFactor,
-              height: widget.iconSize * kIconButtonFactor,
+              width: widget.buttonSize,
+              height: widget.buttonSize,
             ),
             child: RawMaterialButton(
               hoverElevation: 0,
