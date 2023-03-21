@@ -12,8 +12,8 @@ import '../toolbar.dart';
 class LinkStyleButton extends StatefulWidget {
   const LinkStyleButton({
     required this.controller,
-    this.buttonSize = kDefaultButtonSize,
-    this.iconSize = kDefaultIconSize,
+    required this.buttonSize,
+    required this.iconSize,
     this.icon,
     this.iconTheme,
     this.dialogTheme,

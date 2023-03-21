@@ -5,14 +5,13 @@ import '../../models/documents/attribute.dart';
 import '../../models/documents/style.dart';
 import '../../models/themes/quill_icon_theme.dart';
 import '../controller.dart';
-import '../toolbar.dart';
 
 class SelectHeaderStyleButton extends StatefulWidget {
   const SelectHeaderStyleButton({
     required this.controller,
+    required this.buttonSize,
+    required this.iconSize,
     this.axis = Axis.horizontal,
-    this.buttonSize = kDefaultButtonSize,
-    this.iconSize = kDefaultIconSize,
     this.iconTheme,
     this.attributes = const [
       Attribute.header,

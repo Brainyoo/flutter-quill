@@ -13,9 +13,9 @@ typedef ToggleStyleButtonBuilder = Widget Function(
   Color? fillColor,
   bool? isToggled,
   VoidCallback? onPressed,
-  VoidCallback? afterPressed, [
+  VoidCallback? afterPressed,
   double iconSize,
-  double buttonSize,
+  double buttonSize, [
   QuillIconTheme? iconTheme,
 ]);
 
@@ -24,8 +24,8 @@ class ToggleStyleButton extends StatefulWidget {
     required this.attribute,
     required this.icon,
     required this.controller,
-    this.iconSize = kDefaultIconSize,
-    this.buttonSize = kDefaultButtonSize,
+    required this.iconSize,
+    required this.buttonSize,
     this.fillColor,
     this.childBuilder = defaultToggleStyleButtonBuilder,
     this.iconTheme,
@@ -127,9 +127,9 @@ Widget defaultToggleStyleButtonBuilder(
   Color? fillColor,
   bool? isToggled,
   VoidCallback? onPressed,
-  VoidCallback? afterPressed, [
-  double iconSize = kDefaultIconSize,
-  double buttonSize = kDefaultButtonSize,
+  VoidCallback? afterPressed,
+  double iconSize,
+  double buttonSize, [
   QuillIconTheme? iconTheme,
 ]) {
   final theme = Theme.of(context);

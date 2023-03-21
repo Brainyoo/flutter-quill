@@ -5,13 +5,12 @@ import '../../models/documents/attribute.dart';
 import '../../models/documents/style.dart';
 import '../../models/themes/quill_icon_theme.dart';
 import '../controller.dart';
-import '../toolbar.dart';
 
 class SelectAlignmentButton extends StatefulWidget {
   const SelectAlignmentButton({
     required this.controller,
-    this.buttonSize = kDefaultButtonSize,
-    this.iconSize = kDefaultIconSize,
+    required this.buttonSize,
+    required this.iconSize,
     this.iconTheme,
     this.showLeftAlignment,
     this.showCenterAlignment,

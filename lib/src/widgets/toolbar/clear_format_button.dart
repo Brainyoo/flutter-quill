@@ -9,8 +9,8 @@ class ClearFormatButton extends StatefulWidget {
   const ClearFormatButton({
     required this.icon,
     required this.controller,
-    this.iconSize = kDefaultIconSize,
-    this.buttonSize = kDefaultButtonSize,
+    required this.iconSize,
+    required this.buttonSize,
     this.iconTheme,
     this.afterButtonPressed,
     Key? key,
@@ -40,7 +40,7 @@ class _ClearFormatButtonState extends State<ClearFormatButton> {
     return QuillIconButton(
       highlightElevation: 0,
       hoverElevation: 0,
-      size: widget.iconSize,
+      size: widget.buttonSize,
       icon: Icon(widget.icon, size: widget.iconSize, color: iconColor),
       fillColor: fillColor,
       borderRadius: widget.iconTheme?.borderRadius ?? 2,
