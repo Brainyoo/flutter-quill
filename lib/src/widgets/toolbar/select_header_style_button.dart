@@ -91,7 +91,7 @@ class _SelectHeaderStyleButtonState extends State<SelectHeaderStyleButton> {
                     BorderRadius.circular(widget.iconTheme?.borderRadius ?? 2)),
             fillColor: isSelected
                 ? (widget.iconTheme?.iconSelectedFillColor ??
-                    Theme.of(context).primaryColor)
+                    Theme.of(context).colorScheme.primary)
                 : (widget.iconTheme?.iconUnselectedFillColor ??
                     theme.canvasColor),
             onPressed: () {

@@ -78,14 +78,12 @@ class CameraButton extends StatelessWidget {
                 context: context,
                 builder: (ctx) => AlertDialog(
                   contentPadding: EdgeInsets.zero,
-                  backgroundColor: Colors.transparent,
                   content: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       TextButton.icon(
                         icon: const Icon(
                           Icons.camera,
-                          color: Colors.orangeAccent,
                         ),
                         label: Text('Camera'.i18n),
                         onPressed: () =>
@@ -94,7 +92,6 @@ class CameraButton extends StatelessWidget {
                       TextButton.icon(
                         icon: const Icon(
                           Icons.video_call,
-                          color: Colors.cyanAccent,
                         ),
                         label: Text('Video'.i18n),
                         onPressed: () =>

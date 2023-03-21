@@ -216,10 +216,9 @@ class QuillToolbar extends StatelessWidget implements PreferredSizeWidget {
                 PopupMenuItem<String>(
                   key: ValueKey(fontFamily.key),
                   value: fontFamily.value,
-                  child: Text(fontFamily.key.toString(),
-                      style: TextStyle(
-                          color:
-                              fontFamily.value == 'Clear' ? Colors.red : null)),
+                  child: _PopupMenuTextItem(
+                      text: fontFamily.key.toString(),
+                      isReset: fontFamily.value == 'Clear'),
                 ),
             ],
             onSelected: (newFont) {
@@ -240,9 +239,9 @@ class QuillToolbar extends StatelessWidget implements PreferredSizeWidget {
                 PopupMenuItem<String>(
                   key: ValueKey(fontSize.key),
                   value: fontSize.value,
-                  child: Text(fontSize.key.toString(),
-                      style: TextStyle(
-                          color: fontSize.value == '0' ? Colors.red : null)),
+                  child: _PopupMenuTextItem(
+                      text: fontSize.key.toString(),
+                      isReset: fontSize.value == '0'),
                 ),
             ],
             onSelected: (newSize) {
@@ -342,7 +341,7 @@ class QuillToolbar extends StatelessWidget implements PreferredSizeWidget {
                 isButtonGroupShown[3] ||
                 isButtonGroupShown[4] ||
                 isButtonGroupShown[5]))
-          _dividerOnAxis(axis),
+          _DividerOnAxis(axis: axis),
         if (showAlignmentButtons)
           SelectAlignmentButton(
             controller: controller,
@@ -369,7 +368,7 @@ class QuillToolbar extends StatelessWidget implements PreferredSizeWidget {
                 isButtonGroupShown[3] ||
                 isButtonGroupShown[4] ||
                 isButtonGroupShown[5]))
-          _dividerOnAxis(axis),
+          _DividerOnAxis(axis: axis),
         if (showHeaderStyle)
           SelectHeaderStyleButton(
             controller: controller,
@@ -384,7 +383,7 @@ class QuillToolbar extends StatelessWidget implements PreferredSizeWidget {
             (isButtonGroupShown[3] ||
                 isButtonGroupShown[4] ||
                 isButtonGroupShown[5]))
-          _dividerOnAxis(axis),
+          _DividerOnAxis(axis: axis),
         if (showListNumbers)
           ToggleStyleButton(
             attribute: Attribute.ol,
@@ -433,7 +432,7 @@ class QuillToolbar extends StatelessWidget implements PreferredSizeWidget {
         if (showDividers &&
             isButtonGroupShown[3] &&
             (isButtonGroupShown[4] || isButtonGroupShown[5]))
-          _dividerOnAxis(axis),
+          _DividerOnAxis(axis: axis),
         if (showQuote)
           ToggleStyleButton(
             attribute: Attribute.blockQuote,
@@ -462,7 +461,7 @@ class QuillToolbar extends StatelessWidget implements PreferredSizeWidget {
             afterButtonPressed: afterButtonPressed,
           ),
         if (showDividers && isButtonGroupShown[4] && isButtonGroupShown[5])
-          _dividerOnAxis(axis),
+          _DividerOnAxis(axis: axis),
         if (showLink)
           LinkStyleButton(
             controller: controller,
@@ -481,7 +480,7 @@ class QuillToolbar extends StatelessWidget implements PreferredSizeWidget {
             afterButtonPressed: afterButtonPressed,
           ),
         if (customButtons.isNotEmpty)
-          if (showDividers) _dividerOnAxis(axis),
+          if (showDividers) _DividerOnAxis(axis: axis),
         for (var customButton in customButtons)
           QuillIconButton(
             highlightElevation: 0,
@@ -494,22 +493,6 @@ class QuillToolbar extends StatelessWidget implements PreferredSizeWidget {
           ),
       ],
     );
-  }
-
-  static Widget _dividerOnAxis(Axis axis) {
-    if (axis == Axis.horizontal) {
-      return const VerticalDivider(
-        indent: 12,
-        endIndent: 12,
-        color: Colors.grey,
-      );
-    } else {
-      return const Divider(
-        indent: 12,
-        endIndent: 12,
-        color: Colors.grey,
-      );
-    }
   }
 
   final List<Widget> children;
@@ -562,6 +545,49 @@ class QuillToolbar extends StatelessWidget implements PreferredSizeWidget {
                 buttons: children,
               ),
             ),
+    );
+  }
+}
+
+class _DividerOnAxis extends StatelessWidget {
+  const _DividerOnAxis({required this.axis}) : super();
+
+  final Axis axis;
+
+  @override
+  Widget build(BuildContext context) {
+    if (axis == Axis.horizontal) {
+      return VerticalDivider(
+        indent: 12,
+        endIndent: 12,
+        color: Theme.of(context).dividerColor,
+      );
+    } else {
+      return Divider(
+        indent: 12,
+        endIndent: 12,
+        color: Theme.of(context).dividerColor,
+      );
+    }
+  }
+}
+
+class _PopupMenuTextItem extends StatelessWidget {
+  const _PopupMenuTextItem({
+    required this.text,
+    required this.isReset,
+    Key? key,
+  }) : super(key: key);
+
+  final String text;
+  final bool isReset;
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      text,
+      style: TextStyle(
+          color: isReset ? Theme.of(context).colorScheme.error : null),
     );
   }
 }
