@@ -56,3 +56,10 @@ class CustomBlockEmbed extends BlockEmbed {
     return CustomBlockEmbed(embeddable.type, embeddable.data);
   }
 }
+
+class TableEmbed extends CustomBlockEmbed {
+  const TableEmbed(String value) : super(noteType, value);
+
+  static const String noteType = 'tableEmbed';
+}
+
