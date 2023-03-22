@@ -40,7 +40,7 @@ export 'toolbar/toggle_style_button.dart';
 const double _kDefaultIconSize = 18;
 
 /// The default size of a button.
-const double _kDefaultButtonSize = 36;
+const double _kDefaultButtonSize = 24;
 
 class QuillToolbar extends StatelessWidget implements PreferredSizeWidget {
   const QuillToolbar({
