@@ -11,7 +11,7 @@ class TableEmbedBuilder implements EmbedBuilder {
   final void Function(QuillController controller)? onFocusChange;
 
   @override
-  String get key => 'tableEmbed';
+  String get key => BlockEmbed.tableType;
 
   @override
   Widget build(
