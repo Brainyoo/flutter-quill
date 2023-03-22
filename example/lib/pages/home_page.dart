@@ -286,13 +286,20 @@ class _HomePageState extends State<HomePage> {
           Expanded(
             flex: 15,
             child: Container(
-              color: Theme.of(context).colorScheme.background,
+              color: Theme.of(context).colorScheme.background.withOpacity(0.2),
               padding: const EdgeInsets.only(left: 16, right: 16),
               child: quillEditor,
             ),
           ),
           Container(
             padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              border: Border(
+                top: BorderSide(
+                  color: Theme.of(context).dividerColor,
+                ),
+              ),
+            ),
             child: toolbar,
           )
         ],
