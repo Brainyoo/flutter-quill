@@ -18,7 +18,8 @@ class ColorButton extends StatefulWidget {
     required this.icon,
     required this.controller,
     required this.background,
-    this.iconSize = kDefaultIconSize,
+    required this.buttonSize,
+    required this.iconSize,
     this.iconTheme,
     this.afterButtonPressed,
     Key? key,
@@ -26,6 +27,7 @@ class ColorButton extends StatefulWidget {
 
   final IconData icon;
   final double iconSize;
+  final double buttonSize;
   final bool background;
   final QuillController controller;
   final QuillIconTheme? iconTheme;
@@ -121,7 +123,7 @@ class _ColorButtonState extends State<ColorButton> {
     return QuillIconButton(
       highlightElevation: 0,
       hoverElevation: 0,
-      size: widget.iconSize * kIconButtonFactor,
+      size: widget.buttonSize,
       icon: Icon(widget.icon,
           size: widget.iconSize,
           color: widget.background ? iconColorBackground : iconColor),

@@ -12,7 +12,6 @@ import 'package:flutter_quill/flutter_quill.dart' hide Text;
 import 'package:flutter_quill_extensions/flutter_quill_extensions.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:tuple/tuple.dart';
 
 import '../universal_ui/universal_ui.dart';
 import 'read_only_page.dart';
@@ -73,7 +72,6 @@ class _HomePageState extends State<HomePage> {
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.grey.shade800,
         elevation: 0,
         centerTitle: false,
         title: const Text(
@@ -185,18 +183,18 @@ class _HomePageState extends State<HomePage> {
           h1: DefaultTextBlockStyle(
               const TextStyle(
                 fontSize: 32,
-                color: Colors.black,
                 height: 1.15,
                 fontWeight: FontWeight.w300,
               ),
-              const Tuple2(16, 0),
-              const Tuple2(0, 0),
+              const VerticalSpacing(16, 0),
+              const VerticalSpacing(0, 0),
               null),
           sizeSmall: const TextStyle(fontSize: 9),
         ),
         embedBuilders: [
           ...FlutterQuillEmbeds.builders(),
-          NotesEmbedBuilder(addEditNote: _addEditNote)
+          ClozeEmbedBuilder(addEditCloze: _addEditCloze),
+          NotesEmbedBuilder(addEditNote: _addEditNote),
         ],
       ),
     );
@@ -204,36 +202,34 @@ class _HomePageState extends State<HomePage> {
       quillEditor = MouseRegion(
         cursor: SystemMouseCursors.text,
         child: QuillEditor(
-          controller: _controller!,
-          scrollController: ScrollController(),
-          scrollable: true,
-          focusNode: _focusNode,
-          autoFocus: false,
-          readOnly: false,
-          placeholder: 'Add content',
-          expands: false,
-          padding: EdgeInsets.zero,
-          onTapUp: (details, p1) {
-            return _onTripleClickSelection();
-          },
-          customStyles: DefaultStyles(
-            h1: DefaultTextBlockStyle(
-                const TextStyle(
-                  fontSize: 32,
-                  color: Colors.black,
-                  height: 1.15,
-                  fontWeight: FontWeight.w300,
-                ),
-                const Tuple2(16, 0),
-                const Tuple2(0, 0),
-                null),
-            sizeSmall: const TextStyle(fontSize: 9),
-          ),
-          embedBuilders: [
-            ...defaultEmbedBuildersWeb,
-            ClozeEmbedBuilder(addEditCloze: _addEditCloze)
-          ],
-        ),
+            controller: _controller!,
+            scrollController: ScrollController(),
+            scrollable: true,
+            focusNode: _focusNode,
+            autoFocus: false,
+            readOnly: false,
+            placeholder: 'Add content',
+            expands: false,
+            padding: EdgeInsets.zero,
+            onTapUp: (details, p1) {
+              return _onTripleClickSelection();
+            },
+            customStyles: DefaultStyles(
+              h1: DefaultTextBlockStyle(
+                  const TextStyle(
+                    fontSize: 32,
+                    height: 1.15,
+                    fontWeight: FontWeight.w300,
+                  ),
+                  const VerticalSpacing(16, 0),
+                  const VerticalSpacing(0, 0),
+                  null),
+              sizeSmall: const TextStyle(fontSize: 9),
+            ),
+            embedBuilders: [
+              ...defaultEmbedBuildersWeb,
+              NotesEmbedBuilder(addEditNote: _addEditNote),
+            ]),
       );
     }
     var toolbar = QuillToolbar.basic(
@@ -291,19 +287,22 @@ class _HomePageState extends State<HomePage> {
           Expanded(
             flex: 15,
             child: Container(
-              color: Colors.white,
+              color: Theme.of(context).colorScheme.background.withOpacity(0.2),
               padding: const EdgeInsets.only(left: 16, right: 16),
               child: quillEditor,
             ),
           ),
-          kIsWeb
-              ? Expanded(
-                  child: Container(
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
-                  child: toolbar,
-                ))
-              : Container(child: toolbar)
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              border: Border(
+                top: BorderSide(
+                  color: Theme.of(context).dividerColor,
+                ),
+              ),
+            ),
+            child: toolbar,
+          )
         ],
       ),
     );
@@ -493,7 +492,8 @@ class _HomePageState extends State<HomePage> {
     final length = controller.selection.extentOffset - index;
 
     if (isEditing) {
-      final offset = getEmbedNode(controller, controller.selection.start).item1;
+      final offset =
+          getEmbedNode(controller, controller.selection.start).offset;
       controller.replaceText(
           offset, 1, block, TextSelection.collapsed(offset: offset));
     } else {
@@ -545,7 +545,8 @@ class _HomePageState extends State<HomePage> {
     final length = controller.selection.extentOffset - index;
 
     if (isEditing) {
-      final offset = getEmbedNode(controller, controller.selection.start).item1;
+      final offset =
+          getEmbedNode(controller, controller.selection.start).offset;
       controller.replaceText(
           offset, 1, block, TextSelection.collapsed(offset: offset));
     } else {
@@ -604,7 +605,8 @@ class NotesBlockEmbed extends CustomBlockEmbed {
 class ClozeEmbedBuilder implements EmbedBuilder {
   ClozeEmbedBuilder({required this.addEditCloze});
 
-  Future<void> Function(BuildContext context, {Document? document}) addEditCloze;
+  Future<void> Function(BuildContext context, {Document? document})
+      addEditCloze;
 
   @override
   String get key => 'clozeEmbed';

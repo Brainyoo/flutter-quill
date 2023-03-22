@@ -5,13 +5,13 @@ import '../../models/documents/attribute.dart';
 import '../../models/documents/style.dart';
 import '../../models/themes/quill_icon_theme.dart';
 import '../controller.dart';
-import '../toolbar.dart';
 
 class SelectHeaderStyleButton extends StatefulWidget {
   const SelectHeaderStyleButton({
     required this.controller,
+    required this.buttonSize,
+    required this.iconSize,
     this.axis = Axis.horizontal,
-    this.iconSize = kDefaultIconSize,
     this.iconTheme,
     this.attributes = const [
       Attribute.header,
@@ -26,6 +26,7 @@ class SelectHeaderStyleButton extends StatefulWidget {
   final QuillController controller;
   final Axis axis;
   final double iconSize;
+  final double buttonSize;
   final QuillIconTheme? iconTheme;
   final List<Attribute> attributes;
   final VoidCallback? afterButtonPressed;
@@ -76,8 +77,8 @@ class _SelectHeaderStyleButtonState extends State<SelectHeaderStyleButton> {
         padding: EdgeInsets.symmetric(horizontal: !kIsWeb ? 1.0 : 5.0),
         child: ConstrainedBox(
           constraints: BoxConstraints.tightFor(
-            width: widget.iconSize * kIconButtonFactor,
-            height: widget.iconSize * kIconButtonFactor,
+            width: widget.buttonSize,
+            height: widget.buttonSize,
           ),
           child: RawMaterialButton(
             hoverElevation: 0,
@@ -89,7 +90,7 @@ class _SelectHeaderStyleButtonState extends State<SelectHeaderStyleButton> {
                     BorderRadius.circular(widget.iconTheme?.borderRadius ?? 2)),
             fillColor: isSelected
                 ? (widget.iconTheme?.iconSelectedFillColor ??
-                    Theme.of(context).primaryColor)
+                    Theme.of(context).colorScheme.primary)
                 : (widget.iconTheme?.iconUnselectedFillColor ??
                     theme.canvasColor),
             onPressed: () {

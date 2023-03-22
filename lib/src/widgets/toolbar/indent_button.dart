@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
 
-import '../../../flutter_quill.dart';
+import '../../models/themes/quill_icon_theme.dart';
+import '../controller.dart';
+import '../toolbar.dart';
 
 class IndentButton extends StatefulWidget {
   const IndentButton({
     required this.icon,
     required this.controller,
     required this.isIncrease,
-    this.iconSize = kDefaultIconSize,
+    required this.iconSize,
+    required this.buttonSize,
     this.iconTheme,
     this.afterButtonPressed,
     Key? key,
@@ -15,6 +18,7 @@ class IndentButton extends StatefulWidget {
 
   final IconData icon;
   final double iconSize;
+  final double buttonSize;
   final QuillController controller;
   final bool isIncrease;
   final VoidCallback? afterButtonPressed;
@@ -37,7 +41,7 @@ class _IndentButtonState extends State<IndentButton> {
     return QuillIconButton(
       highlightElevation: 0,
       hoverElevation: 0,
-      size: widget.iconSize * 1.77,
+      size: widget.buttonSize,
       icon: Icon(widget.icon, size: widget.iconSize, color: iconColor),
       fillColor: iconFillColor,
       borderRadius: widget.iconTheme?.borderRadius ?? 2,

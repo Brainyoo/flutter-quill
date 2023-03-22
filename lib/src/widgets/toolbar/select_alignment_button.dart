@@ -5,12 +5,12 @@ import '../../models/documents/attribute.dart';
 import '../../models/documents/style.dart';
 import '../../models/themes/quill_icon_theme.dart';
 import '../controller.dart';
-import '../toolbar.dart';
 
 class SelectAlignmentButton extends StatefulWidget {
   const SelectAlignmentButton({
     required this.controller,
-    this.iconSize = kDefaultIconSize,
+    required this.buttonSize,
+    required this.iconSize,
     this.iconTheme,
     this.showLeftAlignment,
     this.showCenterAlignment,
@@ -22,6 +22,7 @@ class SelectAlignmentButton extends StatefulWidget {
 
   final QuillController controller;
   final double iconSize;
+  final double buttonSize;
 
   final QuillIconTheme? iconTheme;
   final bool? showLeftAlignment;
@@ -90,8 +91,8 @@ class _SelectAlignmentButtonState extends State<SelectAlignmentButton> {
           padding: EdgeInsets.symmetric(horizontal: !kIsWeb ? 1.0 : 5.0),
           child: ConstrainedBox(
             constraints: BoxConstraints.tightFor(
-              width: widget.iconSize * kIconButtonFactor,
-              height: widget.iconSize * kIconButtonFactor,
+              width: widget.buttonSize,
+              height: widget.buttonSize,
             ),
             child: RawMaterialButton(
               hoverElevation: 0,
@@ -103,7 +104,7 @@ class _SelectAlignmentButtonState extends State<SelectAlignmentButton> {
                       widget.iconTheme?.borderRadius ?? 2)),
               fillColor: _valueToText[_value] == _valueString[index]
                   ? (widget.iconTheme?.iconSelectedFillColor ??
-                      Theme.of(context).primaryColor)
+                      theme.colorScheme.primary)
                   : (widget.iconTheme?.iconUnselectedFillColor ??
                       theme.canvasColor),
               onPressed: () {
