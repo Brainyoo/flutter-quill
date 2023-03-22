@@ -7,12 +7,9 @@ import 'package:flutter_quill/translations.dart';
 import 'package:gallery_saver/gallery_saver.dart';
 import 'package:tuple/tuple.dart';
 
-import 'utils.dart';
-import 'widgets/formula.dart';
-import 'widgets/image.dart';
-import 'widgets/image_resizer.dart';
-import 'widgets/video_app.dart';
-import 'widgets/youtube_video_app.dart';
+import '../utils.dart';
+import '../widgets/image.dart';
+import '../widgets/image_resizer.dart';
 
 class ImageEmbedBuilder implements EmbedBuilder {
   @override
@@ -144,55 +141,39 @@ class ImageEmbedBuilder implements EmbedBuilder {
   }
 }
 
-class VideoEmbedBuilder implements EmbedBuilder {
-  VideoEmbedBuilder({this.onVideoInit});
+class _SimpleDialogItem extends StatelessWidget {
+  const _SimpleDialogItem(
+      {required this.icon,
+      required this.color,
+      required this.text,
+      required this.onPressed,
+      Key? key})
+      : super(key: key);
 
-  final void Function(GlobalKey videoContainerKey)? onVideoInit;
+  final IconData icon;
+  final Color color;
+  final String text;
+  final VoidCallback onPressed;
 
   @override
-  String get key => BlockEmbed.videoType;
-
-  @override
-  Widget build(
-    BuildContext context,
-    QuillController controller,
-    base.Embed node,
-    bool readOnly,
-  ) {
-    assert(!kIsWeb, 'Please provide video EmbedBuilder for Web');
-
-    final videoUrl = node.value.data;
-    if (videoUrl.contains('youtube.com') || videoUrl.contains('youtu.be')) {
-      return YoutubeVideoApp(
-          videoUrl: videoUrl, context: context, readOnly: readOnly);
-    }
-    return VideoApp(
-      videoUrl: videoUrl,
-      context: context,
-      readOnly: readOnly,
-      onVideoInit: onVideoInit,
+  Widget build(BuildContext context) {
+    return SimpleDialogOption(
+      onPressed: onPressed,
+      child: Row(
+        children: [
+          Icon(icon, size: 36, color: color),
+          Padding(
+            padding: const EdgeInsetsDirectional.only(start: 16),
+            child:
+                Text(text, style: const TextStyle(fontWeight: FontWeight.bold)),
+          ),
+        ],
+      ),
     );
   }
 }
 
-class FormulaEmbedBuilder implements EmbedBuilder {
-  @override
-  String get key => BlockEmbed.formulaType;
 
-  @override
-  Widget build(
-    BuildContext context,
-    QuillController controller,
-    base.Embed node,
-    bool readOnly,
-  ) {
-    return Formula(
-        node: node,
-        context: context,
-        readOnly: readOnly,
-        controller: controller);
-  }
-}
 
 Widget _menuOptionsForReadonlyImage(
     BuildContext context, String imageUrl, Widget image) {
@@ -236,36 +217,4 @@ Widget _menuOptionsForReadonlyImage(
             });
       },
       child: image);
-}
-
-class _SimpleDialogItem extends StatelessWidget {
-  const _SimpleDialogItem(
-      {required this.icon,
-      required this.color,
-      required this.text,
-      required this.onPressed,
-      Key? key})
-      : super(key: key);
-
-  final IconData icon;
-  final Color color;
-  final String text;
-  final VoidCallback onPressed;
-
-  @override
-  Widget build(BuildContext context) {
-    return SimpleDialogOption(
-      onPressed: onPressed,
-      child: Row(
-        children: [
-          Icon(icon, size: 36, color: color),
-          Padding(
-            padding: const EdgeInsetsDirectional.only(start: 16),
-            child:
-                Text(text, style: const TextStyle(fontWeight: FontWeight.bold)),
-          ),
-        ],
-      ),
-    );
-  }
 }

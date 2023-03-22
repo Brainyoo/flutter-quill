@@ -1,7 +1,9 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import '../../../flutter_quill.dart';
+import 'package:flutter_quill/flutter_quill.dart';
+
+import '../models/table_model.dart';
 
 class TableEmbedBuilder implements EmbedBuilder {
   TableEmbedBuilder({this.onFocusChange});
@@ -19,7 +21,7 @@ class TableEmbedBuilder implements EmbedBuilder {
     bool readOnly,
   ) {
     final tableData = jsonDecode(node.value.data) as Map<String, dynamic>;
-    final table = TableEntity.fromJson(tableData);
+    final table = TableModel.fromJson(tableData);
     final rowWidgets = <TableRow>[];
 
     for (var rowIndex = 0; rowIndex < table.rows.length; rowIndex++) {
@@ -36,7 +38,7 @@ class TableEmbedBuilder implements EmbedBuilder {
               final offset =
                   getEmbedNode(controller, controller.selection.start).item1;
 
-              controller.replaceText(offset, 1, TableEmbed(newJson),
+              controller.replaceText(offset, 1, BlockEmbed.table(newJson),
                   TextSelection.collapsed(offset: offset),
                   ignoreFocus: true);
             },
