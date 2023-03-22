@@ -72,7 +72,6 @@ class _HomePageState extends State<HomePage> {
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.grey.shade800,
         elevation: 0,
         centerTitle: false,
         title: const Text(
@@ -184,7 +183,6 @@ class _HomePageState extends State<HomePage> {
           h1: DefaultTextBlockStyle(
               const TextStyle(
                 fontSize: 32,
-                color: Colors.black,
                 height: 1.15,
                 fontWeight: FontWeight.w300,
               ),
@@ -219,7 +217,6 @@ class _HomePageState extends State<HomePage> {
               h1: DefaultTextBlockStyle(
                   const TextStyle(
                     fontSize: 32,
-                    color: Colors.black,
                     height: 1.15,
                     fontWeight: FontWeight.w300,
                   ),
@@ -289,19 +286,22 @@ class _HomePageState extends State<HomePage> {
           Expanded(
             flex: 15,
             child: Container(
-              color: Colors.white,
+              color: Theme.of(context).colorScheme.background.withOpacity(0.2),
               padding: const EdgeInsets.only(left: 16, right: 16),
               child: quillEditor,
             ),
           ),
-          kIsWeb
-              ? Expanded(
-                  child: Container(
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
-                  child: toolbar,
-                ))
-              : Container(child: toolbar)
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              border: Border(
+                top: BorderSide(
+                  color: Theme.of(context).dividerColor,
+                ),
+              ),
+            ),
+            child: toolbar,
+          )
         ],
       ),
     );

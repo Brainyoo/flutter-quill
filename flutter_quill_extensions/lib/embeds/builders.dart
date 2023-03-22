@@ -69,7 +69,6 @@ class ImageEmbedBuilder implements EmbedBuilder {
                 builder: (context) {
                   final resizeOption = _SimpleDialogItem(
                     icon: Icons.settings_outlined,
-                    color: Colors.lightBlueAccent,
                     text: 'Resize'.i18n,
                     onPressed: () {
                       Navigator.pop(context);
@@ -97,7 +96,6 @@ class ImageEmbedBuilder implements EmbedBuilder {
                   );
                   final copyOption = _SimpleDialogItem(
                     icon: Icons.copy_all_outlined,
-                    color: Colors.cyanAccent,
                     text: 'Copy'.i18n,
                     onPressed: () {
                       final imageNode =
@@ -111,7 +109,7 @@ class ImageEmbedBuilder implements EmbedBuilder {
                   );
                   final removeOption = _SimpleDialogItem(
                     icon: Icons.delete_forever_outlined,
-                    color: Colors.red.shade200,
+                    color: Theme.of(context).colorScheme.error,
                     text: 'Remove'.i18n,
                     onPressed: () {
                       final offset =
@@ -216,7 +214,6 @@ Widget _menuOptionsForReadonlyImage(
               );
               final zoomOption = _SimpleDialogItem(
                 icon: Icons.zoom_in,
-                color: Colors.cyanAccent,
                 text: 'Zoom'.i18n,
                 onPressed: () {
                   Navigator.pushReplacement(
@@ -241,14 +238,14 @@ Widget _menuOptionsForReadonlyImage(
 class _SimpleDialogItem extends StatelessWidget {
   const _SimpleDialogItem(
       {required this.icon,
-      required this.color,
       required this.text,
       required this.onPressed,
+      this.color,
       Key? key})
       : super(key: key);
 
   final IconData icon;
-  final Color color;
+  final Color? color;
   final String text;
   final VoidCallback onPressed;
 

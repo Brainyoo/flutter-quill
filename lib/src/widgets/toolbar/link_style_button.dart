@@ -12,7 +12,8 @@ import '../toolbar.dart';
 class LinkStyleButton extends StatefulWidget {
   const LinkStyleButton({
     required this.controller,
-    this.iconSize = kDefaultIconSize,
+    required this.buttonSize,
+    required this.iconSize,
     this.icon,
     this.iconTheme,
     this.dialogTheme,
@@ -21,6 +22,7 @@ class LinkStyleButton extends StatefulWidget {
   }) : super(key: key);
 
   final QuillController controller;
+  final double buttonSize;
   final IconData? icon;
   final double iconSize;
   final QuillIconTheme? iconTheme;
@@ -65,7 +67,7 @@ class _LinkStyleButtonState extends State<LinkStyleButton> {
     return QuillIconButton(
       highlightElevation: 0,
       hoverElevation: 0,
-      size: widget.iconSize * kIconButtonFactor,
+      size: widget.buttonSize,
       icon: Icon(
         widget.icon ?? Icons.link,
         size: widget.iconSize,

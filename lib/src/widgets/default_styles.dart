@@ -203,7 +203,7 @@ class DefaultStyles {
 
     final inlineCodeStyle = TextStyle(
       fontSize: 14,
-      color: themeData.colorScheme.primary.withOpacity(0.8),
+      color: themeData.colorScheme.onSurface.withOpacity(0.8),
       fontFamily: fontFamily,
     );
 
@@ -249,7 +249,7 @@ class DefaultStyles {
         underline: const TextStyle(decoration: TextDecoration.underline),
         strikeThrough: const TextStyle(decoration: TextDecoration.lineThrough),
         inlineCode: InlineCodeStyle(
-          backgroundColor: Colors.grey.shade100,
+          backgroundColor: themeData.colorScheme.surface,
           radius: const Radius.circular(3),
           style: inlineCodeStyle,
           header1: inlineCodeStyle.copyWith(
@@ -270,7 +270,7 @@ class DefaultStyles {
             defaultTextStyle.style.copyWith(
               fontSize: 20,
               height: 1.5,
-              color: Colors.grey.withOpacity(0.6),
+              color: themeData.hintColor,
             ),
             const VerticalSpacing(0, 0),
             const VerticalSpacing(0, 0),
@@ -283,12 +283,13 @@ class DefaultStyles {
             const VerticalSpacing(6, 2),
             BoxDecoration(
               border: Border(
-                left: BorderSide(width: 4, color: Colors.grey.shade300),
+                left: BorderSide(
+                    width: 4, color: themeData.colorScheme.surfaceVariant),
               ),
             )),
         code: DefaultTextBlockStyle(
             TextStyle(
-              color: Colors.blue.shade900.withOpacity(0.9),
+              color: themeData.colorScheme.onSurfaceVariant,
               fontFamily: fontFamily,
               fontSize: 13,
               height: 1.15,
@@ -296,7 +297,7 @@ class DefaultStyles {
             baseSpacing,
             const VerticalSpacing(0, 0),
             BoxDecoration(
-              color: Colors.grey.shade50,
+              color: themeData.colorScheme.surfaceVariant,
               borderRadius: BorderRadius.circular(2),
             )),
         indent: DefaultTextBlockStyle(

@@ -105,13 +105,11 @@ class _DemoScaffoldState extends State<DemoScaffold> {
       key: _scaffoldKey,
       appBar: AppBar(
         elevation: 0,
-        backgroundColor: Theme.of(context).canvasColor,
         centerTitle: false,
         titleSpacing: 0,
         leading: IconButton(
-          icon: Icon(
+          icon: const Icon(
             Icons.chevron_left,
-            color: Colors.grey.shade800,
             size: 18,
           ),
           onPressed: () => Navigator.pop(context),

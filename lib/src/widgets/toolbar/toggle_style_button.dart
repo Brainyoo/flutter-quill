@@ -13,8 +13,9 @@ typedef ToggleStyleButtonBuilder = Widget Function(
   Color? fillColor,
   bool? isToggled,
   VoidCallback? onPressed,
-  VoidCallback? afterPressed, [
+  VoidCallback? afterPressed,
   double iconSize,
+  double buttonSize, [
   QuillIconTheme? iconTheme,
 ]);
 
@@ -23,7 +24,8 @@ class ToggleStyleButton extends StatefulWidget {
     required this.attribute,
     required this.icon,
     required this.controller,
-    this.iconSize = kDefaultIconSize,
+    required this.iconSize,
+    required this.buttonSize,
     this.fillColor,
     this.childBuilder = defaultToggleStyleButtonBuilder,
     this.iconTheme,
@@ -35,6 +37,7 @@ class ToggleStyleButton extends StatefulWidget {
 
   final IconData icon;
   final double iconSize;
+  final double buttonSize;
 
   final Color? fillColor;
 
@@ -74,6 +77,7 @@ class _ToggleStyleButtonState extends State<ToggleStyleButton> {
       _toggleAttribute,
       widget.afterButtonPressed,
       widget.iconSize,
+      widget.buttonSize,
       widget.iconTheme,
     );
   }
@@ -123,8 +127,9 @@ Widget defaultToggleStyleButtonBuilder(
   Color? fillColor,
   bool? isToggled,
   VoidCallback? onPressed,
-  VoidCallback? afterPressed, [
-  double iconSize = kDefaultIconSize,
+  VoidCallback? afterPressed,
+  double iconSize,
+  double buttonSize, [
   QuillIconTheme? iconTheme,
 ]) {
   final theme = Theme.of(context);
@@ -139,7 +144,7 @@ Widget defaultToggleStyleButtonBuilder(
   final fill = isEnabled
       ? isToggled == true
           ? (iconTheme?.iconSelectedFillColor ??
-              Theme.of(context).primaryColor) //Selected icon fill color
+              Theme.of(context).colorScheme.primary) //Selected icon fill color
           : (iconTheme?.iconUnselectedFillColor ??
               theme.canvasColor) //Unselected icon fill color :
       : (iconTheme?.disabledIconFillColor ??
@@ -147,7 +152,7 @@ Widget defaultToggleStyleButtonBuilder(
   return QuillIconButton(
     highlightElevation: 0,
     hoverElevation: 0,
-    size: iconSize * kIconButtonFactor,
+    size: buttonSize,
     icon: Icon(icon, size: iconSize, color: iconColor),
     fillColor: fill,
     onPressed: onPressed,

@@ -68,7 +68,9 @@ class _VideoAppState extends State<VideoApp> {
       return VideoProgressIndicator(
         _controller,
         allowScrubbing: true,
-        colors: const VideoProgressColors(playedColor: Colors.blue),
+        colors: VideoProgressColors(
+            playedColor: Theme.of(context).progressIndicatorTheme.color ??
+                Theme.of(context).colorScheme.primary),
       );
     }
 
