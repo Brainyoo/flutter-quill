@@ -9,7 +9,8 @@ class ImageButton extends StatelessWidget {
   const ImageButton({
     required this.icon,
     required this.controller,
-    this.iconSize = kDefaultIconSize,
+    required this.iconSize,
+    required this.buttonSize,
     this.onImagePickCallback,
     this.fillColor,
     this.filePickImpl,
@@ -22,6 +23,7 @@ class ImageButton extends StatelessWidget {
 
   final IconData icon;
   final double iconSize;
+  final double buttonSize;
 
   final Color? fillColor;
 
@@ -51,7 +53,7 @@ class ImageButton extends StatelessWidget {
       icon: Icon(icon, size: iconSize, color: iconColor),
       highlightElevation: 0,
       hoverElevation: 0,
-      size: iconSize * 1.77,
+      size: buttonSize,
       fillColor: iconFillColor,
       borderRadius: iconTheme?.borderRadius ?? 2,
       onPressed: () => _onPressedHandler(context),

@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
 
-import '../../../flutter_quill.dart';
+import '../../models/documents/attribute.dart';
+import '../../models/themes/quill_icon_theme.dart';
+import '../controller.dart';
+import '../toolbar.dart';
 
 class ClearFormatButton extends StatefulWidget {
   const ClearFormatButton({
     required this.icon,
     required this.controller,
-    this.iconSize = kDefaultIconSize,
+    required this.iconSize,
+    required this.buttonSize,
     this.iconTheme,
     this.afterButtonPressed,
     Key? key,
@@ -14,6 +18,7 @@ class ClearFormatButton extends StatefulWidget {
 
   final IconData icon;
   final double iconSize;
+  final double buttonSize;
 
   final QuillController controller;
 
@@ -35,7 +40,7 @@ class _ClearFormatButtonState extends State<ClearFormatButton> {
     return QuillIconButton(
       highlightElevation: 0,
       hoverElevation: 0,
-      size: widget.iconSize * kIconButtonFactor,
+      size: widget.buttonSize,
       icon: Icon(widget.icon, size: widget.iconSize, color: iconColor),
       fillColor: fillColor,
       borderRadius: widget.iconTheme?.borderRadius ?? 2,

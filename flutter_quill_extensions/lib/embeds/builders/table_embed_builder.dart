@@ -36,7 +36,7 @@ class TableEmbedBuilder implements EmbedBuilder {
                   rowIndex, cellIndex, doc.toDelta().toJson());
               final newJson = jsonEncode(newTable.toJson());
               final offset =
-                  getEmbedNode(controller, controller.selection.start).item1;
+                  getEmbedNode(controller, controller.selection.start).offset;
 
               controller.replaceText(offset, 1, BlockEmbed.table(newJson),
                   TextSelection.collapsed(offset: offset),

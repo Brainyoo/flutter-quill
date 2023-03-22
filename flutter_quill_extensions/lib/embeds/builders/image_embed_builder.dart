@@ -5,7 +5,7 @@ import 'package:flutter_quill/extensions.dart' as base;
 import 'package:flutter_quill/flutter_quill.dart' hide Text;
 import 'package:flutter_quill/translations.dart';
 import 'package:gallery_saver/gallery_saver.dart';
-import 'package:tuple/tuple.dart';
+import 'package:math_keyboard/math_keyboard.dart';
 
 import '../utils.dart';
 import '../widgets/image.dart';
@@ -26,7 +26,7 @@ class ImageEmbedBuilder implements EmbedBuilder {
 
     var image;
     final imageUrl = standardizeImageUrl(node.value.data);
-    Tuple2<double?, double?>? _widthHeight;
+    OptionalSize? _imageSize;
     final style = node.style.attributes['style'];
     if (base.isMobile() && style != null) {
       final _attrs = base.parseKeyValuePairs(style.value.toString(), {
@@ -42,7 +42,7 @@ class ImageEmbedBuilder implements EmbedBuilder {
             'mobileWidth and mobileHeight must be specified');
         final w = double.parse(_attrs[Attribute.mobileWidth]!);
         final h = double.parse(_attrs[Attribute.mobileHeight]!);
-        _widthHeight = Tuple2(w, h);
+        _imageSize = OptionalSize(w, h);
         final m = _attrs[Attribute.mobileMargin] == null
             ? 0.0
             : double.parse(_attrs[Attribute.mobileMargin]!);
@@ -53,9 +53,9 @@ class ImageEmbedBuilder implements EmbedBuilder {
       }
     }
 
-    if (_widthHeight == null) {
+    if (_imageSize == null) {
       image = imageByUrl(imageUrl);
-      _widthHeight = Tuple2((image as Image).width, image.height);
+      _imageSize = OptionalSize((image as Image).width, image.height);
     }
 
     if (!readOnly && base.isMobile()) {
@@ -66,7 +66,6 @@ class ImageEmbedBuilder implements EmbedBuilder {
                 builder: (context) {
                   final resizeOption = _SimpleDialogItem(
                     icon: Icons.settings_outlined,
-                    color: Colors.lightBlueAccent,
                     text: 'Resize'.i18n,
                     onPressed: () {
                       Navigator.pop(context);
@@ -83,10 +82,10 @@ class ImageEmbedBuilder implements EmbedBuilder {
                                   controller
                                     ..skipRequestKeyboard = true
                                     ..formatText(
-                                        res.item1, 1, StyleAttribute(attr));
+                                        res.offset, 1, StyleAttribute(attr));
                                 },
-                                imageWidth: _widthHeight?.item1,
-                                imageHeight: _widthHeight?.item2,
+                                imageWidth: _imageSize?.width,
+                                imageHeight: _imageSize?.height,
                                 maxWidth: _screenSize.width,
                                 maxHeight: _screenSize.height);
                           });
@@ -94,26 +93,25 @@ class ImageEmbedBuilder implements EmbedBuilder {
                   );
                   final copyOption = _SimpleDialogItem(
                     icon: Icons.copy_all_outlined,
-                    color: Colors.cyanAccent,
                     text: 'Copy'.i18n,
                     onPressed: () {
                       final imageNode =
                           getEmbedNode(controller, controller.selection.start)
-                              .item2;
+                              .value;
                       final imageUrl = imageNode.value.data;
                       controller.copiedImageUrl =
-                          Tuple2(imageUrl, getImageStyleString(controller));
+                          ImageUrl(imageUrl, getImageStyleString(controller));
                       Navigator.pop(context);
                     },
                   );
                   final removeOption = _SimpleDialogItem(
                     icon: Icons.delete_forever_outlined,
-                    color: Colors.red.shade200,
+                    color: Theme.of(context).colorScheme.error,
                     text: 'Remove'.i18n,
                     onPressed: () {
                       final offset =
                           getEmbedNode(controller, controller.selection.start)
-                              .item1;
+                              .offset;
                       controller.replaceText(offset, 1, '',
                           TextSelection.collapsed(offset: offset));
                       Navigator.pop(context);
@@ -144,14 +142,14 @@ class ImageEmbedBuilder implements EmbedBuilder {
 class _SimpleDialogItem extends StatelessWidget {
   const _SimpleDialogItem(
       {required this.icon,
-      required this.color,
       required this.text,
       required this.onPressed,
+      this.color,
       Key? key})
       : super(key: key);
 
   final IconData icon;
-  final Color color;
+  final Color? color;
   final String text;
   final VoidCallback onPressed;
 
@@ -172,8 +170,6 @@ class _SimpleDialogItem extends StatelessWidget {
     );
   }
 }
-
-
 
 Widget _menuOptionsForReadonlyImage(
     BuildContext context, String imageUrl, Widget image) {
@@ -197,7 +193,6 @@ Widget _menuOptionsForReadonlyImage(
               );
               final zoomOption = _SimpleDialogItem(
                 icon: Icons.zoom_in,
-                color: Colors.cyanAccent,
                 text: 'Zoom'.i18n,
                 onPressed: () {
                   Navigator.pushReplacement(

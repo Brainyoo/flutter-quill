@@ -5,7 +5,8 @@ class FormulaButton extends StatelessWidget {
   const FormulaButton({
     required this.icon,
     required this.controller,
-    this.iconSize = kDefaultIconSize,
+    required this.iconSize,
+    required this.buttonSize,
     this.fillColor,
     this.iconTheme,
     this.dialogTheme,
@@ -15,6 +16,7 @@ class FormulaButton extends StatelessWidget {
   final IconData icon;
 
   final double iconSize;
+  final double buttonSize;
 
   final Color? fillColor;
 
@@ -36,7 +38,7 @@ class FormulaButton extends StatelessWidget {
       icon: Icon(icon, size: iconSize, color: iconColor),
       highlightElevation: 0,
       hoverElevation: 0,
-      size: iconSize * 1.77,
+      size: buttonSize,
       fillColor: iconFillColor,
       borderRadius: iconTheme?.borderRadius ?? 2,
       onPressed: () => _onPressedHandler(context),
