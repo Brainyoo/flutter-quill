@@ -8,7 +8,8 @@ import '../models/table_model.dart';
 class TableEmbedBuilder implements EmbedBuilder {
   TableEmbedBuilder({this.onFocusChange});
 
-  final void Function(QuillController controller)? onFocusChange;
+  final void Function(QuillController controller, TableIndex index)?
+      onFocusChange;
 
   @override
   String get key => BlockEmbed.tableType;
@@ -43,11 +44,21 @@ class TableEmbedBuilder implements EmbedBuilder {
                   ignoreFocus: true);
             },
             initialDocument: Document.fromJson(cell.deltaJson),
-            onFocusChange: onFocusChange,
+            onFocusChange: (controller) {
+              onFocusChange!(
+                controller,
+                TableIndex(
+                  row: rowIndex,
+                  column: cellIndex,
+                ),
+              );
+            },
           ),
         );
       }
-      rowWidgets.add(TableRow(children: cellWidgets));
+      rowWidgets.add(TableRow(
+        children: cellWidgets,
+      ));
     }
 
     return Material(
@@ -55,6 +66,8 @@ class TableEmbedBuilder implements EmbedBuilder {
         child: Padding(
             padding: const EdgeInsets.only(bottom: 2),
             child: Table(
+              key: ValueKey(
+                  '${rowWidgets.length} ${rowWidgets.first.children?.length ?? 0}'),
               border: TableBorder.all(),
               children: rowWidgets,
             )));
@@ -134,4 +147,10 @@ class _EditorTableCellState extends State<_EditorTableCell> {
       ),
     );
   }
+}
+
+class TableIndex {
+  const TableIndex({required this.row, required this.column});
+  final int row;
+  final int column;
 }

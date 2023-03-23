@@ -1,8 +1,7 @@
 class TableModel {
   const TableModel({required this.rows});
 
-  factory TableModel.withRowCountAndColumnCount(
-      int rowCount, int columnCount) {
+  factory TableModel.withRowCountAndColumnCount(int rowCount, int columnCount) {
     final rows = List<TableRowModel>.generate(
       rowCount,
       (_) => TableRowModel(
@@ -36,8 +35,8 @@ class TableModel {
 
   TableModel copyTableWithCellContent(
       int rowIdx, int cellIdx, List<dynamic> content) {
-    final newRows = List<TableRowModel>.from(
-        rows); // make a copy of the original rows list
+    final newRows =
+        List<TableRowModel>.from(rows); // make a copy of the original rows list
     final row = newRows[rowIdx];
     final newCells = List<TableCellModel>.from(
         row.cells); // make a copy of the cells list in the selected row
@@ -48,25 +47,41 @@ class TableModel {
     return TableModel(rows: newRows);
   }
 
-  TableModel copyTableWithAdditionalRow() {
-    final newRows = List<TableRowModel>.from(
-        rows); // make a copy of the original rows list
+  TableModel copyTableWithAdditionalRow({int rowIdx = 0}) {
+    final newRows =
+        List<TableRowModel>.from(rows); // make a copy of the original rows list
     final newCells = List<TableCellModel>.generate(
         rows[0].cells.length,
         (_) => const TableCellModel(deltaJson: [
               {'insert': '\n'}
             ])); // create a list of default cells for the new row
     final newRow = TableRowModel(cells: newCells);
-    newRows.add(newRow);
+    newRows.insert(rowIdx, newRow);
     return TableModel(rows: newRows);
   }
 
-  TableModel copyTableWithAdditionalColumn() {
+  TableModel copyTableWithoutRow(int rowIdx) {
+    final newRows = List<TableRowModel>.from(rows)..removeAt(rowIdx);
+    return TableModel(rows: newRows);
+  }
+
+  TableModel copyTableWithAdditionalColumn({int columnIdx = 0}) {
     final newRows = rows.map((row) {
       final newCells = List<TableCellModel>.from(row.cells)
-        ..add(const TableCellModel(deltaJson: [
-          {'insert': '\n'}
-        ])); // add a default cell to the end of the cells list
+        ..insert(
+            columnIdx,
+            const TableCellModel(deltaJson: [
+              {'insert': '\n'}
+            ])); // add a default cell to the end of the cells list
+      return TableRowModel(cells: newCells);
+    }).toList();
+    return TableModel(rows: newRows);
+  }
+
+  TableModel copyTableWithoutColumn(int columnIdx) {
+    final newRows = rows.map((row) {
+      final newCells = List<TableCellModel>.from(row.cells)
+        ..removeAt(columnIdx);
       return TableRowModel(cells: newCells);
     }).toList();
     return TableModel(rows: newRows);
