@@ -21,6 +21,7 @@ import 'toolbar/quill_icon_button.dart';
 import 'toolbar/search_button.dart';
 import 'toolbar/select_alignment_button.dart';
 import 'toolbar/select_header_style_button.dart';
+import 'toolbar/select_sub_super_script_font_button.dart';
 import 'toolbar/toggle_check_list_button.dart';
 import 'toolbar/toggle_style_button.dart';
 
@@ -75,6 +76,7 @@ class QuillToolbar extends StatelessWidget implements PreferredSizeWidget {
     bool showItalicButton = true,
     bool showSmallButton = false,
     bool showUnderLineButton = true,
+    bool showSubSuperscriptsButton = true,
     bool showStrikeThrough = true,
     bool showInlineCode = true,
     bool showColorButton = true,
@@ -137,6 +139,7 @@ class QuillToolbar extends StatelessWidget implements PreferredSizeWidget {
           showSmallButton ||
           showUnderLineButton ||
           showStrikeThrough ||
+          showSubSuperscriptsButton ||
           showInlineCode ||
           showColorButton ||
           showBackgroundColorButton ||
@@ -303,6 +306,15 @@ class QuillToolbar extends StatelessWidget implements PreferredSizeWidget {
             icon: Icons.format_strikethrough,
             iconSize: toolbarIconSize,
             controller: controller,
+            iconTheme: iconTheme,
+            afterButtonPressed: afterButtonPressed,
+            buttonSize: toolbarButtonSize,
+          ),
+        if (showSubSuperscriptsButton)
+          SelectSubSuperScriptButton(
+            controller: controller,
+            axis: axis,
+            iconSize: toolbarIconSize,
             iconTheme: iconTheme,
             afterButtonPressed: afterButtonPressed,
             buttonSize: toolbarButtonSize,
