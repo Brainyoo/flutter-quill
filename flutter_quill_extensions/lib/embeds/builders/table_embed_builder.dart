@@ -4,12 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 
 import '../models/table_model.dart';
+import '../widgets/QuillTableController.dart';
 
 class TableEmbedBuilder implements EmbedBuilder {
   TableEmbedBuilder({this.onFocusChange});
 
-  final void Function(QuillController controller, TableIndex index)?
-      onFocusChange;
+  final void Function(QuillTableController controller)? onFocusChange;
 
   @override
   String get key => BlockEmbed.tableType;
@@ -32,6 +32,7 @@ class TableEmbedBuilder implements EmbedBuilder {
         final cell = row.cells[cellIndex];
         cellWidgets.add(
           _EditorTableCell(
+            index: TableIndex(row: rowIndex, column: cellIndex),
             onChanged: (doc) {
               final newTable = table.copyTableWithCellContent(
                   rowIndex, cellIndex, doc.toDelta().toJson());
@@ -44,15 +45,7 @@ class TableEmbedBuilder implements EmbedBuilder {
                   ignoreFocus: true);
             },
             initialDocument: Document.fromJson(cell.deltaJson),
-            onFocusChange: (controller) {
-              onFocusChange!(
-                controller,
-                TableIndex(
-                  row: rowIndex,
-                  column: cellIndex,
-                ),
-              );
-            },
+            onFocusChange: onFocusChange,
           ),
         );
       }
@@ -76,14 +69,16 @@ class TableEmbedBuilder implements EmbedBuilder {
 
 class _EditorTableCell extends StatefulWidget {
   _EditorTableCell({
+    required this.index,
     required this.onChanged,
     required this.initialDocument,
     this.onFocusChange,
   });
 
   final void Function(Document document) onChanged;
-  final void Function(QuillController controller)? onFocusChange;
+  final void Function(QuillTableController controller)? onFocusChange;
 
+  final TableIndex index;
   final Document initialDocument;
   final FocusNode focusNode = FocusNode();
 
@@ -92,14 +87,14 @@ class _EditorTableCell extends StatefulWidget {
 }
 
 class _EditorTableCellState extends State<_EditorTableCell> {
-  late final QuillController controller;
+  late final QuillTableController controller;
 
   void _handleOnChanged() {
     widget.onChanged(controller.document);
   }
 
   void _handleFocusChanged() {
-    if (widget.onFocusChange != null) {
+    if (widget.onFocusChange != null && widget.focusNode.hasPrimaryFocus) {
       widget.onFocusChange!(controller);
     }
   }
@@ -116,7 +111,8 @@ class _EditorTableCellState extends State<_EditorTableCell> {
   @override
   void initState() {
     super.initState();
-    controller = QuillController(
+    controller = QuillTableController(
+        index: widget.index,
         document: widget.initialDocument,
         selection: const TextSelection.collapsed(offset: 0));
     widget.focusNode.addListener(_handleOnChanged);

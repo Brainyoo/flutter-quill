@@ -8,7 +8,10 @@ import 'embeds/embed_types.dart';
 import 'embeds/toolbar/camera_button.dart';
 import 'embeds/toolbar/formula_button.dart';
 import 'embeds/toolbar/image_button.dart';
+import 'embeds/toolbar/table_button.dart';
+import 'embeds/toolbar/table_operation_button_list.dart';
 import 'embeds/toolbar/video_button.dart';
+import 'embeds/widgets/QuillTableController.dart';
 
 export 'embeds/builders/builders.dart';
 export 'embeds/embed_types.dart';
@@ -34,6 +37,8 @@ class FlutterQuillEmbeds {
     bool showVideoButton = true,
     bool showCameraButton = true,
     bool showFormulaButton = false,
+    bool showTableButton = false,
+    bool showTableOperationButtons = false,
     OnImagePickCallback? onImagePickCallback,
     OnVideoPickCallback? onVideoPickCallback,
     MediaPickSettingSelector? mediaPickSettingSelector,
@@ -100,7 +105,27 @@ class FlutterQuillEmbeds {
               iconTheme: iconTheme,
               dialogTheme: dialogTheme,
               buttonSize: toolbarButtonSize,
-            )
+            ),
+      if (showTableButton)
+        (controller, toolbarButtonSize, toolbarIconSize, iconTheme,
+                dialogTheme) =>
+            TableButton(
+              icon: Icons.border_all,
+              iconSize: toolbarIconSize,
+              controller: controller,
+              iconTheme: iconTheme,
+              buttonSize: toolbarButtonSize,
+            ),
+      if (showTableOperationButtons)
+        (controller, toolbarButtonSize, toolbarIconSize, iconTheme,
+                dialogTheme) =>
+            TableOperationButtonList(
+              axis: Axis.horizontal,
+              iconSize: toolbarIconSize,
+              controller: controller as QuillTableController,
+              iconTheme: iconTheme,
+              buttonSize: toolbarButtonSize,
+            ),
     ];
   }
 }
