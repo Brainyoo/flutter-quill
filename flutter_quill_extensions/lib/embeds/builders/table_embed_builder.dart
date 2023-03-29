@@ -32,6 +32,7 @@ class TableEmbedBuilder implements EmbedBuilder {
         final cell = row.cells[cellIndex];
         cellWidgets.add(
           _EditorTableCell(
+            controller: controller,
             index: TableIndex(row: rowIndex, column: cellIndex),
             onChanged: (doc) {
               final newTable = table.copyTableWithCellContent(
@@ -70,6 +71,7 @@ class TableEmbedBuilder implements EmbedBuilder {
 class _EditorTableCell extends StatefulWidget {
   _EditorTableCell({
     required this.index,
+    required this.controller,
     required this.onChanged,
     required this.initialDocument,
     this.onFocusChange,
@@ -79,6 +81,7 @@ class _EditorTableCell extends StatefulWidget {
   final void Function(QuillTableController controller)? onFocusChange;
 
   final TableIndex index;
+  final QuillController controller;
   final Document initialDocument;
   final FocusNode focusNode = FocusNode();
 
@@ -87,15 +90,15 @@ class _EditorTableCell extends StatefulWidget {
 }
 
 class _EditorTableCellState extends State<_EditorTableCell> {
-  late final QuillTableController controller;
+  late final QuillTableController tableController;
 
   void _handleOnChanged() {
-    widget.onChanged(controller.document);
+    widget.onChanged(tableController.document);
   }
 
   void _handleFocusChanged() {
     if (widget.onFocusChange != null && widget.focusNode.hasPrimaryFocus) {
-      widget.onFocusChange!(controller);
+      widget.onFocusChange!(tableController);
     }
   }
 
@@ -111,7 +114,8 @@ class _EditorTableCellState extends State<_EditorTableCell> {
   @override
   void initState() {
     super.initState();
-    controller = QuillTableController(
+    tableController = QuillTableController(
+        parentController: widget.controller,
         index: widget.index,
         document: widget.initialDocument,
         selection: const TextSelection.collapsed(offset: 0));
@@ -121,7 +125,7 @@ class _EditorTableCellState extends State<_EditorTableCell> {
 
   @override
   void dispose() {
-    controller
+    tableController
       ..removeListener(_handleOnChanged)
       ..removeListener(_handleFocusChanged);
 
@@ -135,7 +139,7 @@ class _EditorTableCellState extends State<_EditorTableCell> {
         scrollController: ScrollController(),
         scrollable: false,
         autoFocus: false,
-        controller: controller,
+        controller: tableController,
         expands: false,
         focusNode: widget.focusNode,
         padding: const EdgeInsets.all(4),

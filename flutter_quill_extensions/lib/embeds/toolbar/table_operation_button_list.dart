@@ -57,7 +57,7 @@ class TableOperationButtonList extends StatelessWidget {
       _TableOperationButton(
         buttonSize: buttonSize,
         iconSize: iconSize,
-        icon: Icons.border_left,
+        icon: Icons.border_top,
         fillColor: fillColor,
         iconTheme: iconTheme,
         onPressed: _addNewRowAbove,
@@ -65,7 +65,7 @@ class TableOperationButtonList extends StatelessWidget {
       _TableOperationButton(
         buttonSize: buttonSize,
         iconSize: iconSize,
-        icon: Icons.border_left,
+        icon: Icons.border_bottom,
         fillColor: fillColor,
         iconTheme: iconTheme,
         onPressed: _addNewRowBelow,
@@ -73,7 +73,7 @@ class TableOperationButtonList extends StatelessWidget {
       _TableOperationButton(
         buttonSize: buttonSize,
         iconSize: iconSize,
-        icon: Icons.remove,
+        icon: Icons.remove_circle,
         fillColor: fillColor,
         iconTheme: iconTheme,
         onPressed: _removeRow,
@@ -116,7 +116,7 @@ class TableOperationButtonList extends StatelessWidget {
     _replaceTable(
       controller,
       (table, index) =>
-          table.copyTableWithAdditionalColumn(columnIdx: index.column + 1),
+          table.copyTableWithAdditionalColumn(columnIdx: index.column),
     );
   }
 
@@ -131,18 +131,21 @@ class TableOperationButtonList extends StatelessWidget {
   void _removeColumn() {
     _replaceTable(
       controller,
-      (table, index) => table.copyTableWithoutRow(index.row),
+      (table, index) => table.copyTableWithoutRow(index.column),
     );
   }
 
   void _replaceTable(QuillTableController controller,
       TableModel Function(TableModel table, TableIndex index) createTable) {
-    final embed = getEmbedNode(controller, controller.selection.start).value;
-    final offset = getEmbedNode(controller, controller.selection.start).offset;
+    final parentController = controller.parentController;
+    final embed =
+        getEmbedNode(parentController, parentController.selection.start).value;
+    final offset =
+        getEmbedNode(parentController, parentController.selection.start).offset;
     final table = TableModel.fromJson(jsonDecode(embed.value.data));
     final newTable = createTable(table, controller.index);
     final block = BlockEmbed.table(jsonEncode(newTable.toJson()));
-    controller.replaceText(
+    parentController.replaceText(
         offset, 1, block, TextSelection.collapsed(offset: offset));
   }
 }
