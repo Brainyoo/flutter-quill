@@ -20,6 +20,7 @@ class TableEmbedBuilder implements EmbedBuilder {
     QuillController controller,
     Embed node,
     bool readOnly,
+    bool inline,
   ) {
     final tableData = jsonDecode(node.value.data) as Map<String, dynamic>;
     final table = TableModel.fromJson(tableData);
@@ -66,6 +67,16 @@ class TableEmbedBuilder implements EmbedBuilder {
               children: rowWidgets,
             )));
   }
+  
+  @override
+  WidgetSpan buildWidgetSpan(Widget widget) {
+    // TODO: implement buildWidgetSpan
+    throw UnimplementedError();
+  }
+  
+  @override
+  // TODO: implement expanded
+  bool get expanded => throw UnimplementedError();
 }
 
 class _EditorTableCell extends StatefulWidget {

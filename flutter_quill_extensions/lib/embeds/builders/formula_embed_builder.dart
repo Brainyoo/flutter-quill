@@ -13,6 +13,7 @@ class FormulaEmbedBuilder implements EmbedBuilder {
     QuillController controller,
     base.Embed node,
     bool readOnly,
+    bool inline,
   ) {
     return Formula(
         node: node,
@@ -20,4 +21,14 @@ class FormulaEmbedBuilder implements EmbedBuilder {
         readOnly: readOnly,
         controller: controller);
   }
+  
+  @override
+  WidgetSpan buildWidgetSpan(Widget widget) {
+    // TODO: implement buildWidgetSpan
+    throw UnimplementedError();
+  }
+  
+  @override
+  // TODO: implement expanded
+  bool get expanded => throw UnimplementedError();
 }

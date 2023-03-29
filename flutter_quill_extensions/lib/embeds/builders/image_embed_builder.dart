@@ -5,13 +5,12 @@ import 'package:flutter_quill/extensions.dart' as base;
 import 'package:flutter_quill/flutter_quill.dart' hide Text;
 import 'package:flutter_quill/translations.dart';
 import 'package:gallery_saver/gallery_saver.dart';
-import 'package:math_keyboard/math_keyboard.dart';
 
 import '../utils.dart';
 import '../widgets/image.dart';
 import '../widgets/image_resizer.dart';
 
-class ImageEmbedBuilder implements EmbedBuilder {
+class ImageEmbedBuilder extends EmbedBuilder {
   @override
   String get key => BlockEmbed.imageType;
 
@@ -21,6 +20,7 @@ class ImageEmbedBuilder implements EmbedBuilder {
     QuillController controller,
     base.Embed node,
     bool readOnly,
+    bool inline,
   ) {
     assert(!kIsWeb, 'Please provide image EmbedBuilder for Web');
 
@@ -153,7 +153,6 @@ class _SimpleDialogItem extends StatelessWidget {
   final String text;
   final VoidCallback onPressed;
 
-  @override
   Widget build(BuildContext context) {
     return SimpleDialogOption(
       onPressed: onPressed,

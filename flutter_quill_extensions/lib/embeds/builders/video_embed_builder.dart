@@ -19,6 +19,7 @@ class VideoEmbedBuilder implements EmbedBuilder {
     QuillController controller,
     base.Embed node,
     bool readOnly,
+    bool inline,
   ) {
     assert(!kIsWeb, 'Please provide video EmbedBuilder for Web');
 
@@ -34,4 +35,14 @@ class VideoEmbedBuilder implements EmbedBuilder {
       onVideoInit: onVideoInit,
     );
   }
+  
+  @override
+  WidgetSpan buildWidgetSpan(Widget widget) {
+    // TODO: implement buildWidgetSpan
+    throw UnimplementedError();
+  }
+  
+  @override
+  // TODO: implement expanded
+  bool get expanded => throw UnimplementedError();
 }

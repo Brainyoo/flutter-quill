@@ -555,7 +555,7 @@ class _HomePageState extends State<HomePage> {
   }
 }
 
-class NotesEmbedBuilder implements EmbedBuilder {
+class NotesEmbedBuilder extends EmbedBuilder {
   NotesEmbedBuilder({required this.addEditNote});
 
   Future<void> Function(BuildContext context, {Document? document}) addEditNote;
@@ -569,6 +569,7 @@ class NotesEmbedBuilder implements EmbedBuilder {
     QuillController controller,
     Embed node,
     bool readOnly,
+    bool inline,
   ) {
     final notes = NotesBlockEmbed(node.value.data).document;
 
@@ -617,6 +618,7 @@ class ClozeEmbedBuilder implements EmbedBuilder {
     QuillController controller,
     Embed node,
     bool readOnly,
+    bool inline,
   ) {
     final notes = ClozeBlockEmbed(node.value.data).document;
 
@@ -638,6 +640,16 @@ class ClozeEmbedBuilder implements EmbedBuilder {
       ),
     );
   }
+  
+  @override
+  WidgetSpan buildWidgetSpan(Widget widget) {
+    // TODO: implement buildWidgetSpan
+    throw UnimplementedError();
+  }
+  
+  @override
+  // TODO: implement expanded
+  bool get expanded => throw UnimplementedError();
 }
 
 class ClozeBlockEmbed extends CustomBlockEmbed {
