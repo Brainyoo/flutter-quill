@@ -153,6 +153,7 @@ class _SimpleDialogItem extends StatelessWidget {
   final String text;
   final VoidCallback onPressed;
 
+  @override
   Widget build(BuildContext context) {
     return SimpleDialogOption(
       onPressed: onPressed,

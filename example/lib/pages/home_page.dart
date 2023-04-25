@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_quill/extensions.dart';
 import 'package:flutter_quill/flutter_quill.dart' hide Text;
+import 'package:flutter_quill_extensions/embeds/widgets/QuillTableController.dart';
 import 'package:flutter_quill_extensions/flutter_quill_extensions.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
@@ -196,6 +197,10 @@ class _HomePageState extends State<HomePage> {
           ...FlutterQuillEmbeds.builders(),
           NotesEmbedBuilder(addEditNote: _addEditNote),
           ClozeEmbedBuilder(controller: _controller!),
+          TableEmbedBuilder(onFocusChange: (innerTableController) {
+            setToolbar(_controller!,
+                innerTableController: innerTableController);
+          }),
         ],
       ),
     );
@@ -231,6 +236,10 @@ class _HomePageState extends State<HomePage> {
               ...defaultEmbedBuildersWeb,
               NotesEmbedBuilder(addEditNote: _addEditNote),
               ClozeEmbedBuilder(controller: _controller!),
+              TableEmbedBuilder(onFocusChange: (innerTableController) {
+                setToolbar(_controller!,
+                    innerTableController: innerTableController);
+              }),
             ]),
       );
     }
@@ -247,6 +256,7 @@ class _HomePageState extends State<HomePage> {
         // uncomment to provide a custom "pick from" dialog.
         // cameraPickSettingSelector: _selectCameraPickSetting,
         showFormulaButton: true,
+        showTableButton: true,
       ),
       showAlignmentButtons: true,
       afterButtonPressed: _focusNode.requestFocus,
@@ -258,6 +268,7 @@ class _HomePageState extends State<HomePage> {
           onImagePickCallback: _onImagePickCallback,
           webImagePickImpl: _webImagePickImpl,
           showFormulaButton: true,
+          showTableButton: true,
         ),
         showAlignmentButtons: true,
         afterButtonPressed: _focusNode.requestFocus,
@@ -276,6 +287,8 @@ class _HomePageState extends State<HomePage> {
           onImagePickCallback: _onImagePickCallback,
           filePickImpl: openFileSystemPickerForDesktop,
           showFormulaButton: true,
+          showTableButton: true,
+          showTableOperationButtons: false,
         ),
         showAlignmentButtons: true,
         afterButtonPressed: _focusNode.requestFocus,
@@ -307,6 +320,17 @@ class _HomePageState extends State<HomePage> {
           )
         ],
       ),
+    );
+  }
+
+  void setToolbar(QuillController controller,
+      {QuillTableController? innerTableController}) {
+    QuillToolbar toolbar;
+    toolbar = QuillToolbar.basic(
+      controller: innerTableController ?? controller,
+      embedButtons: FlutterQuillEmbeds.buttons(
+          showTableButton: innerTableController == null,
+          showTableOperationButtons: innerTableController != null),
     );
   }
 

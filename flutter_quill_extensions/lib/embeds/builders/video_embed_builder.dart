@@ -38,11 +38,9 @@ class VideoEmbedBuilder implements EmbedBuilder {
   
   @override
   WidgetSpan buildWidgetSpan(Widget widget) {
-    // TODO: implement buildWidgetSpan
-    throw UnimplementedError();
+    return WidgetSpan(child: widget);
   }
   
   @override
-  // TODO: implement expanded
-  bool get expanded => throw UnimplementedError();
+  bool get expanded => true;
 }
