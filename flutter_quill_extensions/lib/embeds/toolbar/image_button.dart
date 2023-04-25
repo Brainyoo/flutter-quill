@@ -53,6 +53,7 @@ class ImageButton extends StatelessWidget {
 
     return QuillIconButton(
       icon: Icon(icon, size: iconSize, color: iconColor),
+      tooltip: tooltip,
       highlightElevation: 0,
       hoverElevation: 0,
       size: buttonSize,
