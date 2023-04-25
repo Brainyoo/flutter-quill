@@ -10,6 +10,7 @@ class FormulaButton extends StatelessWidget {
     this.fillColor,
     this.iconTheme,
     this.dialogTheme,
+    this.tooltip,
     Key? key,
   }) : super(key: key);
 
@@ -25,6 +26,7 @@ class FormulaButton extends StatelessWidget {
   final QuillIconTheme? iconTheme;
 
   final QuillDialogTheme? dialogTheme;
+  final String? tooltip;
 
   @override
   Widget build(BuildContext context) {

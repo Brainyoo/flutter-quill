@@ -4,7 +4,10 @@ import 'package:flutter/material.dart';
 import '../../models/documents/attribute.dart';
 import '../../models/documents/style.dart';
 import '../../models/themes/quill_icon_theme.dart';
+import '../../utils/widgets.dart';
 import '../controller.dart';
+import '../toolbar.dart';
+import 'enum.dart';
 
 class SelectAlignmentButton extends StatefulWidget {
   const SelectAlignmentButton({
@@ -17,6 +20,7 @@ class SelectAlignmentButton extends StatefulWidget {
     this.showRightAlignment,
     this.showJustifyAlignment,
     this.afterButtonPressed,
+    this.tooltips = const <ToolbarButtons, String>{},
     Key? key,
   }) : super(key: key);
 
@@ -30,6 +34,7 @@ class SelectAlignmentButton extends StatefulWidget {
   final bool? showRightAlignment;
   final bool? showJustifyAlignment;
   final VoidCallback? afterButtonPressed;
+  final Map<ToolbarButtons, String> tooltips;
 
   @override
   _SelectAlignmentButtonState createState() => _SelectAlignmentButtonState();
@@ -75,6 +80,16 @@ class _SelectAlignmentButtonState extends State<SelectAlignmentButton> {
       if (widget.showRightAlignment!) Attribute.rightAlignment.value!,
       if (widget.showJustifyAlignment!) Attribute.justifyAlignment.value!,
     ];
+    final _valueToButtons = <Attribute, ToolbarButtons>{
+      if (widget.showLeftAlignment!)
+        Attribute.leftAlignment: ToolbarButtons.leftAlignment,
+      if (widget.showCenterAlignment!)
+        Attribute.centerAlignment: ToolbarButtons.centerAlignment,
+      if (widget.showRightAlignment!)
+        Attribute.rightAlignment: ToolbarButtons.rightAlignment,
+      if (widget.showJustifyAlignment!)
+        Attribute.justifyAlignment: ToolbarButtons.justifyAlignment,
+    };
 
     final theme = Theme.of(context);
 
@@ -94,40 +109,45 @@ class _SelectAlignmentButtonState extends State<SelectAlignmentButton> {
               width: widget.buttonSize,
               height: widget.buttonSize,
             ),
-            child: RawMaterialButton(
-              hoverElevation: 0,
-              highlightElevation: 0,
-              elevation: 0,
-              visualDensity: VisualDensity.compact,
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(
-                      widget.iconTheme?.borderRadius ?? 2)),
-              fillColor: _valueToText[_value] == _valueString[index]
-                  ? (widget.iconTheme?.iconSelectedFillColor ??
-                      theme.colorScheme.primary)
-                  : (widget.iconTheme?.iconUnselectedFillColor ??
-                      theme.canvasColor),
-              onPressed: () {
-                _valueAttribute[index] == Attribute.leftAlignment
-                    ? widget.controller
-                        .formatSelection(Attribute.clone(Attribute.align, null))
-                    : widget.controller.formatSelection(_valueAttribute[index]);
-                widget.afterButtonPressed?.call();
-              },
-              child: Icon(
-                _valueString[index] == Attribute.leftAlignment.value
-                    ? Icons.format_align_left
-                    : _valueString[index] == Attribute.centerAlignment.value
-                        ? Icons.format_align_center
-                        : _valueString[index] == Attribute.rightAlignment.value
-                            ? Icons.format_align_right
-                            : Icons.format_align_justify,
-                size: widget.iconSize,
-                color: _valueToText[_value] == _valueString[index]
-                    ? (widget.iconTheme?.iconSelectedColor ??
-                        theme.primaryIconTheme.color)
-                    : (widget.iconTheme?.iconUnselectedColor ??
-                        theme.iconTheme.color),
+            child: UtilityWidgets.maybeTooltip(
+              message: widget.tooltips[_valueToButtons[_valueAttribute[index]]],
+              child: RawMaterialButton(
+                hoverElevation: 0,
+                highlightElevation: 0,
+                elevation: 0,
+                visualDensity: VisualDensity.compact,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(
+                        widget.iconTheme?.borderRadius ?? 2)),
+                fillColor: _valueToText[_value] == _valueString[index]
+                    ? (widget.iconTheme?.iconSelectedFillColor ??
+                        Theme.of(context).primaryColor)
+                    : (widget.iconTheme?.iconUnselectedFillColor ??
+                        theme.canvasColor),
+                onPressed: () {
+                  _valueAttribute[index] == Attribute.leftAlignment
+                      ? widget.controller.formatSelection(
+                          Attribute.clone(Attribute.align, null))
+                      : widget.controller
+                          .formatSelection(_valueAttribute[index]);
+                  widget.afterButtonPressed?.call();
+                },
+                child: Icon(
+                  _valueString[index] == Attribute.leftAlignment.value
+                      ? Icons.format_align_left
+                      : _valueString[index] == Attribute.centerAlignment.value
+                          ? Icons.format_align_center
+                          : _valueString[index] ==
+                                  Attribute.rightAlignment.value
+                              ? Icons.format_align_right
+                              : Icons.format_align_justify,
+                  size: widget.iconSize,
+                  color: _valueToText[_value] == _valueString[index]
+                      ? (widget.iconTheme?.iconSelectedColor ??
+                          theme.primaryIconTheme.color)
+                      : (widget.iconTheme?.iconUnselectedColor ??
+                          theme.iconTheme.color),
+                ),
               ),
             ),
           ),
