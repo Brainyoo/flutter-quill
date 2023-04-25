@@ -16,8 +16,9 @@ import '../toolbar.dart';
 class LinkStyleButton2 extends StatefulWidget {
   const LinkStyleButton2({
     required this.controller,
+    required this.buttonSize,
     this.icon,
-    this.iconSize = kDefaultIconSize,
+    this.iconSize,
     this.iconTheme,
     this.dialogTheme,
     this.afterButtonPressed,
@@ -29,7 +30,6 @@ class LinkStyleButton2 extends StatefulWidget {
     this.childrenSpacing = 16.0,
     this.autovalidateMode = AutovalidateMode.disabled,
     this.validationMessage,
-    this.buttonSize,
     Key? key,
   })  : assert(addLinkLabel == null || addLinkLabel.length > 0),
         assert(editLinkLabel == null || editLinkLabel.length > 0),
@@ -39,7 +39,7 @@ class LinkStyleButton2 extends StatefulWidget {
 
   final QuillController controller;
   final IconData? icon;
-  final double iconSize;
+  final double? iconSize;
   final QuillIconTheme? iconTheme;
   final QuillDialogTheme? dialogTheme;
   final VoidCallback? afterButtonPressed;
@@ -64,7 +64,7 @@ class LinkStyleButton2 extends StatefulWidget {
   final String? validationMessage;
 
   /// The size of dialog buttons.
-  final Size? buttonSize;
+  final double buttonSize;
 
   @override
   State<LinkStyleButton2> createState() => _LinkStyleButton2State();
@@ -100,7 +100,7 @@ class _LinkStyleButton2State extends State<LinkStyleButton2> {
       tooltip: widget.tooltip,
       highlightElevation: 0,
       hoverElevation: 0,
-      size: widget.iconSize * kIconButtonFactor,
+      size: widget.buttonSize,
       icon: Icon(
         widget.icon ?? Icons.link,
         size: widget.iconSize,
@@ -135,7 +135,7 @@ class _LinkStyleButton2State extends State<LinkStyleButton2> {
         childrenSpacing: widget.childrenSpacing,
         autovalidateMode: widget.autovalidateMode,
         validationMessage: widget.validationMessage,
-        buttonSize: widget.buttonSize,
+        buttonSize: Size.square(widget.buttonSize),
       ),
     );
 

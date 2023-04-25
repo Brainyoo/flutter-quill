@@ -18,8 +18,9 @@ class MediaButton extends StatelessWidget {
   const MediaButton({
     required this.controller,
     required this.icon,
+    required this.buttonSize,
     this.type = QuillMediaType.image,
-    this.iconSize = kDefaultIconSize,
+    this.iconSize,
     this.fillColor,
     this.mediaFilePicker = _defaultMediaPicker,
     this.onMediaPickedCallback,
@@ -42,7 +43,8 @@ class MediaButton extends StatelessWidget {
 
   final QuillController controller;
   final IconData icon;
-  final double iconSize;
+  final double? iconSize;
+  final double buttonSize;
   final Color? fillColor;
   final QuillMediaType type;
   final QuillIconTheme? iconTheme;
@@ -87,7 +89,7 @@ class MediaButton extends StatelessWidget {
       tooltip: tooltip,
       highlightElevation: 0,
       hoverElevation: 0,
-      size: iconSize * 1.77,
+      size: buttonSize,
       fillColor: iconFillColor,
       borderRadius: iconTheme?.borderRadius ?? 2,
       onPressed: () => _onPressedHandler(context),

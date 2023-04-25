@@ -53,9 +53,12 @@ class FlutterQuillEmbeds {
   }) =>
       [
         if (showImageButton)
-          (controller, toolbarIconSize, iconTheme, dialogTheme) => ImageButton(
+          (controller, toolbarButtonSize, toolbarIconSize, iconTheme,
+                  dialogTheme) =>
+              ImageButton(
                 icon: Icons.image,
                 iconSize: toolbarIconSize,
+                buttonSize: toolbarIconSize,
                 tooltip: imageButtonTooltip,
                 controller: controller,
                 onImagePickCallback: onImagePickCallback,
@@ -66,9 +69,12 @@ class FlutterQuillEmbeds {
                 dialogTheme: dialogTheme,
               ),
         if (showVideoButton)
-          (controller, toolbarIconSize, iconTheme, dialogTheme) => VideoButton(
+          (controller, toolbarButtonSize, toolbarIconSize, iconTheme,
+                  dialogTheme) =>
+              VideoButton(
                 icon: Icons.movie_creation,
                 iconSize: toolbarIconSize,
+                buttonSize: toolbarIconSize,
                 tooltip: videoButtonTooltip,
                 controller: controller,
                 onVideoPickCallback: onVideoPickCallback,
@@ -80,9 +86,12 @@ class FlutterQuillEmbeds {
               ),
         if ((onImagePickCallback != null || onVideoPickCallback != null) &&
             showCameraButton)
-          (controller, toolbarIconSize, iconTheme, dialogTheme) => CameraButton(
+          (controller, toolbarButtonSize, toolbarIconSize, iconTheme,
+                  dialogTheme) =>
+              CameraButton(
                 icon: Icons.photo_camera,
                 iconSize: toolbarIconSize,
+                buttonSize: toolbarIconSize,
                 tooltip: cameraButtonTooltip,
                 controller: controller,
                 onImagePickCallback: onImagePickCallback,
@@ -94,10 +103,12 @@ class FlutterQuillEmbeds {
                 iconTheme: iconTheme,
               ),
         if (showFormulaButton)
-          (controller, toolbarIconSize, iconTheme, dialogTheme) =>
+          (controller, toolbarButtonSize, toolbarIconSize, iconTheme,
+                  dialogTheme) =>
               FormulaButton(
                 icon: Icons.functions,
                 iconSize: toolbarIconSize,
+                buttonSize: toolbarIconSize,
                 tooltip: formulaButtonTooltip,
                 controller: controller,
                 iconTheme: iconTheme,
