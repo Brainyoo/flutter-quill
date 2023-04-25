@@ -2,6 +2,7 @@ library flutter_quill_extensions;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
+
 import 'embeds/builders/builders.dart';
 import 'embeds/embed_types.dart';
 import 'embeds/toolbar/camera_button.dart';
@@ -22,6 +23,7 @@ export 'embeds/toolbar/image_video_utils.dart';
 export 'embeds/toolbar/media_button.dart';
 export 'embeds/toolbar/video_button.dart';
 export 'embeds/utils.dart';
+export 'embeds/widgets/QuillTableController.dart';
 
 class FlutterQuillEmbeds {
   static List<EmbedBuilder> builders({
