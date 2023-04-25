@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:app/embeds/cloze.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:filesystem_picker/filesystem_picker.dart';
 import 'package:flutter/foundation.dart';
@@ -193,8 +194,8 @@ class _HomePageState extends State<HomePage> {
         ),
         embedBuilders: [
           ...FlutterQuillEmbeds.builders(),
-          ClozeEmbedBuilder(addEditCloze: _addEditCloze),
           NotesEmbedBuilder(addEditNote: _addEditNote),
+          ClozeEmbedBuilder(controller: _controller!),
         ],
       ),
     );
@@ -229,6 +230,7 @@ class _HomePageState extends State<HomePage> {
             embedBuilders: [
               ...defaultEmbedBuildersWeb,
               NotesEmbedBuilder(addEditNote: _addEditNote),
+              ClozeEmbedBuilder(controller: _controller!),
             ]),
       );
     }
@@ -599,66 +601,6 @@ class NotesBlockEmbed extends CustomBlockEmbed {
 
   static NotesBlockEmbed fromDocument(Document document) =>
       NotesBlockEmbed(jsonEncode(document.toDelta().toJson()));
-
-  Document get document => Document.fromJson(jsonDecode(data));
-}
-
-class ClozeEmbedBuilder implements EmbedBuilder {
-  ClozeEmbedBuilder({required this.addEditCloze});
-
-  Future<void> Function(BuildContext context, {Document? document})
-      addEditCloze;
-
-  @override
-  String get key => 'clozeEmbed';
-
-  @override
-  Widget build(
-    BuildContext context,
-    QuillController controller,
-    Embed node,
-    bool readOnly,
-    bool inline,
-  ) {
-    final notes = ClozeBlockEmbed(node.value.data).document;
-
-    return Material(
-      color: Colors.transparent,
-      child: Padding(
-        padding: const EdgeInsets.only(bottom: 2),
-        child: OutlinedButton(
-          style: OutlinedButton.styleFrom(
-            minimumSize: Size(0, 0),
-            padding: EdgeInsets.symmetric(horizontal: 2),
-          ),
-          child: Text(
-            notes.toPlainText().replaceAll('\n', ' '),
-            style: DefaultStyles.getInstance(context).paragraph!.style,
-          ),
-          onPressed: () => addEditCloze(context, document: notes),
-        ),
-      ),
-    );
-  }
-  
-  @override
-  WidgetSpan buildWidgetSpan(Widget widget) {
-    // TODO: implement buildWidgetSpan
-    throw UnimplementedError();
-  }
-  
-  @override
-  // TODO: implement expanded
-  bool get expanded => throw UnimplementedError();
-}
-
-class ClozeBlockEmbed extends CustomBlockEmbed {
-  const ClozeBlockEmbed(String value) : super(noteType, value);
-
-  static const String noteType = 'clozeEmbed';
-
-  static ClozeBlockEmbed fromDocument(Document document) =>
-      ClozeBlockEmbed(jsonEncode(document.toDelta().toJson()));
 
   Document get document => Document.fromJson(jsonDecode(data));
 }

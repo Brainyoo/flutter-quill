@@ -20,6 +20,7 @@ class CameraButton extends StatelessWidget {
     this.webVideoPickImpl,
     this.cameraPickSettingSelector,
     this.iconTheme,
+    this.tooltip,
     Key? key,
   }) : super(key: key);
 
@@ -44,6 +45,7 @@ class CameraButton extends StatelessWidget {
   final MediaPickSettingSelector? cameraPickSettingSelector;
 
   final QuillIconTheme? iconTheme;
+  final String? tooltip;
 
   @override
   Widget build(BuildContext context) {
@@ -55,6 +57,7 @@ class CameraButton extends StatelessWidget {
 
     return QuillIconButton(
       icon: Icon(icon, size: iconSize, color: iconColor),
+      tooltip: tooltip,
       highlightElevation: 0,
       hoverElevation: 0,
       size: buttonSize,

@@ -20,16 +20,22 @@ export 'embeds/toolbar/camera_button.dart';
 export 'embeds/toolbar/formula_button.dart';
 export 'embeds/toolbar/image_button.dart';
 export 'embeds/toolbar/image_video_utils.dart';
+export 'embeds/toolbar/media_button.dart';
 export 'embeds/toolbar/video_button.dart';
 export 'embeds/utils.dart';
 
 class FlutterQuillEmbeds {
-  static List<EmbedBuilder> builders(
-          {void Function(GlobalKey videoContainerKey)? onVideoInit}) =>
+  static List<EmbedBuilder> builders({
+    void Function(GlobalKey videoContainerKey)? onVideoInit,
+  }) =>
       [
         ImageEmbedBuilder(),
         VideoEmbedBuilder(onVideoInit: onVideoInit),
         FormulaEmbedBuilder(),
+      ];
+
+  static List<EmbedBuilder> webBuilders() => [
+        ImageEmbedBuilderWeb(),
       ];
 
   static List<EmbedButtonBuilder> buttons({
@@ -39,6 +45,10 @@ class FlutterQuillEmbeds {
     bool showFormulaButton = false,
     bool showTableButton = false,
     bool showTableOperationButtons = false,
+    String? imageButtonTooltip,
+    String? videoButtonTooltip,
+    String? cameraButtonTooltip,
+    String? formulaButtonTooltip,
     OnImagePickCallback? onImagePickCallback,
     OnVideoPickCallback? onVideoPickCallback,
     MediaPickSettingSelector? mediaPickSettingSelector,
@@ -46,86 +56,89 @@ class FlutterQuillEmbeds {
     FilePickImpl? filePickImpl,
     WebImagePickImpl? webImagePickImpl,
     WebVideoPickImpl? webVideoPickImpl,
-  }) {
-    return [
-      if (showImageButton)
-        (controller, toolbarButtonSize, toolbarIconSize, iconTheme,
-                dialogTheme) =>
-            ImageButton(
-              icon: Icons.image,
-              iconSize: toolbarIconSize,
-              controller: controller,
-              onImagePickCallback: onImagePickCallback,
-              filePickImpl: filePickImpl,
-              webImagePickImpl: webImagePickImpl,
-              mediaPickSettingSelector: mediaPickSettingSelector,
-              iconTheme: iconTheme,
-              dialogTheme: dialogTheme,
-              buttonSize: toolbarButtonSize,
-            ),
-      if (showVideoButton)
-        (controller, toolbarButtonSize, toolbarIconSize, iconTheme,
-                dialogTheme) =>
-            VideoButton(
-              icon: Icons.movie_creation,
-              iconSize: toolbarIconSize,
-              controller: controller,
-              onVideoPickCallback: onVideoPickCallback,
-              filePickImpl: filePickImpl,
-              webVideoPickImpl: webImagePickImpl,
-              mediaPickSettingSelector: mediaPickSettingSelector,
-              iconTheme: iconTheme,
-              dialogTheme: dialogTheme,
-              buttonSize: toolbarButtonSize,
-            ),
-      if ((onImagePickCallback != null || onVideoPickCallback != null) &&
-          showCameraButton)
-        (controller, toolbarButtonSize, toolbarIconSize, iconTheme,
-                dialogTheme) =>
-            CameraButton(
-              icon: Icons.photo_camera,
-              iconSize: toolbarIconSize,
-              controller: controller,
-              onImagePickCallback: onImagePickCallback,
-              onVideoPickCallback: onVideoPickCallback,
-              filePickImpl: filePickImpl,
-              webImagePickImpl: webImagePickImpl,
-              webVideoPickImpl: webVideoPickImpl,
-              cameraPickSettingSelector: cameraPickSettingSelector,
-              iconTheme: iconTheme,
-              buttonSize: toolbarButtonSize,
-            ),
-      if (showFormulaButton)
-        (controller, toolbarButtonSize, toolbarIconSize, iconTheme,
-                dialogTheme) =>
-            FormulaButton(
-              icon: Icons.functions,
-              iconSize: toolbarIconSize,
-              controller: controller,
-              iconTheme: iconTheme,
-              dialogTheme: dialogTheme,
-              buttonSize: toolbarButtonSize,
-            ),
-      if (showTableButton)
-        (controller, toolbarButtonSize, toolbarIconSize, iconTheme,
-                dialogTheme) =>
-            TableButton(
-              icon: Icons.border_all,
-              iconSize: toolbarIconSize,
-              controller: controller,
-              iconTheme: iconTheme,
-              buttonSize: toolbarButtonSize,
-            ),
-      if (showTableOperationButtons)
-        (controller, toolbarButtonSize, toolbarIconSize, iconTheme,
-                dialogTheme) =>
-            TableOperationButtonList(
-              axis: Axis.horizontal,
-              iconSize: toolbarIconSize,
-              controller: controller as QuillTableController,
-              iconTheme: iconTheme,
-              buttonSize: toolbarButtonSize,
-            ),
-    ];
-  }
+  }) =>
+      [
+        if (showImageButton)
+          (controller, toolbarButtonSize, toolbarIconSize, iconTheme,
+                  dialogTheme) =>
+              ImageButton(
+                icon: Icons.image,
+                iconSize: toolbarIconSize,
+                buttonSize: toolbarIconSize,
+                tooltip: imageButtonTooltip,
+                controller: controller,
+                onImagePickCallback: onImagePickCallback,
+                filePickImpl: filePickImpl,
+                webImagePickImpl: webImagePickImpl,
+                mediaPickSettingSelector: mediaPickSettingSelector,
+                iconTheme: iconTheme,
+                dialogTheme: dialogTheme,
+              ),
+        if (showVideoButton)
+          (controller, toolbarButtonSize, toolbarIconSize, iconTheme,
+                  dialogTheme) =>
+              VideoButton(
+                icon: Icons.movie_creation,
+                iconSize: toolbarIconSize,
+                buttonSize: toolbarIconSize,
+                tooltip: videoButtonTooltip,
+                controller: controller,
+                onVideoPickCallback: onVideoPickCallback,
+                filePickImpl: filePickImpl,
+                webVideoPickImpl: webImagePickImpl,
+                mediaPickSettingSelector: mediaPickSettingSelector,
+                iconTheme: iconTheme,
+                dialogTheme: dialogTheme,
+              ),
+        if ((onImagePickCallback != null || onVideoPickCallback != null) &&
+            showCameraButton)
+          (controller, toolbarButtonSize, toolbarIconSize, iconTheme,
+                  dialogTheme) =>
+              CameraButton(
+                icon: Icons.photo_camera,
+                iconSize: toolbarIconSize,
+                buttonSize: toolbarIconSize,
+                tooltip: cameraButtonTooltip,
+                controller: controller,
+                onImagePickCallback: onImagePickCallback,
+                onVideoPickCallback: onVideoPickCallback,
+                filePickImpl: filePickImpl,
+                webImagePickImpl: webImagePickImpl,
+                webVideoPickImpl: webVideoPickImpl,
+                cameraPickSettingSelector: cameraPickSettingSelector,
+                iconTheme: iconTheme,
+              ),
+        if (showFormulaButton)
+          (controller, toolbarButtonSize, toolbarIconSize, iconTheme,
+                  dialogTheme) =>
+              FormulaButton(
+                icon: Icons.functions,
+                iconSize: toolbarIconSize,
+                buttonSize: toolbarIconSize,
+                tooltip: formulaButtonTooltip,
+                controller: controller,
+                iconTheme: iconTheme,
+                dialogTheme: dialogTheme,
+              ),
+        if (showTableButton)
+          (controller, toolbarButtonSize, toolbarIconSize, iconTheme,
+                  dialogTheme) =>
+              TableButton(
+                icon: Icons.border_all,
+                iconSize: toolbarIconSize,
+                buttonSize: toolbarButtonSize,
+                controller: controller,
+                iconTheme: iconTheme,
+              ),
+        if (showTableOperationButtons)
+          (controller, toolbarButtonSize, toolbarIconSize, iconTheme,
+                  dialogTheme) =>
+              TableOperationButtonList(
+                axis: Axis.horizontal,
+                iconSize: toolbarIconSize,
+                buttonSize: toolbarButtonSize,
+                controller: controller as QuillTableController,
+                iconTheme: iconTheme,
+              ),
+      ];
 }

@@ -13,6 +13,7 @@ class IndentButton extends StatefulWidget {
     required this.buttonSize,
     this.iconTheme,
     this.afterButtonPressed,
+    this.tooltip,
     Key? key,
   }) : super(key: key);
 
@@ -24,6 +25,7 @@ class IndentButton extends StatefulWidget {
   final VoidCallback? afterButtonPressed;
 
   final QuillIconTheme? iconTheme;
+  final String? tooltip;
 
   @override
   _IndentButtonState createState() => _IndentButtonState();
@@ -39,6 +41,7 @@ class _IndentButtonState extends State<IndentButton> {
     final iconFillColor =
         widget.iconTheme?.iconUnselectedFillColor ?? theme.canvasColor;
     return QuillIconButton(
+      tooltip: widget.tooltip,
       highlightElevation: 0,
       hoverElevation: 0,
       size: widget.buttonSize,

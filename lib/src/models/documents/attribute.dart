@@ -44,6 +44,8 @@ class Attribute<T> {
     Attribute.style.key: Attribute.style,
     Attribute.token.key: Attribute.token,
     Attribute.script.key: Attribute.script,
+    Attribute.image.key: Attribute.image,
+    Attribute.video.key: Attribute.video,
   });
 
   static const BoldAttribute bold = BoldAttribute();
@@ -100,7 +102,7 @@ class Attribute<T> {
 
   static const IdAttribute id = IdAttribute('');
 
-  static const ScriptAttribute script = ScriptAttribute('');
+  static final ScriptAttribute script = ScriptAttribute(null);
 
   static const String mobileWidth = 'mobileWidth';
 
@@ -109,6 +111,10 @@ class Attribute<T> {
   static const String mobileMargin = 'mobileMargin';
 
   static const String mobileAlignment = 'mobileAlignment';
+
+  static const ImageAttribute image = ImageAttribute(null);
+
+  static const VideoAttribute video = VideoAttribute(null);
 
   static final Set<String> inlineKeys = {
     Attribute.bold.key,
@@ -147,6 +153,11 @@ class Attribute<T> {
     Attribute.codeBlock.key,
     Attribute.blockQuote.key,
   });
+
+  static final Set<String> embedKeys = {
+    Attribute.image.key,
+    Attribute.video.key,
+  };
 
   static const Attribute<int?> h1 = HeaderAttribute(level: 1);
 
@@ -374,7 +385,26 @@ class TokenAttribute extends Attribute<String> {
 }
 
 // `script` is supposed to be inline attribute but it is not supported yet
-class ScriptAttribute extends Attribute<String> {
-  const ScriptAttribute(String val)
-      : super('script', AttributeScope.IGNORE, val);
+class ScriptAttribute extends Attribute<String?> {
+  ScriptAttribute(ScriptAttributes? val)
+      : super('script', AttributeScope.IGNORE, val?.value);
+}
+
+enum ScriptAttributes {
+  sup('super'),
+  sub('sup');
+
+  const ScriptAttributes(this.value);
+
+  final String value;
+}
+
+class ImageAttribute extends Attribute<String?> {
+  const ImageAttribute(String? url)
+      : super('image', AttributeScope.EMBEDS, url);
+}
+
+class VideoAttribute extends Attribute<String?> {
+  const VideoAttribute(String? url)
+      : super('video', AttributeScope.EMBEDS, url);
 }
