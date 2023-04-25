@@ -41,6 +41,7 @@ class TextLine extends StatefulWidget {
     required this.linkActionPicker,
     this.textDirection,
     this.customStyleBuilder,
+    this.customLinkPrefixes = const <String>[],
     Key? key,
   }) : super(key: key);
 
@@ -53,6 +54,7 @@ class TextLine extends StatefulWidget {
   final CustomStyleBuilder? customStyleBuilder;
   final ValueChanged<String>? onLaunchUrl;
   final LinkActionPicker linkActionPicker;
+  final List<String> customLinkPrefixes;
 
   @override
   State<TextLine> createState() => _TextLineState();
@@ -455,7 +457,7 @@ class _TextLineState extends State<TextLine> {
     launchUrl ??= _launchUrl;
 
     link = link.trim();
-    if (!linkPrefixes
+    if (!(widget.customLinkPrefixes + linkPrefixes)
         .any((linkPrefix) => link!.toLowerCase().startsWith(linkPrefix))) {
       link = 'https://$link';
     }
@@ -1132,6 +1134,18 @@ class RenderEditableTextLine extends RenderEditableBox {
         _selectedRects ??= _body!.getBoxesForSelection(
           local,
         );
+
+        // Paint a small rect at the start of empty lines that
+        // are contained by the selection.
+        if (line.isEmpty &&
+            textSelection.baseOffset <= line.offset &&
+            textSelection.extentOffset > line.offset) {
+          final lineHeight =
+              preferredLineHeight(TextPosition(offset: line.offset));
+          _selectedRects
+              ?.add(TextBox.fromLTRBD(0, 0, 3, lineHeight, textDirection));
+        }
+
         _paintSelection(context, effectiveOffset);
       }
     }

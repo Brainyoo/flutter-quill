@@ -4,6 +4,7 @@ import 'dart:io';
 import 'dart:math' as math;
 // ignore: unnecessary_import
 import 'dart:typed_data';
+import 'dart:ui' as ui hide TextStyle;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -77,7 +78,8 @@ class RawEditor extends StatefulWidget {
       this.linkActionPickerDelegate = defaultLinkActionPickerDelegate,
       this.customStyleBuilder,
       this.floatingCursorDisabled = false,
-      this.onImagePaste})
+      this.onImagePaste,
+      this.customLinkPrefixes = const <String>[]})
       : assert(maxHeight == null || maxHeight > 0, 'maxHeight cannot be null'),
         assert(minHeight == null || minHeight >= 0, 'minHeight cannot be null'),
         assert(maxHeight == null || minHeight == null || maxHeight >= minHeight,
@@ -124,9 +126,11 @@ class RawEditor extends StatefulWidget {
     BuildContext context,
     RawEditorState state,
   ) {
-    return AdaptiveTextSelectionToolbar.buttonItems(
-      buttonItems: state.contextMenuButtonItems,
-      anchors: state.contextMenuAnchors,
+    return TextFieldTapRegion(
+      child: AdaptiveTextSelectionToolbar.buttonItems(
+        buttonItems: state.contextMenuButtonItems,
+        anchors: state.contextMenuAnchors,
+      ),
     );
   }
 
@@ -247,6 +251,7 @@ class RawEditor extends StatefulWidget {
   final LinkActionPickerDelegate linkActionPickerDelegate;
   final CustomStyleBuilder? customStyleBuilder;
   final bool floatingCursorDisabled;
+  final List<String> customLinkPrefixes;
 
   @override
   State<StatefulWidget> createState() => RawEditorState();
@@ -371,6 +376,40 @@ class RawEditorState extends EditorState
     );
   }
 
+  void _defaultOnTapOutside(PointerDownEvent event) {
+    /// The focus dropping behavior is only present on desktop platforms
+    /// and mobile browsers.
+    switch (defaultTargetPlatform) {
+      case TargetPlatform.android:
+      case TargetPlatform.iOS:
+      case TargetPlatform.fuchsia:
+        // On mobile platforms, we don't unfocus on touch events unless they're
+        // in the web browser, but we do unfocus for all other kinds of events.
+        switch (event.kind) {
+          case ui.PointerDeviceKind.touch:
+            if (kIsWeb) {
+              widget.focusNode.unfocus();
+            }
+            break;
+          case ui.PointerDeviceKind.mouse:
+          case ui.PointerDeviceKind.stylus:
+          case ui.PointerDeviceKind.invertedStylus:
+          case ui.PointerDeviceKind.unknown:
+            widget.focusNode.unfocus();
+            break;
+          case ui.PointerDeviceKind.trackpad:
+            throw UnimplementedError(
+                'Unexpected pointer down event for trackpad');
+        }
+        break;
+      case TargetPlatform.linux:
+      case TargetPlatform.macOS:
+      case TargetPlatform.windows:
+        widget.focusNode.unfocus();
+        break;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     assert(debugCheckHasMediaQuery(context));
@@ -454,78 +493,85 @@ class RawEditorState extends EditorState
             minHeight: widget.minHeight ?? 0.0,
             maxHeight: widget.maxHeight ?? double.infinity);
 
-    return QuillStyles(
-      data: _styles!,
-      child: Shortcuts(
-        shortcuts: <LogicalKeySet, Intent>{
-          // shortcuts added for Desktop platforms.
-          LogicalKeySet(LogicalKeyboardKey.escape):
-              const HideSelectionToolbarIntent(),
-          LogicalKeySet(LogicalKeyboardKey.control, LogicalKeyboardKey.keyZ):
-              const UndoTextIntent(SelectionChangedCause.keyboard),
-          LogicalKeySet(LogicalKeyboardKey.control, LogicalKeyboardKey.keyY):
-              const RedoTextIntent(SelectionChangedCause.keyboard),
+    return TextFieldTapRegion(
+      onTapOutside: _defaultOnTapOutside,
+      child: QuillStyles(
+        data: _styles!,
+        child: Shortcuts(
+          shortcuts: <LogicalKeySet, Intent>{
+            // shortcuts added for Desktop platforms.
+            LogicalKeySet(LogicalKeyboardKey.escape):
+                const HideSelectionToolbarIntent(),
+            LogicalKeySet(LogicalKeyboardKey.control, LogicalKeyboardKey.keyZ):
+                const UndoTextIntent(SelectionChangedCause.keyboard),
+            LogicalKeySet(LogicalKeyboardKey.control, LogicalKeyboardKey.keyY):
+                const RedoTextIntent(SelectionChangedCause.keyboard),
 
-          // Selection formatting.
-          LogicalKeySet(LogicalKeyboardKey.control, LogicalKeyboardKey.keyB):
-              const ToggleTextStyleIntent(Attribute.bold),
-          LogicalKeySet(LogicalKeyboardKey.control, LogicalKeyboardKey.keyU):
-              const ToggleTextStyleIntent(Attribute.underline),
-          LogicalKeySet(LogicalKeyboardKey.control, LogicalKeyboardKey.keyI):
-              const ToggleTextStyleIntent(Attribute.italic),
-          LogicalKeySet(LogicalKeyboardKey.control, LogicalKeyboardKey.shift,
-                  LogicalKeyboardKey.keyS):
-              const ToggleTextStyleIntent(Attribute.strikeThrough),
-          LogicalKeySet(
-                  LogicalKeyboardKey.control, LogicalKeyboardKey.backquote):
-              const ToggleTextStyleIntent(Attribute.inlineCode),
-          LogicalKeySet(LogicalKeyboardKey.control, LogicalKeyboardKey.keyL):
-              const ToggleTextStyleIntent(Attribute.ul),
-          LogicalKeySet(LogicalKeyboardKey.control, LogicalKeyboardKey.keyO):
-              const ToggleTextStyleIntent(Attribute.ol),
-          LogicalKeySet(LogicalKeyboardKey.control, LogicalKeyboardKey.shift,
-                  LogicalKeyboardKey.keyB):
-              const ToggleTextStyleIntent(Attribute.blockQuote),
-          LogicalKeySet(LogicalKeyboardKey.control, LogicalKeyboardKey.shift,
-                  LogicalKeyboardKey.tilde):
-              const ToggleTextStyleIntent(Attribute.codeBlock),
-          // Indent
-          LogicalKeySet(
-                  LogicalKeyboardKey.control, LogicalKeyboardKey.bracketRight):
-              const IndentSelectionIntent(true),
-          LogicalKeySet(
-                  LogicalKeyboardKey.control, LogicalKeyboardKey.bracketLeft):
-              const IndentSelectionIntent(false),
+            // Selection formatting.
+            LogicalKeySet(LogicalKeyboardKey.control, LogicalKeyboardKey.keyB):
+                const ToggleTextStyleIntent(Attribute.bold),
+            LogicalKeySet(LogicalKeyboardKey.control, LogicalKeyboardKey.keyU):
+                const ToggleTextStyleIntent(Attribute.underline),
+            LogicalKeySet(LogicalKeyboardKey.control, LogicalKeyboardKey.keyI):
+                const ToggleTextStyleIntent(Attribute.italic),
+            LogicalKeySet(LogicalKeyboardKey.control, LogicalKeyboardKey.shift,
+                    LogicalKeyboardKey.keyS):
+                const ToggleTextStyleIntent(Attribute.strikeThrough),
+            LogicalKeySet(
+                    LogicalKeyboardKey.control, LogicalKeyboardKey.backquote):
+                const ToggleTextStyleIntent(Attribute.inlineCode),
+            LogicalKeySet(LogicalKeyboardKey.control, LogicalKeyboardKey.keyL):
+                const ToggleTextStyleIntent(Attribute.ul),
+            LogicalKeySet(LogicalKeyboardKey.control, LogicalKeyboardKey.keyO):
+                const ToggleTextStyleIntent(Attribute.ol),
+            LogicalKeySet(LogicalKeyboardKey.control, LogicalKeyboardKey.shift,
+                    LogicalKeyboardKey.keyB):
+                const ToggleTextStyleIntent(Attribute.blockQuote),
+            LogicalKeySet(LogicalKeyboardKey.control, LogicalKeyboardKey.shift,
+                    LogicalKeyboardKey.tilde):
+                const ToggleTextStyleIntent(Attribute.codeBlock),
+            // Indent
+            LogicalKeySet(LogicalKeyboardKey.control,
+                    LogicalKeyboardKey.bracketRight):
+                const IndentSelectionIntent(true),
+            LogicalKeySet(
+                    LogicalKeyboardKey.control, LogicalKeyboardKey.bracketLeft):
+                const IndentSelectionIntent(false),
 
-          LogicalKeySet(LogicalKeyboardKey.control, LogicalKeyboardKey.keyF):
-              const OpenSearchIntent(),
+            LogicalKeySet(LogicalKeyboardKey.control, LogicalKeyboardKey.keyF):
+                const OpenSearchIntent(),
 
-          LogicalKeySet(LogicalKeyboardKey.control, LogicalKeyboardKey.digit1):
-              const ApplyHeaderIntent(Attribute.h1),
-          LogicalKeySet(LogicalKeyboardKey.control, LogicalKeyboardKey.digit2):
-              const ApplyHeaderIntent(Attribute.h2),
-          LogicalKeySet(LogicalKeyboardKey.control, LogicalKeyboardKey.digit3):
-              const ApplyHeaderIntent(Attribute.h3),
-          LogicalKeySet(LogicalKeyboardKey.control, LogicalKeyboardKey.digit0):
-              const ApplyHeaderIntent(Attribute.header),
+            LogicalKeySet(
+                    LogicalKeyboardKey.control, LogicalKeyboardKey.digit1):
+                const ApplyHeaderIntent(Attribute.h1),
+            LogicalKeySet(
+                    LogicalKeyboardKey.control, LogicalKeyboardKey.digit2):
+                const ApplyHeaderIntent(Attribute.h2),
+            LogicalKeySet(
+                    LogicalKeyboardKey.control, LogicalKeyboardKey.digit3):
+                const ApplyHeaderIntent(Attribute.h3),
+            LogicalKeySet(
+                    LogicalKeyboardKey.control, LogicalKeyboardKey.digit0):
+                const ApplyHeaderIntent(Attribute.header),
 
-          LogicalKeySet(LogicalKeyboardKey.control, LogicalKeyboardKey.shift,
-              LogicalKeyboardKey.keyL): const ApplyCheckListIntent(),
+            LogicalKeySet(LogicalKeyboardKey.control, LogicalKeyboardKey.shift,
+                LogicalKeyboardKey.keyL): const ApplyCheckListIntent(),
 
-          if (widget.customShortcuts != null) ...widget.customShortcuts!,
-        },
-        child: Actions(
-          actions: {
-            ..._actions,
-            if (widget.customActions != null) ...widget.customActions!,
+            if (widget.customShortcuts != null) ...widget.customShortcuts!,
           },
-          child: Focus(
-            focusNode: widget.focusNode,
-            onKey: _onKey,
-            child: QuillKeyboardListener(
-              child: Container(
-                constraints: constraints,
-                child: child,
+          child: Actions(
+            actions: {
+              ..._actions,
+              if (widget.customActions != null) ...widget.customActions!,
+            },
+            child: Focus(
+              focusNode: widget.focusNode,
+              onKey: _onKey,
+              child: QuillKeyboardListener(
+                child: Container(
+                  constraints: constraints,
+                  child: child,
+                ),
               ),
             ),
           ),
@@ -619,16 +665,21 @@ class RawEditorState extends EditorState
       return insertTabCharacter();
     }
 
-    if (node.isNotEmpty && (node.first as leaf.Text).value.isNotEmpty) {
-      return insertTabCharacter();
-    }
-
     final parentBlock = parent;
     if (parentBlock.style.containsKey(Attribute.ol.key) ||
         parentBlock.style.containsKey(Attribute.ul.key) ||
         parentBlock.style.containsKey(Attribute.checked.key)) {
+      if (node.isNotEmpty &&
+          (node.first as leaf.Text).value.isNotEmpty &&
+          controller.selection.base.offset > node.documentOffset) {
+        return insertTabCharacter();
+      }
       controller.indentSelection(!event.isShiftPressed);
       return KeyEventResult.handled;
+    }
+
+    if (node.isNotEmpty && (node.first as leaf.Text).value.isNotEmpty) {
+      return insertTabCharacter();
     }
 
     return insertTabCharacter();
@@ -712,13 +763,28 @@ class RawEditorState extends EditorState
   List<Widget> _buildChildren(Document doc, BuildContext context) {
     final result = <Widget>[];
     final indentLevelCounts = <int, int>{};
+    // this need for several ordered list in document
+    // we need to reset indents Map, if list finished
+    // List finished when there is node without Attribute.ol in styles
+    // So in this case we set clearIndents=true and send it
+    // to the next EditableTextBlock
+    var prevNodeOl = false;
+    var clearIndents = false;
+
     for (final node in doc.root.children) {
+      final attrs = node.style.attributes;
+
+      if (prevNodeOl && attrs[Attribute.list.key] != Attribute.ol) {
+        clearIndents = true;
+      }
+
+      prevNodeOl = attrs[Attribute.list.key] == Attribute.ol;
+
       if (node is Line) {
         final editableTextLine = _getEditableTextLineFromNode(node, context);
         result.add(Directionality(
             textDirection: getDirectionOfNode(node), child: editableTextLine));
       } else if (node is Block) {
-        final attrs = node.style.attributes;
         final editableTextBlock = EditableTextBlock(
             block: node,
             controller: controller,
@@ -738,11 +804,15 @@ class RawEditorState extends EditorState
             onLaunchUrl: widget.onLaunchUrl,
             cursorCont: _cursorCont,
             indentLevelCounts: indentLevelCounts,
+            clearIndents: clearIndents,
             onCheckboxTap: _handleCheckboxTap,
             readOnly: widget.readOnly,
-            customStyleBuilder: widget.customStyleBuilder);
+            customStyleBuilder: widget.customStyleBuilder,
+            customLinkPrefixes: widget.customLinkPrefixes);
         result.add(Directionality(
             textDirection: getDirectionOfNode(node), child: editableTextBlock));
+
+        clearIndents = false;
       } else {
         throw StateError('Unreachable.');
       }
@@ -762,6 +832,7 @@ class RawEditorState extends EditorState
       controller: controller,
       linkActionPicker: _linkActionPicker,
       onLaunchUrl: widget.onLaunchUrl,
+      customLinkPrefixes: widget.customLinkPrefixes,
     );
     final editableTextLine = EditableTextLine(
         node,
