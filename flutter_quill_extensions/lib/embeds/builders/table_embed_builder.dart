@@ -21,6 +21,7 @@ class TableEmbedBuilder implements EmbedBuilder {
     Embed node,
     bool readOnly,
     bool inline,
+    TextStyle textStyle,
   ) {
     final tableData = jsonDecode(node.value.data) as Map<String, dynamic>;
     final table = TableModel.fromJson(tableData);
@@ -62,7 +63,7 @@ class TableEmbedBuilder implements EmbedBuilder {
             padding: const EdgeInsets.only(bottom: 2),
             child: Table(
               key: ValueKey(
-                  '${rowWidgets.length} ${rowWidgets.first.children?.length ?? 0}'),
+                  '${rowWidgets.length} ${rowWidgets.first.children.length}'),
               border: TableBorder.all(),
               children: rowWidgets,
             )));

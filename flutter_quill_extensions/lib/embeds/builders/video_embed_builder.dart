@@ -20,6 +20,7 @@ class VideoEmbedBuilder implements EmbedBuilder {
     base.Embed node,
     bool readOnly,
     bool inline,
+    TextStyle textStyle,
   ) {
     assert(!kIsWeb, 'Please provide video EmbedBuilder for Web');
 

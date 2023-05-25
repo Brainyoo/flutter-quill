@@ -22,6 +22,7 @@ class ImageEmbedBuilderWeb extends EmbedBuilder {
     Embed node,
     bool readOnly,
     bool inline,
+    TextStyle textStyle,
   ) {
     final imageUrl = node.value.data;
 

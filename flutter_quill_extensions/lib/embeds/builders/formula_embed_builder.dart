@@ -14,6 +14,7 @@ class FormulaEmbedBuilder implements EmbedBuilder {
     base.Embed node,
     bool readOnly,
     bool inline,
+    TextStyle textStyle,
   ) {
     return Formula(
         node: node,
