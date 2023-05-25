@@ -18,6 +18,7 @@ class ClozeEmbedBuilder implements EmbedBuilder {
     Embed node,
     bool readOnly,
     bool inline,
+    TextStyle textStyle,
   ) {
     final notes = ClozeBlockEmbed(node.value.data).document;
 

@@ -1,5 +1,35 @@
+# [7.2.0]
+- Checkboxes, bullet points, and number points are now scaled based on the default paragraph font size.
+
+# [7.1.20]
+- Pass linestyle to embedded block.
+
+# [7.1.19]
+- Fix Rtl leading alignment problem.
+
+# [7.1.18]
+- Support flutter latest version.
+
+# [7.1.17+1]
+- Updates `device_info_plus` to version 9.0.0 to benefit from AGP 8 (see [changelog#900](https://pub.dev/packages/device_info_plus/changelog#900)).
+
+# [7.1.16]
+- Fixed subscript key from 'sup' to 'sub'.
+
+# [7.1.15]
+- Fixed a bug introduced in 7.1.7 where each section in `QuillToolbar` was displayed on its own line.
+
+# [7.1.14]
+- Add indents change for multiline selection.
+
+# [7.1.13]
+- Add custom recognizer.
+
+# [7.1.12]
+- Add superscript and subscript styles.
+
 # [7.1.11]
-- Add inserting indents for lines of list if text is selected
+- Add inserting indents for lines of list if text is selected.
 
 # [7.1.10]
 - Image embedding tweaks

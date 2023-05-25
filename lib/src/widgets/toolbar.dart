@@ -68,6 +68,155 @@ class QuillToolbar extends StatelessWidget implements PreferredSizeWidget {
     Key? key,
   }) : super(key: key);
 
+  factory QuillToolbar.only({
+    required QuillController controller,
+    Axis axis = Axis.horizontal,
+    double toolbarIconSize = _kDefaultIconSize,
+    double toolbarButtonSize = _kDefaultButtonSize,
+    double toolbarSectionSpacing = kToolbarSectionSpacing,
+    WrapAlignment toolbarIconAlignment = WrapAlignment.center,
+    WrapCrossAlignment toolbarIconCrossAlignment = WrapCrossAlignment.center,
+    bool multiRowsDisplay = false,
+    bool showDividers = false,
+    bool showFontFamily = false,
+    bool showFontSize = false,
+    bool showBoldButton = false,
+    bool showItalicButton = false,
+    bool showSmallButton = false,
+    bool showUnderLineButton = false,
+    bool showStrikeThrough = false,
+    bool showInlineCode = false,
+    bool showColorButton = false,
+    bool showBackgroundColorButton = false,
+    bool showClearFormat = false,
+    bool showAlignmentButtons = false,
+    bool showLeftAlignment = false,
+    bool showCenterAlignment = false,
+    bool showRightAlignment = false,
+    bool showJustifyAlignment = false,
+    bool showListNumbers = false,
+    bool showListBullets = false,
+    bool showListCheck = false,
+    bool showCodeBlock = false,
+    bool showClozeButton = false,
+    bool showQuote = false,
+    bool showIndent = false,
+    bool showLink = false,
+    bool showUndo = false,
+    bool showRedo = false,
+    bool showDirection = false,
+    bool showSearchButton = false,
+    bool showSubscript = false,
+    bool showSuperscript = false,
+    List<Attribute<int?>> headerStyles = const [],
+    List<QuillCustomButton> customButtons = const [],
+
+    ///Map of font sizes in string
+    Map<String, String>? fontSizeValues,
+
+    ///Map of font families in string
+    Map<String, String>? fontFamilyValues,
+
+    /// Toolbar items to display for controls of embed blocks
+    List<EmbedButtonBuilder>? embedButtons,
+
+    ///The theme to use for the icons in the toolbar, uses type [QuillIconTheme]
+    QuillIconTheme? iconTheme,
+
+    ///The theme to use for the theming of the [LinkDialog()],
+    ///shown when embedding an image, for example
+    QuillDialogTheme? dialogTheme,
+
+    /// Callback to be called after any button on the toolbar is pressed.
+    /// Is called after whatever logic the button performs has run.
+    VoidCallback? afterButtonPressed,
+
+    ///Map of tooltips for toolbar  buttons
+    ///
+    ///The example is:
+    ///```dart
+    /// tooltips = <ToolbarButtons, String>{
+    ///   ToolbarButtons.undo: 'Undo',
+    ///   ToolbarButtons.redo: 'Redo',
+    /// }
+    ///
+    ///```
+    ///
+    /// To disable tooltips just pass empty map as well.
+    Map<ToolbarButtons, String>? tooltips,
+
+    /// The locale to use for the editor toolbar, defaults to system locale
+    /// More at https://github.com/singerdmx/flutter-quill#translation
+    Locale? locale,
+
+    /// The color of the toolbar
+    Color? color,
+
+    /// The color of the toolbar section divider
+    Color? sectionDividerColor,
+
+    /// The space occupied by toolbar divider
+    double? sectionDividerSpace,
+    Key? key,
+  }) {
+    return QuillToolbar.basic(
+      controller: controller,
+      axis: axis,
+      toolbarIconSize: toolbarIconSize,
+      toolbarButtonSize: toolbarButtonSize,
+      toolbarSectionSpacing: toolbarSectionSpacing,
+      toolbarIconAlignment: toolbarIconAlignment,
+      toolbarIconCrossAlignment: toolbarIconCrossAlignment,
+      multiRowsDisplay: multiRowsDisplay,
+      showDividers: showDividers,
+      showFontFamily: showFontFamily,
+      showFontSize: showFontSize,
+      showBoldButton: showBoldButton,
+      showItalicButton: showItalicButton,
+      showSmallButton: showSmallButton,
+      showUnderLineButton: showUnderLineButton,
+      showStrikeThrough: showStrikeThrough,
+      showInlineCode: showInlineCode,
+      showColorButton: showColorButton,
+      showBackgroundColorButton: showBackgroundColorButton,
+      showClearFormat: showClearFormat,
+      showAlignmentButtons: showAlignmentButtons,
+      showLeftAlignment: showLeftAlignment,
+      showCenterAlignment: showCenterAlignment,
+      showRightAlignment: showRightAlignment,
+      showJustifyAlignment: showJustifyAlignment,
+      showHeaderStyle: headerStyles.isNotEmpty,
+      showListNumbers: showListNumbers,
+      showListBullets: showListBullets,
+      showListCheck: showListCheck,
+      showCodeBlock: showCodeBlock,
+      showClozeButton: showClozeButton,
+      showQuote: showQuote,
+      showIndent: showIndent,
+      showLink: showLink,
+      showUndo: showUndo,
+      showRedo: showRedo,
+      showDirection: showDirection,
+      showSearchButton: showSearchButton,
+      showSubscript: showSubscript,
+      showSuperscript: showSuperscript,
+      customButtons: customButtons,
+      fontSizeValues: fontSizeValues,
+      fontFamilyValues: fontFamilyValues,
+      headerStyles: headerStyles,
+      embedButtons: embedButtons,
+      iconTheme: iconTheme,
+      dialogTheme: dialogTheme,
+      afterButtonPressed: afterButtonPressed,
+      tooltips: tooltips,
+      locale: locale,
+      color: color,
+      sectionDividerColor: sectionDividerColor,
+      sectionDividerSpace: sectionDividerSpace,
+      key: key,
+    );
+  }
+
   factory QuillToolbar.basic({
     required QuillController controller,
     Axis axis = Axis.horizontal,
@@ -95,6 +244,12 @@ class QuillToolbar extends StatelessWidget implements PreferredSizeWidget {
     bool showRightAlignment = true,
     bool showJustifyAlignment = true,
     bool showHeaderStyle = true,
+    List<Attribute<int?>> headerStyles = const [
+      Attribute.header,
+      Attribute.h1,
+      Attribute.h2,
+      Attribute.h3
+    ],
     bool showListNumbers = true,
     bool showListBullets = true,
     bool showListCheck = true,
@@ -107,6 +262,8 @@ class QuillToolbar extends StatelessWidget implements PreferredSizeWidget {
     bool showRedo = true,
     bool showDirection = false,
     bool showSearchButton = true,
+    bool showSubscript = true,
+    bool showSuperscript = true,
     List<QuillCustomButton> customButtons = const [],
 
     ///Map of font sizes in string
@@ -212,6 +369,8 @@ class QuillToolbar extends StatelessWidget implements PreferredSizeWidget {
           ToolbarButtons.fontFamily: 'Font family'.i18n,
           ToolbarButtons.fontSize: 'Font size'.i18n,
           ToolbarButtons.bold: 'Bold'.i18n,
+          ToolbarButtons.subscript: 'Subscript'.i18n,
+          ToolbarButtons.superscript: 'Superscript'.i18n,
           ToolbarButtons.italic: 'Italic'.i18n,
           ToolbarButtons.small: 'Small'.i18n,
           ToolbarButtons.underline: 'Underline'.i18n,
@@ -300,6 +459,28 @@ class QuillToolbar extends StatelessWidget implements PreferredSizeWidget {
             icon: Icons.format_bold,
             iconSize: toolbarIconSize,
             tooltip: buttonTooltips[ToolbarButtons.bold],
+            controller: controller,
+            iconTheme: iconTheme,
+            afterButtonPressed: afterButtonPressed,
+            buttonSize: toolbarButtonSize,
+          ),
+        if (showSubscript)
+          ToggleStyleButton(
+            attribute: Attribute.subscript,
+            icon: Icons.subscript,
+            iconSize: toolbarIconSize,
+            tooltip: buttonTooltips[ToolbarButtons.subscript],
+            controller: controller,
+            iconTheme: iconTheme,
+            afterButtonPressed: afterButtonPressed,
+            buttonSize: toolbarButtonSize,
+          ),
+        if (showSuperscript)
+          ToggleStyleButton(
+            attribute: Attribute.superscript,
+            icon: Icons.superscript,
+            iconSize: toolbarIconSize,
+            tooltip: buttonTooltips[ToolbarButtons.superscript],
             controller: controller,
             iconTheme: iconTheme,
             afterButtonPressed: afterButtonPressed,
@@ -403,7 +584,7 @@ class QuillToolbar extends StatelessWidget implements PreferredSizeWidget {
                 isButtonGroupShown[3] ||
                 isButtonGroupShown[4] ||
                 isButtonGroupShown[5]))
-          AxisDivider(axis,
+          QuillDivider(axis,
               color: sectionDividerColor, space: sectionDividerSpace),
         if (showAlignmentButtons)
           SelectAlignmentButton(
@@ -441,7 +622,7 @@ class QuillToolbar extends StatelessWidget implements PreferredSizeWidget {
                 isButtonGroupShown[3] ||
                 isButtonGroupShown[4] ||
                 isButtonGroupShown[5]))
-          AxisDivider(axis,
+          QuillDivider(axis,
               color: sectionDividerColor, space: sectionDividerSpace),
         if (showHeaderStyle)
           SelectHeaderStyleButton(
@@ -450,6 +631,7 @@ class QuillToolbar extends StatelessWidget implements PreferredSizeWidget {
             axis: axis,
             iconSize: toolbarIconSize,
             iconTheme: iconTheme,
+            attributes: headerStyles,
             afterButtonPressed: afterButtonPressed,
             buttonSize: toolbarButtonSize,
           ),
@@ -459,7 +641,7 @@ class QuillToolbar extends StatelessWidget implements PreferredSizeWidget {
             (isButtonGroupShown[3] ||
                 isButtonGroupShown[4] ||
                 isButtonGroupShown[5]))
-          AxisDivider(axis,
+          QuillDivider(axis,
               color: sectionDividerColor, space: sectionDividerSpace),
         if (showListNumbers)
           ToggleStyleButton(
@@ -518,7 +700,7 @@ class QuillToolbar extends StatelessWidget implements PreferredSizeWidget {
         if (showDividers &&
             isButtonGroupShown[3] &&
             (isButtonGroupShown[4] || isButtonGroupShown[5]))
-          AxisDivider(axis,
+          QuillDivider(axis,
               color: sectionDividerColor, space: sectionDividerSpace),
         if (showQuote)
           ToggleStyleButton(
@@ -554,7 +736,7 @@ class QuillToolbar extends StatelessWidget implements PreferredSizeWidget {
             buttonSize: toolbarButtonSize,
           ),
         if (showDividers && isButtonGroupShown[4] && isButtonGroupShown[5])
-          AxisDivider(axis,
+          QuillDivider(axis,
               color: sectionDividerColor, space: sectionDividerSpace),
         if (showLink)
           LinkStyleButton(
@@ -579,7 +761,7 @@ class QuillToolbar extends StatelessWidget implements PreferredSizeWidget {
           ),
         if (customButtons.isNotEmpty)
           if (showDividers)
-            AxisDivider(axis,
+            QuillDivider(axis,
                 color: sectionDividerColor, space: sectionDividerSpace),
         for (var customButton in customButtons)
           QuillIconButton(
@@ -662,27 +844,39 @@ class QuillToolbar extends StatelessWidget implements PreferredSizeWidget {
   }
 }
 
-class AxisDivider extends StatelessWidget {
-  const AxisDivider(
+/// The divider which is used for separation of buttons in the toolbar.
+///
+/// It can be used outside of this package, for example when user does not use
+/// [QuillToolbar.basic] and compose toolbat's children on its own.
+class QuillDivider extends StatelessWidget {
+  const QuillDivider(
     this.axis, {
     Key? key,
     this.color,
     this.space,
   }) : super(key: key);
 
-  const AxisDivider.horizontal({Color? color, double? space})
+  /// Provides a horizonal divider for vertical toolbar.
+  const QuillDivider.horizontal({Color? color, double? space})
       : this(Axis.horizontal, color: color, space: space);
 
-  const AxisDivider.vertical({Color? color, double? space})
+  /// Provides a horizonal divider for horizontal toolbar.
+  const QuillDivider.vertical({Color? color, double? space})
       : this(Axis.vertical, color: color, space: space);
 
+  /// The axis along which the toolbar is.
   final Axis axis;
+
+  /// The color to use when painting this divider's line.
   final Color? color;
+
+  /// The divider's space (width or height) depending of [axis].
   final double? space;
 
   @override
   Widget build(BuildContext context) {
-    return axis == Axis.horizontal
+    // Vertical toolbar requires horizontal divider, and vice versa
+    return axis == Axis.vertical
         ? Divider(
             height: space,
             color: color,

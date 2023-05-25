@@ -79,6 +79,7 @@ class RawEditor extends StatefulWidget {
     this.scrollPhysics,
     this.linkActionPickerDelegate = defaultLinkActionPickerDelegate,
     this.customStyleBuilder,
+    this.customRecognizerBuilder,
     this.floatingCursorDisabled = false,
     this.onImagePaste,
     this.customLinkPrefixes = const <String>[],
@@ -262,6 +263,7 @@ class RawEditor extends StatefulWidget {
   final EmbedsBuilder embedBuilder;
   final LinkActionPickerDelegate linkActionPickerDelegate;
   final CustomStyleBuilder? customStyleBuilder;
+  final CustomRecognizerBuilder? customRecognizerBuilder;
   final bool floatingCursorDisabled;
   final List<String> customLinkPrefixes;
 
@@ -322,6 +324,9 @@ class RawEditorState extends EditorState
   final LayerLink _endHandleLayerLink = LayerLink();
 
   TextDirection get _textDirection => Directionality.of(context);
+
+  @override
+  void insertContent(KeyboardInsertedContent content) {}
 
   /// Returns the [ContextMenuButtonItem]s representing the buttons in this
   /// platform's default selection menu for [RawEditor].
@@ -886,7 +891,7 @@ class RawEditorState extends EditorState
         final editableTextBlock = EditableTextBlock(
             block: node,
             controller: controller,
-            textDirection: _textDirection,
+            textDirection: getDirectionOfNode(node),
             scrollBottomInset: widget.scrollBottomInset,
             verticalSpacing: _getVerticalSpacingForBlock(node, _styles),
             textSelection: controller.selection,
@@ -925,6 +930,7 @@ class RawEditorState extends EditorState
       textDirection: _textDirection,
       embedBuilder: widget.embedBuilder,
       customStyleBuilder: widget.customStyleBuilder,
+      customRecognizerBuilder: widget.customRecognizerBuilder,
       styles: _styles!,
       readOnly: widget.readOnly,
       controller: controller,
@@ -1706,7 +1712,7 @@ class RawEditorState extends EditorState
 }
 
 class _Editor extends MultiChildRenderObjectWidget {
-  _Editor({
+  const _Editor({
     required Key key,
     required List<Widget> children,
     required this.document,

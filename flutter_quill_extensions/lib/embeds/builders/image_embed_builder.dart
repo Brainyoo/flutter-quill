@@ -5,6 +5,10 @@ import 'package:flutter_quill/extensions.dart' as base;
 import 'package:flutter_quill/flutter_quill.dart' hide Text;
 import 'package:flutter_quill/translations.dart';
 import 'package:gallery_saver/gallery_saver.dart';
+<<<<<<< HEAD:flutter_quill_extensions/lib/embeds/builders/image_embed_builder.dart
+=======
+import 'package:universal_html/html.dart' as html;
+>>>>>>> develop:flutter_quill_extensions/lib/embeds/builders.dart
 
 import '../utils.dart';
 import '../widgets/image.dart';
@@ -21,6 +25,7 @@ class ImageEmbedBuilder extends EmbedBuilder {
     base.Embed node,
     bool readOnly,
     bool inline,
+    TextStyle textStyle,
   ) {
     assert(!kIsWeb, 'Please provide image EmbedBuilder for Web');
 
@@ -154,6 +159,7 @@ class _SimpleDialogItem extends StatelessWidget {
   final VoidCallback onPressed;
 
   @override
+<<<<<<< HEAD:flutter_quill_extensions/lib/embeds/builders/image_embed_builder.dart
   Widget build(BuildContext context) {
     return SimpleDialogOption(
       onPressed: onPressed,
@@ -166,11 +172,91 @@ class _SimpleDialogItem extends StatelessWidget {
                 Text(text, style: const TextStyle(fontWeight: FontWeight.bold)),
           ),
         ],
+=======
+  Widget build(
+    BuildContext context,
+    QuillController controller,
+    Embed node,
+    bool readOnly,
+    bool inline,
+    TextStyle textStyle,
+  ) {
+    final imageUrl = node.value.data;
+
+    ui.platformViewRegistry.registerViewFactory(imageUrl, (viewId) {
+      return html.ImageElement()
+        ..src = imageUrl
+        ..style.height = 'auto'
+        ..style.width = 'auto';
+    });
+
+    return ConstrainedBox(
+      constraints: constraints ?? BoxConstraints.loose(const Size(200, 200)),
+      child: HtmlElementView(
+        viewType: imageUrl,
+>>>>>>> develop:flutter_quill_extensions/lib/embeds/builders.dart
       ),
     );
   }
 }
 
+<<<<<<< HEAD:flutter_quill_extensions/lib/embeds/builders/image_embed_builder.dart
+=======
+class VideoEmbedBuilder extends EmbedBuilder {
+  VideoEmbedBuilder({this.onVideoInit});
+
+  final void Function(GlobalKey videoContainerKey)? onVideoInit;
+
+  @override
+  String get key => BlockEmbed.videoType;
+
+  @override
+  Widget build(
+    BuildContext context,
+    QuillController controller,
+    base.Embed node,
+    bool readOnly,
+    bool inline,
+    TextStyle textStyle,
+  ) {
+    assert(!kIsWeb, 'Please provide video EmbedBuilder for Web');
+
+    final videoUrl = node.value.data;
+    if (videoUrl.contains('youtube.com') || videoUrl.contains('youtu.be')) {
+      return YoutubeVideoApp(
+          videoUrl: videoUrl, context: context, readOnly: readOnly);
+    }
+    return VideoApp(
+      videoUrl: videoUrl,
+      context: context,
+      readOnly: readOnly,
+      onVideoInit: onVideoInit,
+    );
+  }
+}
+
+class FormulaEmbedBuilder extends EmbedBuilder {
+  @override
+  String get key => BlockEmbed.formulaType;
+
+  @override
+  Widget build(
+    BuildContext context,
+    QuillController controller,
+    base.Embed node,
+    bool readOnly,
+    bool inline,
+    TextStyle textStyle,
+  ) {
+    return Formula(
+        node: node,
+        context: context,
+        readOnly: readOnly,
+        controller: controller);
+  }
+}
+
+>>>>>>> develop:flutter_quill_extensions/lib/embeds/builders.dart
 Widget _menuOptionsForReadonlyImage(
     BuildContext context, String imageUrl, Widget image) {
   return GestureDetector(
