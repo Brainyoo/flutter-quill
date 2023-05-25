@@ -401,7 +401,7 @@ class ScriptAttribute extends Attribute<String?> {
 
 enum ScriptAttributes {
   sup('super'),
-  sub('sup');
+  sub('sub');
 
   const ScriptAttributes(this.value);
 
