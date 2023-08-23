@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'dart:ui';
 
 import 'package:app/embeds/cloze.dart';
 import 'package:file_picker/file_picker.dart';
@@ -10,12 +11,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_quill/extensions.dart';
 import 'package:flutter_quill/flutter_quill.dart' hide Text;
-import 'package:flutter_quill_extensions/embeds/widgets/QuillTableController.dart';
 import 'package:flutter_quill_extensions/flutter_quill_extensions.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 
 import '../universal_ui/universal_ui.dart';
+import '../widgets/time_stamp_embed_widget.dart';
 import 'read_only_page.dart';
 
 enum _SelectionType {
@@ -81,8 +82,23 @@ class _HomePageState extends State<HomePage> {
         ),
         actions: [
           IconButton(
-            onPressed: () => _addEditNote(context),
-            icon: const Icon(Icons.note_add),
+            onPressed: () => _insertTimeStamp(
+              _controller!,
+              DateTime.now().toString(),
+            ),
+            icon: const Icon(Icons.add_alarm_rounded),
+          ),
+          IconButton(
+            onPressed: () => showDialog(
+              context: context,
+              builder: (context) => AlertDialog(
+                content: Text(_controller!.document.toPlainText([
+                  ...FlutterQuillEmbeds.builders(),
+                  TimeStampEmbedBuilderWidget()
+                ])),
+              ),
+            ),
+            icon: const Icon(Icons.text_fields_rounded),
           ),
           IconButton(
             onPressed: () =>
@@ -164,84 +180,89 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _buildWelcomeEditor(BuildContext context) {
-    Widget quillEditor = MouseRegion(
-      cursor: SystemMouseCursors.text,
-      child: QuillEditor(
-        controller: _controller!,
-        scrollController: ScrollController(),
-        scrollable: true,
-        focusNode: _focusNode,
-        autoFocus: false,
-        readOnly: false,
-        placeholder: 'Add content',
-        enableSelectionToolbar: isMobile(),
-        expands: false,
-        padding: EdgeInsets.zero,
-        onImagePaste: _onImagePaste,
-        onTapUp: (details, p1) {
-          return _onTripleClickSelection();
-        },
-        customStyles: DefaultStyles(
-          h1: DefaultTextBlockStyle(
-              const TextStyle(
-                fontSize: 32,
-                height: 1.15,
-                fontWeight: FontWeight.w300,
-              ),
-              const VerticalSpacing(16, 0),
-              const VerticalSpacing(0, 0),
-              null),
-          sizeSmall: const TextStyle(fontSize: 9),
+    Widget quillEditor = QuillEditor(
+      controller: _controller!,
+      scrollController: ScrollController(),
+      scrollable: true,
+      focusNode: _focusNode,
+      autoFocus: false,
+      readOnly: false,
+      placeholder: 'Add content',
+      enableSelectionToolbar: isMobile(),
+      expands: false,
+      padding: EdgeInsets.zero,
+      onImagePaste: _onImagePaste,
+      onTapUp: (details, p1) {
+        return _onTripleClickSelection();
+      },
+      customStyles: DefaultStyles(
+        h1: DefaultTextBlockStyle(
+            const TextStyle(
+              fontSize: 32,
+              color: Colors.black,
+              height: 1.15,
+              fontWeight: FontWeight.w300,
+            ),
+            const VerticalSpacing(16, 0),
+            const VerticalSpacing(0, 0),
+            null),
+        sizeSmall: const TextStyle(fontSize: 9),
+        subscript: const TextStyle(
+          fontFamily: 'SF-UI-Display',
+          fontFeatures: [FontFeature.subscripts()],
         ),
-        embedBuilders: [
-          ...FlutterQuillEmbeds.builders(),
-          NotesEmbedBuilder(addEditNote: _addEditNote),
-          ClozeEmbedBuilder(controller: _controller!),
-          TableEmbedBuilder(onFocusChange: (innerTableController) {
-            setToolbar(_controller!,
-                innerTableController: innerTableController);
-          }),
-        ],
+        superscript: const TextStyle(
+          fontFamily: 'SF-UI-Display',
+          fontFeatures: [FontFeature.superscripts()],
+        ),
       ),
+      embedBuilders: [
+        ...FlutterQuillEmbeds.builders(),
+        TimeStampEmbedBuilderWidget(),
+        NotesEmbedBuilder(addEditNote: _addEditNote),
+        ClozeEmbedBuilder(controller: _controller!),
+        TableEmbedBuilder(onFocusChange: (innerTableController) {
+          setToolbar(_controller!, innerTableController: innerTableController);
+        }),
+      ],
     );
     if (kIsWeb) {
-      quillEditor = MouseRegion(
-        cursor: SystemMouseCursors.text,
-        child: QuillEditor(
-            controller: _controller!,
-            scrollController: ScrollController(),
-            scrollable: true,
-            focusNode: _focusNode,
-            autoFocus: false,
-            readOnly: false,
-            placeholder: 'Add content',
-            expands: false,
-            padding: EdgeInsets.zero,
-            onTapUp: (details, p1) {
-              return _onTripleClickSelection();
-            },
-            customStyles: DefaultStyles(
-              h1: DefaultTextBlockStyle(
-                  const TextStyle(
-                    fontSize: 32,
-                    height: 1.15,
-                    fontWeight: FontWeight.w300,
-                  ),
-                  const VerticalSpacing(16, 0),
-                  const VerticalSpacing(0, 0),
-                  null),
-              sizeSmall: const TextStyle(fontSize: 9),
-            ),
-            embedBuilders: [
-              ...defaultEmbedBuildersWeb,
-              NotesEmbedBuilder(addEditNote: _addEditNote),
-              ClozeEmbedBuilder(controller: _controller!),
-              TableEmbedBuilder(onFocusChange: (innerTableController) {
-                setToolbar(_controller!,
-                    innerTableController: innerTableController);
-              }),
-            ]),
-      );
+      quillEditor = QuillEditor(
+          controller: _controller!,
+          scrollController: ScrollController(),
+          scrollable: true,
+          focusNode: _focusNode,
+          autoFocus: false,
+          readOnly: false,
+          placeholder: 'Add content',
+          expands: false,
+          padding: EdgeInsets.zero,
+          onTapUp: (details, p1) {
+            return _onTripleClickSelection();
+          },
+          customStyles: DefaultStyles(
+            h1: DefaultTextBlockStyle(
+                const TextStyle(
+                  fontSize: 32,
+                  color: Colors.black,
+                  height: 1.15,
+                  fontWeight: FontWeight.w300,
+                ),
+                const VerticalSpacing(16, 0),
+                const VerticalSpacing(0, 0),
+                null),
+            sizeSmall: const TextStyle(fontSize: 9),
+          ),
+          embedBuilders: [
+            ...defaultEmbedBuildersWeb,
+            TimeStampEmbedBuilderWidget(),
+            NotesEmbedBuilder(addEditNote: _addEditNote),
+            ClozeEmbedBuilder(controller: _controller!),
+            TableEmbedBuilder(onFocusChange: (innerTableController) {
+              setToolbar(_controller!,
+                  innerTableController: innerTableController);
+            }),
+          ]);
     }
     var toolbar = QuillToolbar.basic(
       controller: _controller!,
@@ -525,6 +546,44 @@ class _HomePageState extends State<HomePage> {
     } else {
       controller.replaceText(index, length, block, null);
     }
+  }
+
+  static void _insertTimeStamp(QuillController controller, String string) {
+    controller.document.insert(controller.selection.extentOffset, '\n');
+    controller.updateSelection(
+      TextSelection.collapsed(
+        offset: controller.selection.extentOffset + 1,
+      ),
+      ChangeSource.LOCAL,
+    );
+
+    controller.document.insert(
+      controller.selection.extentOffset,
+      TimeStampEmbed(string),
+    );
+
+    controller.updateSelection(
+      TextSelection.collapsed(
+        offset: controller.selection.extentOffset + 1,
+      ),
+      ChangeSource.LOCAL,
+    );
+
+    controller.document.insert(controller.selection.extentOffset, ' ');
+    controller.updateSelection(
+      TextSelection.collapsed(
+        offset: controller.selection.extentOffset + 1,
+      ),
+      ChangeSource.LOCAL,
+    );
+
+    controller.document.insert(controller.selection.extentOffset, '\n');
+    controller.updateSelection(
+      TextSelection.collapsed(
+        offset: controller.selection.extentOffset + 1,
+      ),
+      ChangeSource.LOCAL,
+    );
   }
 
   Future<void> _addEditCloze(BuildContext context, {Document? document}) async {

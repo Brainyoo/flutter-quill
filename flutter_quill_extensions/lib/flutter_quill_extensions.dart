@@ -57,6 +57,8 @@ class FlutterQuillEmbeds {
     FilePickImpl? filePickImpl,
     WebImagePickImpl? webImagePickImpl,
     WebVideoPickImpl? webVideoPickImpl,
+    RegExp? imageLinkRegExp,
+    RegExp? videoLinkRegExp,
   }) =>
       [
         if (showImageButton)
@@ -74,6 +76,7 @@ class FlutterQuillEmbeds {
                 mediaPickSettingSelector: mediaPickSettingSelector,
                 iconTheme: iconTheme,
                 dialogTheme: dialogTheme,
+                linkRegExp: imageLinkRegExp,
               ),
         if (showVideoButton)
           (controller, toolbarButtonSize, toolbarIconSize, iconTheme,
@@ -90,7 +93,8 @@ class FlutterQuillEmbeds {
                 mediaPickSettingSelector: mediaPickSettingSelector,
                 iconTheme: iconTheme,
                 dialogTheme: dialogTheme,
-              ),
+                linkRegExp: videoLinkRegExp,
+          ),
         if ((onImagePickCallback != null || onVideoPickCallback != null) &&
             showCameraButton)
           (controller, toolbarButtonSize, toolbarIconSize, iconTheme,

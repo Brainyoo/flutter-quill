@@ -36,12 +36,15 @@ class VideoEmbedBuilder implements EmbedBuilder {
       onVideoInit: onVideoInit,
     );
   }
-  
+
   @override
   WidgetSpan buildWidgetSpan(Widget widget) {
     return WidgetSpan(child: widget);
   }
-  
+
   @override
   bool get expanded => true;
+
+  @override
+  String toPlainText(base.Embed node) => node.value.data;
 }

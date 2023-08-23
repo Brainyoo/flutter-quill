@@ -30,4 +30,7 @@ class FormulaEmbedBuilder implements EmbedBuilder {
   
   @override
   bool get expanded => true;
+  
+  @override
+  String toPlainText(base.Embed node) => node.value.data;
 }
