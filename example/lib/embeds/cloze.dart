@@ -101,6 +101,9 @@ class ClozeEmbedBuilder implements EmbedBuilder {
 
   @override
   bool get expanded => true;
+
+  @override
+  String toPlainText(Embed node) => Embed.kObjectReplacementCharacter;
 }
 
 class ClozeBlockEmbed extends CustomBlockEmbed {

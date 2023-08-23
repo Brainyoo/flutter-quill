@@ -19,6 +19,7 @@ class VideoButton extends StatelessWidget {
     this.iconTheme,
     this.dialogTheme,
     this.tooltip,
+    this.linkRegExp,
     Key? key,
   }) : super(key: key);
 
@@ -41,7 +42,10 @@ class VideoButton extends StatelessWidget {
   final QuillIconTheme? iconTheme;
 
   final QuillDialogTheme? dialogTheme;
+
   final String? tooltip;
+
+  final RegExp? linkRegExp;
 
   @override
   Widget build(BuildContext context) {
