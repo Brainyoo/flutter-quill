@@ -508,6 +508,16 @@
   },
   {
     "insert": {
+      "audio": "/Volumes/Macintosh HD/Users/christoph/Documents/blub.mp3"
+    }
+  },
+  {
+    "insert": {
+      "audio": "https://www2.cs.uic.edu/~i101/SoundFiles/BabyElephantWalk60.wav"
+    }
+  },
+  {
+    "insert": {
       "image": "https://user-images.githubusercontent.com/122956/72955931-ccc07900-3d52-11ea-89b1-d468a6e2aa2b.png"
     },
     "attributes": {
