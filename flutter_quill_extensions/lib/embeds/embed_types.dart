@@ -5,11 +5,14 @@ import 'package:flutter/material.dart';
 
 typedef OnImagePickCallback = Future<String?> Function(File file);
 typedef OnVideoPickCallback = Future<String?> Function(File file);
+typedef OnAudioPickCallback = Future<String?> Function(File file);
 typedef FilePickImpl = Future<String?> Function(BuildContext context);
 typedef WebImagePickImpl = Future<String?> Function(
     OnImagePickCallback onImagePickCallback);
 typedef WebVideoPickImpl = Future<String?> Function(
     OnVideoPickCallback onImagePickCallback);
+typedef WebAudioPickImpl = Future<String?> Function(
+    OnAudioPickCallback onAudioPickCallback);
 typedef MediaPickSettingSelector = Future<MediaPickSetting?> Function(
     BuildContext context);
 

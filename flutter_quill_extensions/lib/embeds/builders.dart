@@ -10,7 +10,7 @@ import 'package:universal_html/html.dart' as html;
 import '../shims/dart_ui_fake.dart'
     if (dart.library.html) '../shims/dart_ui_real.dart' as ui;
 import 'utils.dart';
-import 'widgets/audio_player.dart';
+import 'widgets/audio.dart';
 import 'widgets/formula.dart';
 import 'widgets/image.dart';
 import 'widgets/image_resizer.dart';
@@ -253,7 +253,7 @@ class AudioEmbedBuilder extends EmbedBuilder {
     bool inline,
     TextStyle textStyle,
   ) {
-    return AudioButton(audioUrl: node.value.data);
+    return Audio(audioUrl: node.value.data);
   }
 }
 

@@ -79,7 +79,7 @@ class LinkDialogState extends State<LinkDialog> {
   }
 }
 
-class ImageVideoUtils {
+class ImageAudioVideoUtils {
   static Future<MediaPickSetting?> selectMediaPickSetting(
     BuildContext context,
   ) =>
@@ -159,6 +159,42 @@ class ImageVideoUtils {
 
     final file = File(filePath);
     return onImagePickCallback(file);
+  }
+
+  /// For audio picking logic
+  static Future<void> handleAudioButtonTap(BuildContext context,
+      QuillController controller, OnAudioPickCallback onAudioPickCallback,
+      {FilePickImpl? filePickImpl, WebAudioPickImpl? webAudioPickImpl}) async {
+    final index = controller.selection.baseOffset;
+    final length = controller.selection.extentOffset - index;
+
+    String? audioUrl;
+    if (kIsWeb) {
+      assert(
+          webAudioPickImpl != null,
+          'Please provide webAudioPickImpl for Web '
+          '(check out example directory for how to do it)');
+      audioUrl = await webAudioPickImpl!(onAudioPickCallback);
+    } else {
+      assert(
+          filePickImpl != null, 'Desktop and Mobile must provide filePickImpl');
+      audioUrl = await _pickAudio(context, filePickImpl!, onAudioPickCallback);
+    }
+
+    if (audioUrl != null) {
+      controller.replaceText(index, length, BlockEmbed.audio(audioUrl), null);
+    }
+  }
+
+  static Future<String?> _pickAudio(
+      BuildContext context,
+      FilePickImpl filePickImpl,
+      OnAudioPickCallback onAudioPickCallback) async {
+    final filePath = await filePickImpl(context);
+    if (filePath == null || filePath.isEmpty) return null;
+
+    final file = File(filePath);
+    return onAudioPickCallback(file);
   }
 
   /// For video picking logic

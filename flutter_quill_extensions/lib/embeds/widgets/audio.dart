@@ -1,8 +1,8 @@
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 
-class AudioButton extends StatefulWidget {
-  const AudioButton({
+class Audio extends StatefulWidget {
+  const Audio({
     required this.audioUrl,
     super.key,
   });
@@ -10,10 +10,10 @@ class AudioButton extends StatefulWidget {
   final String audioUrl;
 
   @override
-  State<AudioButton> createState() => _AudioButtonState();
+  State<Audio> createState() => _AudioState();
 }
 
-class _AudioButtonState extends State<AudioButton> {
+class _AudioState extends State<Audio> {
   bool isPlaying = false;
   late AudioPlayer player = AudioPlayer();
 
@@ -30,19 +30,21 @@ class _AudioButtonState extends State<AudioButton> {
 
   @override
   void initState() {
-    player.onPlayerStateChanged.listen((event) {
-      setState(() {
-        switch (event) {
-          case PlayerState.playing:
-            isPlaying = true;
-            break;
-          default:
-            isPlaying = false;
-        }
-      });
-    });
-
     super.initState();
+
+    player.onPlayerStateChanged.listen((event) {
+      if (mounted) {
+        setState(() {
+          switch (event) {
+            case PlayerState.playing:
+              isPlaying = true;
+              break;
+            default:
+              isPlaying = false;
+          }
+        });
+      }
+    });
   }
 
   @override

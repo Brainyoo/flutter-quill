@@ -1,20 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
-import 'package:image_picker/image_picker.dart';
 
 import '../embed_types.dart';
 import 'image_video_audio_utils.dart';
 
-class ImageButton extends StatelessWidget {
-  const ImageButton({
+class AudioButton extends StatelessWidget {
+  const AudioButton({
     required this.icon,
     required this.controller,
     required this.iconSize,
     required this.buttonSize,
-    this.onImagePickCallback,
+    this.onAudioPickCallback,
     this.fillColor,
     this.filePickImpl,
-    this.webImagePickImpl,
+    this.webAudioPickImpl,
     this.mediaPickSettingSelector,
     this.iconTheme,
     this.dialogTheme,
@@ -31,9 +30,9 @@ class ImageButton extends StatelessWidget {
 
   final QuillController controller;
 
-  final OnImagePickCallback? onImagePickCallback;
+  final OnAudioPickCallback? onAudioPickCallback;
 
-  final WebImagePickImpl? webImagePickImpl;
+  final WebAudioPickImpl? webAudioPickImpl;
 
   final FilePickImpl? filePickImpl;
 
@@ -66,13 +65,13 @@ class ImageButton extends StatelessWidget {
   }
 
   Future<void> _onPressedHandler(BuildContext context) async {
-    if (onImagePickCallback != null) {
+    if (onAudioPickCallback != null) {
       final selector = mediaPickSettingSelector ??
           ImageAudioVideoUtils.selectMediaPickSetting;
       final source = await selector(context);
       if (source != null) {
         if (source == MediaPickSetting.Gallery) {
-          _pickImage(context);
+          _pickAudio(context);
         } else {
           _typeLink(context);
         }
@@ -82,14 +81,13 @@ class ImageButton extends StatelessWidget {
     }
   }
 
-  void _pickImage(BuildContext context) =>
-      ImageAudioVideoUtils.handleImageButtonTap(
+  void _pickAudio(BuildContext context) =>
+      ImageAudioVideoUtils.handleAudioButtonTap(
         context,
         controller,
-        ImageSource.gallery,
-        onImagePickCallback!,
+        onAudioPickCallback!,
         filePickImpl: filePickImpl,
-        webImagePickImpl: webImagePickImpl,
+        webAudioPickImpl: webAudioPickImpl,
       );
 
   void _typeLink(BuildContext context) {
@@ -107,7 +105,7 @@ class ImageButton extends StatelessWidget {
       final index = controller.selection.baseOffset;
       final length = controller.selection.extentOffset - index;
 
-      controller.replaceText(index, length, BlockEmbed.image(value), null);
+      controller.replaceText(index, length, BlockEmbed.audio(value), null);
     }
   }
 }

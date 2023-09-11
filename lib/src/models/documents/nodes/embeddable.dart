@@ -42,7 +42,7 @@ class BlockEmbed extends Embeddable {
   static BlockEmbed formula(String formula) => BlockEmbed(formulaType, formula);
 
   static const String audioType = 'audio';
-  static BlockEmbed audio(String audioUrl) => BlockEmbed(audioUrl, audioUrl);
+  static BlockEmbed audio(String audioUrl) => BlockEmbed(audioType, audioUrl);
 
   static const String customType = 'custom';
   static BlockEmbed custom(CustomBlockEmbed customBlock) =>

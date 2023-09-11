@@ -4,7 +4,7 @@ import 'package:flutter_quill/translations.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../embed_types.dart';
-import 'image_video_utils.dart';
+import 'image_video_audio_utils.dart';
 
 class CameraButton extends StatelessWidget {
   const CameraButton({
@@ -111,12 +111,12 @@ class CameraButton extends StatelessWidget {
       if (source != null) {
         switch (source) {
           case MediaPickSetting.Camera:
-            await ImageVideoUtils.handleImageButtonTap(
+            await ImageAudioVideoUtils.handleImageButtonTap(
                 context, controller, ImageSource.camera, onImagePickCallback,
                 filePickImpl: filePickImpl, webImagePickImpl: webImagePickImpl);
             break;
           case MediaPickSetting.Video:
-            await ImageVideoUtils.handleVideoButtonTap(
+            await ImageAudioVideoUtils.handleVideoButtonTap(
                 context, controller, ImageSource.camera, onVideoPickCallback,
                 filePickImpl: filePickImpl, webVideoPickImpl: webVideoPickImpl);
             break;

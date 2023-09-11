@@ -263,8 +263,9 @@ class _HomePageState extends State<HomePage> {
         // provide a callback to enable picking images from device.
         // if omit, "image" button only allows adding images from url.
         // same goes for videos.
-        onImagePickCallback: _onImagePickCallback,
-        onVideoPickCallback: _onVideoPickCallback,
+        onImagePickCallback: _onFilePickCallback,
+        onVideoPickCallback: _onFilePickCallback,
+        onAudioPickCallback: _onFilePickCallback,
         // uncomment to provide a custom "pick from" dialog.
         // mediaPickSettingSelector: _selectMediaPickSetting,
         // uncomment to provide a custom "pick from" dialog.
@@ -278,7 +279,8 @@ class _HomePageState extends State<HomePage> {
       toolbar = QuillToolbar.basic(
         controller: _controller!,
         embedButtons: FlutterQuillEmbeds.buttons(
-          onImagePickCallback: _onImagePickCallback,
+          onImagePickCallback: _onFilePickCallback,
+          onAudioPickCallback: _onFilePickCallback,
           webImagePickImpl: _webImagePickImpl,
           showFormulaButton: true,
         ),
@@ -296,7 +298,8 @@ class _HomePageState extends State<HomePage> {
       toolbar = QuillToolbar.basic(
         controller: _controller!,
         embedButtons: FlutterQuillEmbeds.buttons(
-          onImagePickCallback: _onImagePickCallback,
+          onImagePickCallback: _onFilePickCallback,
+          onAudioPickCallback: _onFilePickCallback,
           filePickImpl: openFileSystemPickerForDesktop,
           showFormulaButton: true,
         ),
@@ -347,7 +350,7 @@ class _HomePageState extends State<HomePage> {
   // Renders the image picked by imagePicker from local file storage
   // You can also upload the picked image to any server (eg : AWS s3
   // or Firebase) and then return the uploaded image URL.
-  Future<String> _onImagePickCallback(File file) async {
+  Future<String> _onFilePickCallback(File file) async {
     // Copies the picked file from temporary cache to applications directory
     final appDocDir = await getApplicationDocumentsDirectory();
     final copiedFile =
@@ -368,18 +371,7 @@ class _HomePageState extends State<HomePage> {
 
     return onImagePickCallback(file);
   }
-
-  // Renders the video picked by imagePicker from local file storage
-  // You can also upload the picked video to any server (eg : AWS s3
-  // or Firebase) and then return the uploaded video URL.
-  Future<String> _onVideoPickCallback(File file) async {
-    // Copies the picked file from temporary cache to applications directory
-    final appDocDir = await getApplicationDocumentsDirectory();
-    final copiedFile =
-        await file.copy('${appDocDir.path}/${basename(file.path)}');
-    return copiedFile.path.toString();
-  }
-
+  
   // ignore: unused_element
   Future<MediaPickSetting?> _selectMediaPickSetting(BuildContext context) =>
       showDialog<MediaPickSetting>(

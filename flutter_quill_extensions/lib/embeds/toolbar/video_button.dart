@@ -3,7 +3,7 @@ import 'package:flutter_quill/flutter_quill.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../embed_types.dart';
-import 'image_video_utils.dart';
+import 'image_video_audio_utils.dart';
 
 class VideoButton extends StatelessWidget {
   const VideoButton({
@@ -69,8 +69,8 @@ class VideoButton extends StatelessWidget {
 
   Future<void> _onPressedHandler(BuildContext context) async {
     if (onVideoPickCallback != null) {
-      final selector =
-          mediaPickSettingSelector ?? ImageVideoUtils.selectMediaPickSetting;
+      final selector = mediaPickSettingSelector ??
+          ImageAudioVideoUtils.selectMediaPickSetting;
       final source = await selector(context);
       if (source != null) {
         if (source == MediaPickSetting.Gallery) {
@@ -84,7 +84,8 @@ class VideoButton extends StatelessWidget {
     }
   }
 
-  void _pickVideo(BuildContext context) => ImageVideoUtils.handleVideoButtonTap(
+  void _pickVideo(BuildContext context) =>
+      ImageAudioVideoUtils.handleVideoButtonTap(
         context,
         controller,
         ImageSource.gallery,
