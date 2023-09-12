@@ -5,16 +5,10 @@ import 'package:flutter_quill/extensions.dart' as base;
 import 'package:flutter_quill/flutter_quill.dart' hide Text;
 import 'package:flutter_quill/translations.dart';
 import 'package:gallery_saver/gallery_saver.dart';
-import 'package:universal_html/html.dart' as html;
 
-import '../shims/dart_ui_fake.dart'
-    if (dart.library.html) '../shims/dart_ui_real.dart' as ui;
-import 'utils.dart';
-import 'widgets/formula.dart';
-import 'widgets/image.dart';
-import 'widgets/image_resizer.dart';
-import 'widgets/video_app.dart';
-import 'widgets/youtube_video_app.dart';
+import '../utils.dart';
+import '../widgets/image.dart';
+import '../widgets/image_resizer.dart';
 
 class ImageEmbedBuilder extends EmbedBuilder {
   @override
@@ -149,93 +143,35 @@ class ImageEmbedBuilder extends EmbedBuilder {
   }
 }
 
-class ImageEmbedBuilderWeb extends EmbedBuilder {
-  ImageEmbedBuilderWeb({this.constraints})
-      : assert(kIsWeb, 'ImageEmbedBuilderWeb is only for web platform');
+class _SimpleDialogItem extends StatelessWidget {
+  const _SimpleDialogItem(
+      {required this.icon,
+      required this.text,
+      required this.onPressed,
+      this.color,
+      Key? key})
+      : super(key: key);
 
-  final BoxConstraints? constraints;
+  final IconData icon;
+  final Color? color;
+  final String text;
+  final VoidCallback onPressed;
 
   @override
-  String get key => BlockEmbed.imageType;
-
-  @override
-  Widget build(
-    BuildContext context,
-    QuillController controller,
-    Embed node,
-    bool readOnly,
-    bool inline,
-    TextStyle textStyle,
-  ) {
-    final imageUrl = node.value.data;
-
-    ui.platformViewRegistry.registerViewFactory(imageUrl, (viewId) {
-      return html.ImageElement()
-        ..src = imageUrl
-        ..style.height = 'auto'
-        ..style.width = 'auto';
-    });
-
-    return ConstrainedBox(
-      constraints: constraints ?? BoxConstraints.loose(const Size(200, 200)),
-      child: HtmlElementView(
-        viewType: imageUrl,
+  Widget build(BuildContext context) {
+    return SimpleDialogOption(
+      onPressed: onPressed,
+      child: Row(
+        children: [
+          Icon(icon, size: 36, color: color),
+          Padding(
+            padding: const EdgeInsetsDirectional.only(start: 16),
+            child:
+                Text(text, style: const TextStyle(fontWeight: FontWeight.bold)),
+          ),
+        ],
       ),
     );
-  }
-}
-
-class VideoEmbedBuilder extends EmbedBuilder {
-  VideoEmbedBuilder({this.onVideoInit});
-
-  final void Function(GlobalKey videoContainerKey)? onVideoInit;
-
-  @override
-  String get key => BlockEmbed.videoType;
-
-  @override
-  Widget build(
-    BuildContext context,
-    QuillController controller,
-    base.Embed node,
-    bool readOnly,
-    bool inline,
-    TextStyle textStyle,
-  ) {
-    assert(!kIsWeb, 'Please provide video EmbedBuilder for Web');
-
-    final videoUrl = node.value.data;
-    if (videoUrl.contains('youtube.com') || videoUrl.contains('youtu.be')) {
-      return YoutubeVideoApp(
-          videoUrl: videoUrl, context: context, readOnly: readOnly);
-    }
-    return VideoApp(
-      videoUrl: videoUrl,
-      context: context,
-      readOnly: readOnly,
-      onVideoInit: onVideoInit,
-    );
-  }
-}
-
-class FormulaEmbedBuilder extends EmbedBuilder {
-  @override
-  String get key => BlockEmbed.formulaType;
-
-  @override
-  Widget build(
-    BuildContext context,
-    QuillController controller,
-    base.Embed node,
-    bool readOnly,
-    bool inline,
-    TextStyle textStyle,
-  ) {
-    return Formula(
-        node: node,
-        context: context,
-        readOnly: readOnly,
-        controller: controller);
   }
 }
 
@@ -280,36 +216,4 @@ Widget _menuOptionsForReadonlyImage(
             });
       },
       child: image);
-}
-
-class _SimpleDialogItem extends StatelessWidget {
-  const _SimpleDialogItem(
-      {required this.icon,
-      required this.text,
-      required this.onPressed,
-      this.color,
-      Key? key})
-      : super(key: key);
-
-  final IconData icon;
-  final Color? color;
-  final String text;
-  final VoidCallback onPressed;
-
-  @override
-  Widget build(BuildContext context) {
-    return SimpleDialogOption(
-      onPressed: onPressed,
-      child: Row(
-        children: [
-          Icon(icon, size: 36, color: color),
-          Padding(
-            padding: const EdgeInsetsDirectional.only(start: 16),
-            child:
-                Text(text, style: const TextStyle(fontWeight: FontWeight.bold)),
-          ),
-        ],
-      ),
-    );
-  }
 }

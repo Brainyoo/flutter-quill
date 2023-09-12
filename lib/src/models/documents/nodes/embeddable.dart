@@ -41,6 +41,9 @@ class BlockEmbed extends Embeddable {
   static const String formulaType = 'formula';
   static BlockEmbed formula(String formula) => BlockEmbed(formulaType, formula);
 
+  static const String tableType = 'table';
+  static BlockEmbed table(String tableJson) => BlockEmbed(tableType, tableJson);
+
   static const String customType = 'custom';
   static BlockEmbed custom(CustomBlockEmbed customBlock) =>
       BlockEmbed(customType, customBlock.toJsonString());
@@ -56,3 +59,10 @@ class CustomBlockEmbed extends BlockEmbed {
     return CustomBlockEmbed(embeddable.type, embeddable.data);
   }
 }
+
+class TableEmbed extends CustomBlockEmbed {
+  const TableEmbed(String value) : super(noteType, value);
+
+  static const String noteType = 'tableEmbed';
+}
+

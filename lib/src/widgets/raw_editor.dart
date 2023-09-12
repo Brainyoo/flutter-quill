@@ -310,7 +310,7 @@ class RawEditorState extends EditorState
   // Focus
   bool _didAutoFocus = false;
 
-  bool get _hasFocus => widget.focusNode.hasFocus;
+  bool get _hasFocus => widget.focusNode.hasPrimaryFocus;
 
   // Theme
   DefaultStyles? _styles;

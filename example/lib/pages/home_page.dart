@@ -221,6 +221,9 @@ class _HomePageState extends State<HomePage> {
         TimeStampEmbedBuilderWidget(),
         NotesEmbedBuilder(addEditNote: _addEditNote),
         ClozeEmbedBuilder(controller: _controller!),
+        TableEmbedBuilder(onFocusChange: (innerTableController) {
+          setToolbar(_controller!, innerTableController: innerTableController);
+        }),
       ],
     );
     if (kIsWeb) {
@@ -255,6 +258,10 @@ class _HomePageState extends State<HomePage> {
             TimeStampEmbedBuilderWidget(),
             NotesEmbedBuilder(addEditNote: _addEditNote),
             ClozeEmbedBuilder(controller: _controller!),
+            TableEmbedBuilder(onFocusChange: (innerTableController) {
+              setToolbar(_controller!,
+                  innerTableController: innerTableController);
+            }),
           ]);
     }
     var toolbar = QuillToolbar.basic(
@@ -270,6 +277,7 @@ class _HomePageState extends State<HomePage> {
         // uncomment to provide a custom "pick from" dialog.
         // cameraPickSettingSelector: _selectCameraPickSetting,
         showFormulaButton: true,
+        showTableButton: true,
       ),
       showAlignmentButtons: true,
       afterButtonPressed: _focusNode.requestFocus,
@@ -281,6 +289,7 @@ class _HomePageState extends State<HomePage> {
           onImagePickCallback: _onImagePickCallback,
           webImagePickImpl: _webImagePickImpl,
           showFormulaButton: true,
+          showTableButton: true,
         ),
         showAlignmentButtons: true,
         afterButtonPressed: _focusNode.requestFocus,
@@ -299,6 +308,8 @@ class _HomePageState extends State<HomePage> {
           onImagePickCallback: _onImagePickCallback,
           filePickImpl: openFileSystemPickerForDesktop,
           showFormulaButton: true,
+          showTableButton: true,
+          showTableOperationButtons: false,
         ),
         showAlignmentButtons: true,
         afterButtonPressed: _focusNode.requestFocus,
@@ -330,6 +341,17 @@ class _HomePageState extends State<HomePage> {
           )
         ],
       ),
+    );
+  }
+
+  void setToolbar(QuillController controller,
+      {QuillTableController? innerTableController}) {
+    QuillToolbar toolbar;
+    toolbar = QuillToolbar.basic(
+      controller: innerTableController ?? controller,
+      embedButtons: FlutterQuillEmbeds.buttons(
+          showTableButton: innerTableController == null,
+          showTableOperationButtons: innerTableController != null),
     );
   }
 
