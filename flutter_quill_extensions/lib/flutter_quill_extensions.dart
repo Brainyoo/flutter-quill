@@ -3,16 +3,20 @@ library flutter_quill_extensions;
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 
-import 'embeds/builders.dart';
+import 'embeds/builders/builders.dart';
 import 'embeds/embed_types.dart';
 import 'embeds/toolbar/audio_button.dart';
 import 'embeds/toolbar/camera_button.dart';
 import 'embeds/toolbar/formula_button.dart';
 import 'embeds/toolbar/image_button.dart';
+import 'embeds/toolbar/table_button.dart';
+import 'embeds/toolbar/table_operation_button_list.dart';
 import 'embeds/toolbar/video_button.dart';
+import 'embeds/widgets/quill_table_controller.dart';
 
-export 'embeds/builders.dart';
+export 'embeds/builders/builders.dart';
 export 'embeds/embed_types.dart';
+export 'embeds/models/models.dart';
 export 'embeds/toolbar/camera_button.dart';
 export 'embeds/toolbar/formula_button.dart';
 export 'embeds/toolbar/image_button.dart';
@@ -20,6 +24,7 @@ export 'embeds/toolbar/image_video_audio_utils.dart';
 export 'embeds/toolbar/media_button.dart';
 export 'embeds/toolbar/video_button.dart';
 export 'embeds/utils.dart';
+export 'embeds/widgets/quill_table_controller.dart';
 
 class FlutterQuillEmbeds {
   static List<EmbedBuilder> builders({
@@ -42,6 +47,8 @@ class FlutterQuillEmbeds {
     bool showCameraButton = true,
     bool showAudioButton = true,
     bool showFormulaButton = false,
+    bool showTableButton = false,
+    bool showTableOperationButtons = false,
     String? imageButtonTooltip,
     String? videoButtonTooltip,
     String? audioButtonTooltip,
@@ -141,6 +148,26 @@ class FlutterQuillEmbeds {
                 controller: controller,
                 iconTheme: iconTheme,
                 dialogTheme: dialogTheme,
-              )
+              ),
+        if (showTableButton)
+          (controller, toolbarButtonSize, toolbarIconSize, iconTheme,
+                  dialogTheme) =>
+              TableButton(
+                icon: Icons.border_all,
+                iconSize: toolbarIconSize,
+                buttonSize: toolbarButtonSize,
+                controller: controller,
+                iconTheme: iconTheme,
+              ),
+        if (showTableOperationButtons)
+          (controller, toolbarButtonSize, toolbarIconSize, iconTheme,
+                  dialogTheme) =>
+              TableOperationButtonList(
+                axis: Axis.horizontal,
+                iconSize: toolbarIconSize,
+                buttonSize: toolbarButtonSize,
+                controller: controller as QuillTableController,
+                iconTheme: iconTheme,
+              ),
       ];
 }
