@@ -73,6 +73,7 @@ class EditableTextBlock extends StatelessWidget {
       required this.readOnly,
       this.onLaunchUrl,
       this.customStyleBuilder,
+      this.customCanvasBuilder,
       this.customLinkPrefixes = const <String>[],
       Key? key});
 
@@ -91,6 +92,7 @@ class EditableTextBlock extends StatelessWidget {
   final LinkActionPicker linkActionPicker;
   final ValueChanged<String>? onLaunchUrl;
   final CustomStyleBuilder? customStyleBuilder;
+  final CustomCanvasBuilder? customCanvasBuilder;
   final CursorCont cursorCont;
   final Map<int, int> indentLevelCounts;
   final bool clearIndents;
@@ -160,7 +162,8 @@ class EditableTextBlock extends StatelessWidget {
           enableInteractiveSelection,
           hasFocus,
           MediaQuery.of(context).devicePixelRatio,
-          cursorCont);
+          cursorCont,
+          customCanvasBuilder);
       final nodeTextDirection = getDirectionOfNode(line);
       children.add(Directionality(
           textDirection: nodeTextDirection, child: editableTextLine));

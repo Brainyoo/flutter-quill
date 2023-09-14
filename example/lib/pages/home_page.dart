@@ -195,6 +195,15 @@ class _HomePageState extends State<HomePage> {
       onTapUp: (details, p1) {
         return _onTripleClickSelection();
       },
+      customCanvasBuilder: (attribute, rects, canvas, offset) {
+        for (final box in rects) {
+          final rect = box.toRect().translate(0, 1).shift(offset);
+
+          final paintRect = RRect.fromLTRBR(rect.left - 2, rect.top,
+              rect.right + 2, rect.bottom, Radius.circular(3));
+          canvas.drawRRect(paintRect, Paint()..color = Colors.white);
+        }
+      },
       customStyles: DefaultStyles(
         h1: DefaultTextBlockStyle(
             const TextStyle(
@@ -393,7 +402,7 @@ class _HomePageState extends State<HomePage> {
 
     return onImagePickCallback(file);
   }
-  
+
   // ignore: unused_element
   Future<MediaPickSetting?> _selectMediaPickSetting(BuildContext context) =>
       showDialog<MediaPickSetting>(

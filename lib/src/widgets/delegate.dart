@@ -14,6 +14,9 @@ typedef EmbedsBuilder = EmbedBuilder Function(Embed node);
 
 typedef CustomStyleBuilder = TextStyle Function(Attribute attribute);
 
+typedef CustomCanvasBuilder = void Function(
+    Attribute attribute, List<TextBox> rects, Canvas canvas, Offset offset);
+
 typedef CustomRecognizerBuilder = GestureRecognizer? Function(
     Attribute attribute, Leaf leaf);
 

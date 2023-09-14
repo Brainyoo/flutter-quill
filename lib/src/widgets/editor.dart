@@ -179,6 +179,7 @@ class QuillEditor extends StatefulWidget {
     this.unknownEmbedBuilder,
     this.linkActionPickerDelegate = defaultLinkActionPickerDelegate,
     this.customStyleBuilder,
+    this.customCanvasBuilder,
     this.customRecognizerBuilder,
     this.locale,
     this.floatingCursorDisabled = false,
@@ -388,6 +389,7 @@ class QuillEditor extends StatefulWidget {
   final Iterable<EmbedBuilder>? embedBuilders;
   final EmbedBuilder? unknownEmbedBuilder;
   final CustomStyleBuilder? customStyleBuilder;
+  final CustomCanvasBuilder? customCanvasBuilder;
   final CustomRecognizerBuilder? customRecognizerBuilder;
 
   /// The locale to use for the editor toolbar, defaults to system locale
@@ -550,6 +552,7 @@ class QuillEditorState extends State<QuillEditor>
       embedBuilder: _getEmbedBuilder,
       linkActionPickerDelegate: widget.linkActionPickerDelegate,
       customStyleBuilder: widget.customStyleBuilder,
+      customCanvasBuilder: widget.customCanvasBuilder,
       customRecognizerBuilder: widget.customRecognizerBuilder,
       floatingCursorDisabled: widget.floatingCursorDisabled,
       onImagePaste: widget.onImagePaste,

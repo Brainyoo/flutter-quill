@@ -41,6 +41,7 @@ class TextLine extends StatefulWidget {
     required this.linkActionPicker,
     this.textDirection,
     this.customStyleBuilder,
+    this.customCanvasBuilder,
     this.customRecognizerBuilder,
     this.customLinkPrefixes = const <String>[],
     Key? key,
@@ -53,6 +54,7 @@ class TextLine extends StatefulWidget {
   final bool readOnly;
   final QuillController controller;
   final CustomStyleBuilder? customStyleBuilder;
+  final CustomCanvasBuilder? customCanvasBuilder;
   final CustomRecognizerBuilder? customRecognizerBuilder;
   final ValueChanged<String>? onLaunchUrl;
   final LinkActionPicker linkActionPicker;
@@ -541,6 +543,7 @@ class EditableTextLine extends RenderObjectWidget {
     this.hasFocus,
     this.devicePixelRatio,
     this.cursorCont,
+    this.customCanvasBuilder,
   );
 
   final Line line;
@@ -555,6 +558,7 @@ class EditableTextLine extends RenderObjectWidget {
   final bool hasFocus;
   final double devicePixelRatio;
   final CursorCont cursorCont;
+  final CustomCanvasBuilder? customCanvasBuilder;
 
   @override
   RenderObjectElement createElement() {
@@ -574,7 +578,8 @@ class EditableTextLine extends RenderObjectWidget {
         _getPadding(),
         color,
         cursorCont,
-        defaultStyles.inlineCode!);
+        defaultStyles.inlineCode!,
+        customCanvasBuilder);
   }
 
   @override
@@ -591,7 +596,8 @@ class EditableTextLine extends RenderObjectWidget {
       ..hasFocus = hasFocus
       ..setDevicePixelRatio(devicePixelRatio)
       ..setCursorCont(cursorCont)
-      ..setInlineCodeStyle(defaultStyles.inlineCode!);
+      ..setInlineCodeStyle(defaultStyles.inlineCode!)
+      ..setCustomCanvasBuilder(customCanvasBuilder);
   }
 
   EdgeInsetsGeometry _getPadding() {
@@ -616,7 +622,8 @@ class RenderEditableTextLine extends RenderEditableBox {
       this.padding,
       this.color,
       this.cursorCont,
-      this.inlineCodeStyle);
+      this.inlineCodeStyle,
+      this.customCanvasBuilder);
 
   RenderBox? _leading;
   RenderContentProxyBox? _body;
@@ -634,6 +641,7 @@ class RenderEditableTextLine extends RenderEditableBox {
   List<TextBox>? _selectedRects;
   late Rect _caretPrototype;
   InlineCodeStyle inlineCodeStyle;
+  CustomCanvasBuilder? customCanvasBuilder;
   final Map<TextLineSlot, RenderBox> children = <TextLineSlot, RenderBox>{};
 
   Iterable<RenderBox> get _children sync* {
@@ -749,6 +757,11 @@ class RenderEditableTextLine extends RenderEditableBox {
     markNeedsLayout();
   }
 
+  void setCustomCanvasBuilder(CustomCanvasBuilder? canvasBuilder) {
+    if (customCanvasBuilder == canvasBuilder) return;
+    customCanvasBuilder = canvasBuilder;
+    markNeedsLayout();
+  }
   // Start selection implementation
 
   bool containsTextSelection() {
@@ -1122,9 +1135,18 @@ class RenderEditableTextLine extends RenderEditableBox {
 
       if (inlineCodeStyle.backgroundColor != null) {
         for (final item in line.children) {
-          if (item is! leaf.Text ||
-              !item.style.containsKey(Attribute.inlineCode.key)) {
-            continue;
+          if (item is leaf.Text) {
+            for (final att in item.style.attributes.values) {
+              final textRange = TextSelection(
+                  baseOffset: item.offset,
+                  extentOffset: item.offset + item.length);
+              final rects = _body!.getBoxesForSelection(textRange);
+              customCanvasBuilder?.call(att, rects, context.canvas, effectiveOffset);
+            }
+
+            if (!item.style.containsKey(Attribute.inlineCode.key)) {
+              continue;
+            }
           }
           final textRange = TextSelection(
               baseOffset: item.offset, extentOffset: item.offset + item.length);
