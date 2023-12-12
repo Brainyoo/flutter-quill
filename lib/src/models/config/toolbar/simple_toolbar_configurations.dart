@@ -2,12 +2,14 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart' show immutable;
 import 'package:flutter/widgets.dart'
-    show Axis, Widget, WrapAlignment, WrapCrossAlignment;
+    show Axis, Color, Decoration, Widget, WrapAlignment, WrapCrossAlignment;
 
 import '../../../widgets/quill/embeds.dart';
 import '../../../widgets/quill/quill_controller.dart';
+import '../../structs/link_dialog_action.dart';
 import '../../themes/quill_dialog_theme.dart';
 import '../../themes/quill_icon_theme.dart';
+import '../quill_shared_configurations.dart';
 import 'buttons/base_configurations.dart';
 import 'buttons/clear_format_configurations.dart';
 import 'buttons/color_configurations.dart';
@@ -137,71 +139,72 @@ class QuillSimpleToolbarConfigurations extends QuillSharedToolbarProperties {
   }) : _toolbarSize = toolbarSize;
 
   factory QuillSimpleToolbarConfigurations.only({
-    required controller,
-    sharedConfigurations,
-    toolbarSectionSpacing = kToolbarSectionSpacing,
-    toolbarIconAlignment = WrapAlignment.center,
-    toolbarIconCrossAlignment = WrapCrossAlignment.center,
-    buttonOptions = const QuillToolbarButtonOptions(),
-    customButtons = const [],
-    fontFamilyValues,
-    multiRowsDisplay = false,
-    fontSizesValues,
-    showDividers = false,
-    showFontFamily = false,
-    showFontSize = false,
-    showBoldButton = false,
-    showItalicButton = false,
-    showSmallButton = false,
-    showUnderLineButton = false,
-    showStrikeThrough = false,
-    showInlineCode = false,
-    showColorButton = false,
-    showBackgroundColorButton = false,
-    showClearFormat = false,
-    showAlignmentButtons = false,
-    showLeftAlignment = false,
-    showCenterAlignment = false,
-    showRightAlignment = false,
-    showJustifyAlignment = false,
-    showHeaderStyle = false,
-    showListNumbers = false,
-    showListBullets = false,
-    showListCheck = false,
-    showCodeBlock = false,
-    showQuote = false,
-    showIndent = false,
-    showLink = false,
-    showUndo = false,
-    showRedo = false,
-    showDirection = false,
-    showSearchButton = false,
-    showSubscript = false,
-    showSuperscript = false,
-    linkStyleType = LinkStyleType.original,
+    required QuillController controller,
+    QuillSharedConfigurations sharedConfigurations =
+        const QuillSharedConfigurations(),
+    double toolbarSectionSpacing = kToolbarSectionSpacing,
+    WrapAlignment toolbarIconAlignment = WrapAlignment.center,
+    WrapCrossAlignment toolbarIconCrossAlignment = WrapCrossAlignment.center,
+    QuillToolbarButtonOptions buttonOptions = const QuillToolbarButtonOptions(),
+    List<QuillToolbarCustomButtonOptions> customButtons = const [],
+    Map<String, String>? fontFamilyValues,
+    bool multiRowsDisplay = false,
+    Map<String, String>? fontSizesValues,
+    bool showDividers = false,
+    bool showFontFamily = false,
+    bool showFontSize = false,
+    bool showBoldButton = false,
+    bool showItalicButton = false,
+    bool showSmallButton = false,
+    bool showUnderLineButton = false,
+    bool showStrikeThrough = false,
+    bool showInlineCode = false,
+    bool showColorButton = false,
+    bool showBackgroundColorButton = false,
+    bool showClearFormat = false,
+    bool showAlignmentButtons = false,
+    bool showLeftAlignment = false,
+    bool showCenterAlignment = false,
+    bool showRightAlignment = false,
+    bool showJustifyAlignment = false,
+    bool showHeaderStyle = false,
+    bool showListNumbers = false,
+    bool showListBullets = false,
+    bool showListCheck = false,
+    bool showCodeBlock = false,
+    bool showQuote = false,
+    bool showIndent = false,
+    bool showLink = false,
+    bool showUndo = false,
+    bool showRedo = false,
+    bool showDirection = false,
+    bool showSearchButton = false,
+    bool showSubscript = false,
+    bool showSuperscript = false,
+    LinkStyleType linkStyleType = LinkStyleType.original,
 
     /// The decoration to use for the toolbar.
-    decoration,
+    Decoration? decoration,
 
     /// Toolbar items to display for controls of embed blocks
-    embedButtons,
-    linkDialogAction,
+    List<EmbedButtonBuilder>? embedButtons,
+    LinkDialogAction? linkDialogAction,
 
     ///The theme to use for the icons in the toolbar, uses type [QuillIconTheme]
     // this.iconTheme,
-    dialogTheme,
-    axis = Axis.horizontal,
-    color,
-    sectionDividerColor,
-    sectionDividerSpace,
-    spacerWidget,
+    QuillDialogTheme? dialogTheme,
+    Axis axis = Axis.horizontal,
+    Color? color,
+    Color? sectionDividerColor,
+    double? sectionDividerSpace,
+    Widget? spacerWidget,
 
     /// By default it will calculated based on the [globalIconSize] from
     /// [base] in [QuillToolbarButtonOptions]
     /// You can change it but the the change only apply if
     /// the [multiRowsDisplay] is false, if [multiRowsDisplay] then the value
     /// will be [kDefaultIconSize] * 2
-    toolbarSize,
+    double? toolbarSize,
   }) =>
       QuillSimpleToolbarConfigurations(
         controller: controller,

@@ -9,9 +9,11 @@ import '../../extensions/scaffold_messenger.dart';
 import '../../quill/quill_screen.dart';
 import '../../quill/samples/quill_default_sample.dart';
 import '../../quill/samples/quill_images_sample.dart';
+import '../../quill/samples/quill_only_text_sample.dart';
 import '../../quill/samples/quill_text_sample.dart';
 import '../../quill/samples/quill_videos_sample.dart';
 import '../../settings/widgets/settings_screen.dart';
+import '../../simple/simple_screen.dart';
 import 'example_item.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -73,6 +75,20 @@ class HomeScreen extends StatelessWidget {
                       QuillScreen.routeName,
                       arguments: QuillScreenArgs(
                         document: Document.fromJson(quillDefaultSample),
+                      ),
+                    ),
+                  ),
+                  HomeScreenExampleItem(
+                    title: 'Simple',
+                    icon: const Icon(
+                      Icons.earbuds,
+                      size: 50,
+                    ),
+                    text: '',
+                    onPressed: () => Navigator.of(context).pushNamed(
+                      SimpleScreen.routeName,
+                      arguments: SimpleScreenArgs(
+                        document: Document.fromJson(quillOnlyTextSample),
                       ),
                     ),
                   ),

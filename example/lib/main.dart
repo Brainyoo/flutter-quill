@@ -21,6 +21,7 @@ import 'presentation/quill/samples/quill_text_sample.dart';
 import 'presentation/quill/samples/quill_videos_sample.dart';
 import 'presentation/settings/cubit/settings_cubit.dart';
 import 'presentation/settings/widgets/settings_screen.dart';
+import 'presentation/simple/simple_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -75,6 +76,16 @@ class MyApp extends StatelessWidget {
                   builder: (context) {
                     final args = settings.arguments as QuillScreenArgs;
                     return QuillScreen(
+                      args: args,
+                    );
+                  },
+                );
+              }
+              if (name == SimpleScreen.routeName) {
+                return MaterialPageRoute(
+                  builder: (context) {
+                    final args = settings.arguments as SimpleScreenArgs;
+                    return SimpleScreen(
                       args: args,
                     );
                   },
