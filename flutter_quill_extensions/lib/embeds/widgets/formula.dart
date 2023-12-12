@@ -10,6 +10,7 @@ class Formula extends StatefulWidget {
     required this.context,
     required this.readOnly,
     required this.controller,
+    super.key,
   });
 
   final base.Embed node;

@@ -300,12 +300,12 @@ class StrikeThroughAttribute extends Attribute<bool> {
 
 class SuperscriptsAttribute extends Attribute<bool> {
   const SuperscriptsAttribute()
-      : super('superscripts', AttributeScope.INLINE, true);
+      : super('superscripts', AttributeScope.inline, true);
 }
 
 class SubscriptsAttribute extends Attribute<bool> {
   const SubscriptsAttribute()
-      : super('subscripts', AttributeScope.INLINE, true);
+      : super('subscripts', AttributeScope.inline, true);
 }
 
 class InlineCodeAttribute extends Attribute<bool> {
@@ -341,7 +341,7 @@ class PlaceholderAttribute extends Attribute<bool> {
 }
 
 class ClozeAttribute extends Attribute<String> {
-  const ClozeAttribute(String val) : super('cloze', AttributeScope.INLINE, val);
+  const ClozeAttribute(String val) : super('cloze', AttributeScope.inline, val);
 }
 
 class HeaderAttribute extends Attribute<int?> {
@@ -391,7 +391,7 @@ class StyleAttribute extends Attribute<String?> {
 }
 
 class IdAttribute extends Attribute<String> {
-  const IdAttribute(String val) : super('id', AttributeScope.INLINE, val);
+  const IdAttribute(String val) : super('id', AttributeScope.inline, val);
 }
 
 class TokenAttribute extends Attribute<String> {

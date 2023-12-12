@@ -39,6 +39,9 @@ dependencies:
   flutter_quill: ^9.0.0-dev
   photo_view: ^0.14.0
 
+  math_keyboard: ^0.2.1
+  flutter_math_fork: ^0.7.2
+
   # Plugins
   video_player: ^2.8.1
   youtube_player_flutter: ^8.1.2

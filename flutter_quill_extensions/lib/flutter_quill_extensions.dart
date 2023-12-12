@@ -23,7 +23,6 @@ import 'models/config/toolbar/buttons/image.dart';
 import 'models/config/toolbar/buttons/media_button.dart';
 import 'models/config/toolbar/buttons/video.dart';
 
-export 'embeds/builders.dart';
 export 'embeds/embed_types.dart';
 export 'embeds/formula/toolbar/formula_button.dart';
 export 'embeds/image/editor/image_embed.dart';
