@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 
+import '../../embeds/cloze/cloze_embed_builder.dart';
+
 class SimpleScreen extends StatefulWidget {
   const SimpleScreen({super.key});
 

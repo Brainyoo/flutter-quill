@@ -10,6 +10,7 @@ import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart'
     show getApplicationDocumentsDirectory;
 
+import '../../embeds/cloze/cloze_embed_builder.dart';
 import '../settings/cubit/settings_cubit.dart';
 import 'embeds/timestamp_embed.dart';
 
@@ -216,6 +217,10 @@ class MyQuillToolbar extends StatelessWidget {
             ),
             customButtons: [
               QuillToolbarCustomButtonOptions(
+                icon: const Icon(Icons.space_bar_outlined),
+                onPressed: () => _addEditCloze(context),
+              ),
+              QuillToolbarCustomButtonOptions(
                 icon: const Icon(Icons.add_alarm_rounded),
                 onPressed: () {
                   controller.document
@@ -284,5 +289,57 @@ class MyQuillToolbar extends StatelessWidget {
         );
       },
     );
+  }
+
+  Future<void> _addEditCloze(BuildContext context, {Document? document}) async {
+    final isEditing = document != null;
+    final quillEditorController = QuillController(
+      document: Document(),
+      selection: const TextSelection.collapsed(offset: 0),
+    );
+
+    final textController = TextEditingController(text: document?.toPlainText());
+
+    await showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        titlePadding: const EdgeInsets.only(left: 16, top: 8),
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text('${isEditing ? 'Edit' : 'Add'} cloze'),
+            IconButton(
+              onPressed: () => Navigator.of(context).pop(),
+              icon: const Icon(Icons.close),
+            )
+          ],
+        ),
+        content: TextField(
+          controller: textController,
+        ),
+      ),
+    );
+
+    quillEditorController.replaceText(0, 0, textController.text, null);
+
+    if (quillEditorController.document.isEmpty()) return;
+
+    quillEditorController.formatText(0, quillEditorController.document.length,
+        const IdAttribute('SuperTolleSuperID'));
+
+    final block = BlockEmbed.custom(
+      ClozeBlockEmbed.fromDocument(quillEditorController.document),
+    );
+    final index = controller.selection.baseOffset;
+    final length = controller.selection.extentOffset - index;
+
+    if (isEditing) {
+      final offset =
+          getEmbedNode(controller, controller.selection.start).offset;
+      controller.replaceText(
+          offset, 1, block, TextSelection.collapsed(offset: offset));
+    } else {
+      controller.replaceText(index, length, block, null);
+    }
   }
 }

@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_quill/flutter_quill.dart' hide Text;
+import 'package:flutter_quill/flutter_quill.dart';
 
 class ClozeEmbedBuilder implements EmbedBuilder {
   ClozeEmbedBuilder({required this.controller});
@@ -9,7 +9,7 @@ class ClozeEmbedBuilder implements EmbedBuilder {
   QuillController controller;
 
   @override
-  String get key => 'clozeEmbed';
+  String get key => ClozeBlockEmbed.clozeType;
 
   @override
   Widget build(
@@ -20,7 +20,7 @@ class ClozeEmbedBuilder implements EmbedBuilder {
     bool inline,
     TextStyle textStyle,
   ) {
-    final notes = ClozeBlockEmbed(node.value.data).document;
+    final cloze = ClozeBlockEmbed(node.value.data).document;
 
     return Material(
       color: Colors.transparent,
@@ -32,10 +32,10 @@ class ClozeEmbedBuilder implements EmbedBuilder {
             padding: const EdgeInsets.symmetric(horizontal: 2),
           ),
           child: Text(
-            notes.toPlainText().replaceAll('\n', ' '),
+            cloze.toPlainText().replaceAll('\n', ' '),
             style: DefaultStyles.getInstance(context).paragraph!.style,
           ),
-          onPressed: () => _addEditCloze(context, document: notes),
+          onPressed: () => _addEditCloze(context, document: cloze),
         ),
       ),
     );
@@ -107,9 +107,9 @@ class ClozeEmbedBuilder implements EmbedBuilder {
 }
 
 class ClozeBlockEmbed extends CustomBlockEmbed {
-  const ClozeBlockEmbed(String value) : super(noteType, value);
+  const ClozeBlockEmbed(String value) : super(clozeType, value);
 
-  static const String noteType = 'clozeEmbed';
+  static const String clozeType = 'cloze';
 
   static ClozeBlockEmbed fromDocument(Document document) =>
       ClozeBlockEmbed(jsonEncode(document.toDelta().toJson()));

@@ -73,6 +73,7 @@ class MyQuillEditor extends StatelessWidget {
           return file.path;
         },
         embedBuilders: [
+          ...configurations.embedBuilders ?? [],
           ...(isWeb()
               ? FlutterQuillEmbeds.editorWebBuilders()
               : FlutterQuillEmbeds.editorBuilders(
