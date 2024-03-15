@@ -6,6 +6,7 @@ import 'package:flutter/material.dart'
 import 'package:flutter/widgets.dart';
 import 'package:meta/meta.dart' show experimental;
 
+import '../../../../flutter_quill.dart';
 import '../../../widgets/editor/editor_builder.dart';
 import '../../../widgets/others/default_styles.dart';
 import '../../../widgets/others/delegate.dart';
@@ -15,6 +16,7 @@ import '../../../widgets/quill/quill_controller.dart';
 import '../../../widgets/raw_editor/raw_editor.dart';
 import '../../themes/quill_dialog_theme.dart';
 import '../quill_shared_configurations.dart';
+import '../quill_shortcut_configuration.dart';
 import 'element_options.dart';
 
 export 'element_options.dart';
@@ -79,6 +81,7 @@ class QuillEditorConfigurations extends Equatable {
     this.enableScribble = false,
     this.onScribbleActivated,
     this.scribbleAreaInsets,
+    this.shortcutConfiguration = const QuillShortcutConfiguration(),
   });
 
   final QuillSharedConfigurations sharedConfigurations;
@@ -348,6 +351,8 @@ class QuillEditorConfigurations extends Equatable {
   /// Optional insets for the scribble area.
   final EdgeInsets? scribbleAreaInsets;
 
+  final QuillShortcutConfiguration shortcutConfiguration;
+  
   @override
   List<Object?> get props => [
         placeholder,
@@ -408,6 +413,7 @@ class QuillEditorConfigurations extends Equatable {
     bool? enableScribble,
     void Function()? onScribbleActivated,
     EdgeInsets? scribbleAreaInsets,
+    QuillShortcutConfiguration? shortcutConfiguration,
   }) {
     return QuillEditorConfigurations(
       sharedConfigurations: sharedConfigurations ?? this.sharedConfigurations,
@@ -471,6 +477,7 @@ class QuillEditorConfigurations extends Equatable {
       enableScribble: enableScribble ?? this.enableScribble,
       onScribbleActivated: onScribbleActivated ?? this.onScribbleActivated,
       scribbleAreaInsets: scribbleAreaInsets ?? this.scribbleAreaInsets,
+      shortcutConfiguration: shortcutConfiguration ?? this.shortcutConfiguration,
     );
   }
 }

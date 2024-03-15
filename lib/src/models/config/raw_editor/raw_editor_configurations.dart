@@ -33,6 +33,7 @@ import '../../../widgets/quill/quill_controller.dart';
 import '../../../widgets/raw_editor/raw_editor.dart';
 import '../../../widgets/raw_editor/raw_editor_state.dart';
 import '../../themes/quill_dialog_theme.dart';
+import '../quill_shortcut_configuration.dart';
 
 @immutable
 class QuillRawEditorConfigurations extends Equatable {
@@ -81,6 +82,7 @@ class QuillRawEditorConfigurations extends Equatable {
     this.enableScribble = false,
     this.onScribbleActivated,
     this.scribbleAreaInsets,
+    this.shortcutConfiguration = const QuillShortcutConfiguration(),
   });
 
   /// Controls the document being edited.
@@ -314,6 +316,8 @@ class QuillRawEditorConfigurations extends Equatable {
 
   /// Optional insets for the scribble area.
   final EdgeInsets? scribbleAreaInsets;
+
+  final QuillShortcutConfiguration shortcutConfiguration;
 
   @override
   List<Object?> get props => [
