@@ -31,7 +31,7 @@ for the modern Android, iOS,
 web and desktop platforms.
 Check out our [Youtube Playlist] or [Code Introduction](./doc/code_introduction.md)
 to take a detailed walkthrough of the code base.
-You can join our [Slack Group] or [Telegram Channel] for discussion.
+You can join our [Slack Group] for discussion.
 
 Pub page: [FlutterQuill] <br>
 If you are viewing this page from pub.dev page, then you
@@ -88,20 +88,9 @@ dependencies:
     git: https://github.com/singerdmx/flutter-quill.git
 ```
 
->
-> Note: At this time, we are making too many changes to the library, and you might see a new version almost every day
->
 > Using the latest version and reporting any issues you encounter on GitHub will greatly contribute to the improvement of the library. 
-> Your input and insights are valuable in shaping a stable and reliable version for all our users. Thank you for being part of the open-source community!
+> Your input and insights are valuable in shaping a stable and reliable version for all the developers. Thank you for being part of the open-source community!
 >
-
-<!-- Compatible versions:
-
-| flutter_quill | Flutter | Dart  |
-|---------------|---------|-------|
-| 9.0.x         | 3.16.x  | 3.2.x |
-
-These versions are tested and well-supported, you shouldn't get a build failure -->
 
 ## Platform Specific Configurations
 
@@ -127,7 +116,6 @@ QuillController _controller = QuillController.basic();
 
 And then use the `QuillEditor`, `QuillToolbar` widgets,
 connect the `QuillController` to them
-using `QuillProvider` inherited widget
 
 ```dart
 QuillToolbar.simple(
@@ -295,5 +283,4 @@ You can check the [Todo](./doc/todo.md) list if you want to
 [ReactQuill]: https://github.com/zenoamaro/react-quill
 [Youtube Playlist]: https://youtube.com/playlist?list=PLbhaS_83B97vONkOAWGJrSXWX58et9zZ2
 [Slack Group]: https://join.slack.com/t/bulletjournal1024/shared_invite/zt-fys7t9hi-ITVU5PGDen1rNRyCjdcQ2g
-[Telegram Channel]: https://t.me/flutter_quill
-[Sample Page]: https://github.com/singerdmx/flutter-quill/blob/master/example/lib/presentation/quill/quill_screen.dart
+[Sample Page]: https://github.com/singerdmx/flutter-quill/blob/master/example/lib/screens/quill/quill_screen.dart

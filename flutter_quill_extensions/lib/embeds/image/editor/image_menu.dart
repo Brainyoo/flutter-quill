@@ -1,12 +1,13 @@
 import 'package:flutter/cupertino.dart' show showCupertinoModalPopup;
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
+import 'package:flutter_quill/extensions.dart';
 import 'package:flutter_quill/flutter_quill.dart'
     show ImageUrl, QuillController, StyleAttribute, getEmbedNode;
 import 'package:flutter_quill/translations.dart';
 import 'package:super_clipboard/super_clipboard.dart';
 
-import '../../../models/config/editor/image/image.dart';
+import '../../../models/config/image/editor/image_configurations.dart';
 import '../../../models/config/shared_configurations.dart';
 import '../../../services/image_saver/s_image_saver.dart';
 import '../../../utils/element_utils/element_utils.dart';
@@ -96,9 +97,10 @@ class ImageOptionsMenu extends StatelessWidget {
               );
 
               final data = await convertImageToUint8List(image);
+              final clipboard = SystemClipboard.instance;
               if (data != null) {
                 final item = DataWriterItem()..add(Formats.png(data));
-                await ClipboardWriter.instance.write([item]);
+                await clipboard?.write([item]);
               }
               navigator.pop();
             },
@@ -159,14 +161,15 @@ class ImageOptionsMenu extends StatelessWidget {
                   return;
                 }
 
-                String message;
-                switch (saveImageResult.method) {
-                  case SaveImageResultMethod.network:
-                    message = localizations.savedUsingTheNetwork;
-                    break;
-                  case SaveImageResultMethod.localStorage:
-                    message = localizations.savedUsingLocalStorage;
-                    break;
+                var message = switch (saveImageResult.method) {
+                  SaveImageResultMethod.network =>
+                    localizations.savedUsingTheNetwork,
+                  SaveImageResultMethod.localStorage =>
+                    localizations.savedUsingLocalStorage,
+                };
+
+                if (isDesktop(supportWeb: false)) {
+                  message = localizations.theImageHasBeenSavedAt(imageSource);
                 }
 
                 messenger.showSnackBar(

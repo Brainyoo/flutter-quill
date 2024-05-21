@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 
-import '../../../models/config/toolbar/buttons/formula.dart';
+import '../../../models/config/formula/formula_configurations.dart';
 
 class QuillToolbarFormulaButton extends StatelessWidget {
   const QuillToolbarFormulaButton({
@@ -14,40 +14,39 @@ class QuillToolbarFormulaButton extends StatelessWidget {
   final QuillToolbarFormulaButtonOptions options;
 
   double _iconSize(BuildContext context) {
-    final baseFontSize = baseButtonExtraOptions(context).globalIconSize;
+    final baseFontSize = baseButtonExtraOptions(context)?.iconSize;
     final iconSize = options.iconSize;
-    return iconSize ?? baseFontSize;
+    return iconSize ?? baseFontSize ?? kDefaultIconSize;
   }
 
   double _iconButtonFactor(BuildContext context) {
-    final baseIconFactor =
-        baseButtonExtraOptions(context).globalIconButtonFactor;
+    final baseIconFactor = baseButtonExtraOptions(context)?.iconButtonFactor;
     final iconButtonFactor = options.iconButtonFactor;
-    return iconButtonFactor ?? baseIconFactor;
+    return iconButtonFactor ?? baseIconFactor ?? kDefaultIconButtonFactor;
   }
 
   VoidCallback? _afterButtonPressed(BuildContext context) {
     return options.afterButtonPressed ??
-        baseButtonExtraOptions(context).afterButtonPressed;
+        baseButtonExtraOptions(context)?.afterButtonPressed;
   }
 
   QuillIconTheme? _iconTheme(BuildContext context) {
-    return options.iconTheme ?? baseButtonExtraOptions(context).iconTheme;
+    return options.iconTheme ?? baseButtonExtraOptions(context)?.iconTheme;
   }
 
-  QuillToolbarBaseButtonOptions baseButtonExtraOptions(BuildContext context) {
-    return context.requireQuillToolbarBaseButtonOptions;
+  QuillToolbarBaseButtonOptions? baseButtonExtraOptions(BuildContext context) {
+    return context.quillToolbarBaseButtonOptions;
   }
 
   IconData _iconData(BuildContext context) {
     return options.iconData ??
-        baseButtonExtraOptions(context).iconData ??
+        baseButtonExtraOptions(context)?.iconData ??
         Icons.functions;
   }
 
   String _tooltip(BuildContext context) {
     return options.tooltip ??
-        baseButtonExtraOptions(context).tooltip ??
+        baseButtonExtraOptions(context)?.tooltip ??
         'Insert formula';
     // ('Insert formula'.i18n);
   }
@@ -59,8 +58,6 @@ class QuillToolbarFormulaButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
     final iconTheme = _iconTheme(context);
 
     final tooltip = _tooltip(context);
@@ -68,9 +65,7 @@ class QuillToolbarFormulaButton extends StatelessWidget {
     final iconButtonFactor = _iconButtonFactor(context);
     final iconData = _iconData(context);
     final childBuilder =
-        options.childBuilder ?? baseButtonExtraOptions(context).childBuilder;
-
-    final iconColor = iconTheme?.iconUnselectedColor ?? theme.iconTheme.color;
+        options.childBuilder ?? baseButtonExtraOptions(context)?.childBuilder;
 
     if (childBuilder != null) {
       return childBuilder(
@@ -91,10 +86,14 @@ class QuillToolbarFormulaButton extends StatelessWidget {
     }
 
     return QuillToolbarIconButton(
-      icon: Icon(iconData, size: iconSize * iconButtonFactor, color: iconColor),
+      icon: Icon(
+        iconData,
+        size: iconSize * iconButtonFactor,
+      ),
       tooltip: tooltip,
       onPressed: () => _sharedOnPressed(context),
-      isFilled: false,
+      isSelected: false,
+      iconTheme: iconTheme,
     );
   }
 

@@ -7,10 +7,8 @@ import 'package:flutter/material.dart' show Theme;
 import 'package:flutter/scheduler.dart' show SchedulerBinding;
 import 'package:flutter/services.dart';
 
-import '../../models/documents/attribute.dart';
 import '../../models/documents/document.dart';
 import '../../utils/delta.dart';
-import '../../utils/font.dart';
 import '../editor/editor.dart';
 import 'raw_editor.dart';
 
@@ -207,35 +205,6 @@ mixin RawEditorStateTextInputClientMixin on EditorState
         diff.inserted,
         value.selection,
       );
-
-      // TODO: There is a bug here, the first character is not being formatted
-
-      if (widget.configurations.controller.selectedFontFamily != null) {
-        widget.configurations.controller.formatText(
-          diff.start,
-          diff.deleted.length,
-          Attribute.fromKeyValue(
-            Attribute.font.key,
-            widget.configurations.controller.selectedFontFamily,
-          ),
-        );
-      }
-
-      // TODO: A bug here too
-
-      if (widget.configurations.controller.selectedFontSize != null) {
-        widget.configurations.controller.formatText(
-          diff.start,
-          diff.deleted.length,
-          Attribute.fromKeyValue(
-            Attribute.size.key,
-            widget.configurations.controller.selectedFontSize == '0'
-                ? null
-                : getFontSize(
-                    widget.configurations.controller.selectedFontSize),
-          ),
-        );
-      }
     }
   }
 

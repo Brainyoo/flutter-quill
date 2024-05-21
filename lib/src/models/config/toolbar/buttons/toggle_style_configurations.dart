@@ -1,8 +1,7 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/foundation.dart' show immutable;
-import 'package:flutter/widgets.dart' show Color;
 
-import 'base_configurations.dart';
+import '../base_button_configurations.dart';
 
 class QuillToolbarToggleStyleButtonExtraOptions
     extends QuillToolbarBaseButtonExtraOptions
@@ -24,17 +23,11 @@ class QuillToolbarToggleStyleButtonOptions
         QuillToolbarToggleStyleButtonExtraOptions> {
   const QuillToolbarToggleStyleButtonOptions({
     super.iconData,
-    this.iconSize,
-    this.iconButtonFactor,
-    this.fillColor,
+    super.iconSize,
+    super.iconButtonFactor,
     super.tooltip,
     super.afterButtonPressed,
     super.iconTheme,
     super.childBuilder,
-    super.controller,
   });
-
-  final double? iconSize;
-  final double? iconButtonFactor;
-  final Color? fillColor;
 }

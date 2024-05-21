@@ -1,36 +1,114 @@
-import 'package:flutter/widgets.dart' show Color;
-
-import 'package:meta/meta.dart' show immutable;
+// ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'package:flutter/material.dart';
 
 @immutable
 class QuillIconTheme {
-  const QuillIconTheme(
-      {this.iconSelectedColor,
-      this.iconUnselectedColor,
-      this.iconSelectedFillColor,
-      this.iconUnselectedFillColor,
-      this.disabledIconColor,
-      this.disabledIconFillColor,
-      this.borderRadius});
+  const QuillIconTheme({
+    this.iconButtonSelectedData,
+    this.iconButtonUnselectedData,
+  });
 
-  ///The color to use for selected icons in the toolbar
-  final Color? iconSelectedColor;
+  final IconButtonData? iconButtonUnselectedData;
+  final IconButtonData? iconButtonSelectedData;
 
-  ///The color to use for unselected icons in the toolbar
-  final Color? iconUnselectedColor;
+  QuillIconTheme copyWith({
+    IconButtonData? iconButtonUnselectedData,
+    IconButtonData? iconButtonSelectedData,
+  }) {
+    return QuillIconTheme(
+      iconButtonUnselectedData:
+          iconButtonUnselectedData ?? this.iconButtonUnselectedData,
+      iconButtonSelectedData:
+          iconButtonSelectedData ?? this.iconButtonSelectedData,
+    );
+  }
+}
 
-  ///The fill color to use for the selected icons in the toolbar
-  final Color? iconSelectedFillColor;
+@immutable
+class IconButtonData {
+  const IconButtonData({
+    this.iconSize,
+    this.visualDensity,
+    this.padding,
+    this.alignment,
+    this.splashRadius,
+    this.color,
+    this.focusColor,
+    this.hoverColor,
+    this.highlightColor,
+    this.splashColor,
+    this.disabledColor,
+    this.mouseCursor,
+    this.autofocus = false,
+    this.tooltip,
+    this.enableFeedback,
+    this.constraints,
+    this.style,
+    this.isSelected,
+    this.selectedIcon,
+  });
 
-  ///The fill color to use for the unselected icons in the toolbar
-  final Color? iconUnselectedFillColor;
+  final double? iconSize;
+  final VisualDensity? visualDensity;
+  final EdgeInsetsGeometry? padding;
+  final AlignmentGeometry? alignment;
+  final double? splashRadius;
+  final Color? color;
+  final Color? focusColor;
+  final Color? hoverColor;
+  final Color? highlightColor;
+  final Color? splashColor;
+  final Color? disabledColor;
+  final MouseCursor? mouseCursor;
+  final bool autofocus;
+  final String? tooltip;
+  final bool? enableFeedback;
+  final BoxConstraints? constraints;
+  final ButtonStyle? style;
+  final bool? isSelected;
+  final Widget? selectedIcon;
 
-  ///The color to use for disabled icons in the toolbar
-  final Color? disabledIconColor;
-
-  ///The fill color to use for disabled icons in the toolbar
-  final Color? disabledIconFillColor;
-
-  ///The borderRadius for icons
-  final double? borderRadius;
+  IconButtonData copyWith({
+    double? iconSize,
+    VisualDensity? visualDensity,
+    EdgeInsetsGeometry? padding,
+    AlignmentGeometry? alignment,
+    double? splashRadius,
+    Color? color,
+    Color? focusColor,
+    Color? hoverColor,
+    Color? highlightColor,
+    Color? splashColor,
+    Color? disabledColor,
+    MouseCursor? mouseCursor,
+    bool? autofocus,
+    String? tooltip,
+    bool? enableFeedback,
+    BoxConstraints? constraints,
+    ButtonStyle? style,
+    bool? isSelected,
+    Widget? selectedIcon,
+  }) {
+    return IconButtonData(
+      iconSize: iconSize ?? this.iconSize,
+      visualDensity: visualDensity ?? this.visualDensity,
+      padding: padding ?? this.padding,
+      alignment: alignment ?? this.alignment,
+      splashRadius: splashRadius ?? this.splashRadius,
+      color: color ?? this.color,
+      focusColor: focusColor ?? this.focusColor,
+      hoverColor: hoverColor ?? this.hoverColor,
+      highlightColor: highlightColor ?? this.highlightColor,
+      splashColor: splashColor ?? this.splashColor,
+      disabledColor: disabledColor ?? this.disabledColor,
+      mouseCursor: mouseCursor ?? this.mouseCursor,
+      autofocus: autofocus ?? this.autofocus,
+      tooltip: tooltip ?? this.tooltip,
+      enableFeedback: enableFeedback ?? this.enableFeedback,
+      constraints: constraints ?? this.constraints,
+      style: style ?? this.style,
+      isSelected: isSelected ?? this.isSelected,
+      selectedIcon: selectedIcon ?? this.selectedIcon,
+    );
+  }
 }

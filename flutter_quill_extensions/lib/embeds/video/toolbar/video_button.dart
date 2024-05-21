@@ -1,11 +1,9 @@
-// ignore_for_file: use_build_context_synchronously
-
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:flutter_quill/translations.dart';
 
 import '../../../models/config/shared_configurations.dart';
-import '../../../models/config/toolbar/buttons/video.dart';
+import '../../../models/config/video/toolbar/video_configurations.dart';
 import '../../../services/image_picker/image_options.dart';
 import '../../others/image_video_utils.dart';
 import '../video.dart';
@@ -23,40 +21,39 @@ class QuillToolbarVideoButton extends StatelessWidget {
   final QuillToolbarVideoButtonOptions options;
 
   double _iconSize(BuildContext context) {
-    final baseFontSize = baseButtonExtraOptions(context).globalIconSize;
+    final baseFontSize = baseButtonExtraOptions(context)?.iconSize;
     final iconSize = options.iconSize;
-    return iconSize ?? baseFontSize;
+    return iconSize ?? baseFontSize ?? kDefaultIconSize;
   }
 
   double _iconButtonFactor(BuildContext context) {
-    final baseIconFactor =
-        baseButtonExtraOptions(context).globalIconButtonFactor;
+    final baseIconFactor = baseButtonExtraOptions(context)?.iconButtonFactor;
     final iconButtonFactor = options.iconButtonFactor;
-    return iconButtonFactor ?? baseIconFactor;
+    return iconButtonFactor ?? baseIconFactor ?? kDefaultIconButtonFactor;
   }
 
   VoidCallback? _afterButtonPressed(BuildContext context) {
     return options.afterButtonPressed ??
-        baseButtonExtraOptions(context).afterButtonPressed;
+        baseButtonExtraOptions(context)?.afterButtonPressed;
   }
 
   QuillIconTheme? _iconTheme(BuildContext context) {
-    return options.iconTheme ?? baseButtonExtraOptions(context).iconTheme;
+    return options.iconTheme ?? baseButtonExtraOptions(context)?.iconTheme;
   }
 
-  QuillToolbarBaseButtonOptions baseButtonExtraOptions(BuildContext context) {
-    return context.requireQuillToolbarBaseButtonOptions;
+  QuillToolbarBaseButtonOptions? baseButtonExtraOptions(BuildContext context) {
+    return context.quillToolbarBaseButtonOptions;
   }
 
   IconData _iconData(BuildContext context) {
     return options.iconData ??
-        baseButtonExtraOptions(context).iconData ??
+        baseButtonExtraOptions(context)?.iconData ??
         Icons.movie_creation;
   }
 
   String _tooltip(BuildContext context) {
     return options.tooltip ??
-        baseButtonExtraOptions(context).tooltip ??
+        baseButtonExtraOptions(context)?.tooltip ??
         'Insert video';
     // ('Insert video'.i18n);
   }
@@ -68,20 +65,17 @@ class QuillToolbarVideoButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
-    final iconTheme = _iconTheme(context);
-
     final tooltip = _tooltip(context);
     final iconSize = _iconSize(context);
     final iconButtonFactor = _iconButtonFactor(context);
     final iconData = _iconData(context);
     final childBuilder =
-        options.childBuilder ?? baseButtonExtraOptions(context).childBuilder;
+        options.childBuilder ?? baseButtonExtraOptions(context)?.childBuilder;
 
-    final iconColor = iconTheme?.iconUnselectedColor ?? theme.iconTheme.color;
-    final iconFillColor = iconTheme?.iconUnselectedFillColor ??
-        (options.fillColor ?? theme.canvasColor);
+    // final iconColor =
+    //     iconTheme?.iconUnselectedFillColor ?? theme.iconTheme.color;
+    // final iconFillColor = iconTheme?.iconUnselectedFillColor ??
+    //     (options.fillColor ?? theme.canvasColor);
 
     if (childBuilder != null) {
       return childBuilder(
@@ -89,7 +83,6 @@ class QuillToolbarVideoButton extends StatelessWidget {
           afterButtonPressed: _afterButtonPressed(context),
           iconData: iconData,
           dialogTheme: options.dialogTheme,
-          fillColor: iconFillColor,
           iconSize: options.iconSize,
           iconButtonFactor: iconButtonFactor,
           linkRegExp: options.linkRegExp,
@@ -106,10 +99,14 @@ class QuillToolbarVideoButton extends StatelessWidget {
     }
 
     return QuillToolbarIconButton(
-      icon: Icon(iconData, size: iconSize * iconButtonFactor, color: iconColor),
+      icon: Icon(
+        iconData,
+        size: iconSize * iconButtonFactor,
+      ),
       tooltip: tooltip,
-      isFilled: false,
+      isSelected: false,
       onPressed: () => _sharedOnPressed(context),
+      iconTheme: _iconTheme(context),
     );
   }
 
@@ -141,7 +138,8 @@ class QuillToolbarVideoButton extends StatelessWidget {
         (await imagePickerService.pickVideo(source: ImageSource.gallery))?.path,
       InsertVideoSource.camera =>
         (await imagePickerService.pickVideo(source: ImageSource.camera))?.path,
-      InsertVideoSource.link => await _typeLink(context),
+      InsertVideoSource.link =>
+        context.mounted ? await _typeLink(context) : null,
     };
     if (videoUrl == null) {
       return;

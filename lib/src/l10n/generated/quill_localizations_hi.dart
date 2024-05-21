@@ -149,6 +149,15 @@ class FlutterQuillLocalizationsHi extends FlutterQuillLocalizations {
   String get heading3 => 'Heading 3';
 
   @override
+  String get heading4 => 'Heading 4';
+
+  @override
+  String get heading5 => 'Heading 5';
+
+  @override
+  String get heading6 => 'Heading 6';
+
+  @override
   String get numberedList => 'संख्याबद्ध सूची';
 
   @override
@@ -211,6 +220,11 @@ class FlutterQuillLocalizationsHi extends FlutterQuillLocalizations {
   @override
   String get savedUsingLocalStorage =>
       'स्थानीय संग्रहण का उपयोग करके सहेजा गया';
+
+  @override
+  String theImageHasBeenSavedAt(String imagePath) {
+    return 'The image has been saved at: $imagePath';
+  }
 
   @override
   String get errorWhileSavingImage => 'तस्वीर सहेजते समय त्रुटि';

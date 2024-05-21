@@ -33,7 +33,6 @@ class QuillToolbarFontFamilyButtonOptions extends QuillToolbarBaseButtonOptions<
   const QuillToolbarFontFamilyButtonOptions({
     this.attribute = Attribute.font,
     this.rawItemsMap,
-    super.controller,
     super.iconData,
     super.afterButtonPressed,
     super.tooltip,
@@ -50,8 +49,9 @@ class QuillToolbarFontFamilyButtonOptions extends QuillToolbarBaseButtonOptions<
     this.itemPadding,
     this.defaultItemColor = Colors.red,
     this.renderFontFamilies = true,
-    this.iconSize,
-    this.iconButtonFactor,
+    super.iconSize,
+    super.iconButtonFactor,
+    this.defaultDisplayText,
   });
 
   /// By default it will be [fontFamilyValues] from [QuillSimpleToolbarConfigurations]
@@ -70,10 +70,7 @@ class QuillToolbarFontFamilyButtonOptions extends QuillToolbarBaseButtonOptions<
   final double? itemHeight;
   final EdgeInsets? itemPadding;
   final Color? defaultItemColor;
-
-  /// By default will use [globalIconSize]
-  final double? iconSize;
-  final double? iconButtonFactor;
+  final String? defaultDisplayText;
 
   QuillToolbarFontFamilyButtonOptions copyWith({
     List<PopupMenuEntry<String>>? items,
@@ -92,17 +89,15 @@ class QuillToolbarFontFamilyButtonOptions extends QuillToolbarBaseButtonOptions<
     Color? defaultItemColor,
     double? iconSize,
     double? iconButtonFactor,
-    // Add properties to override inherited properties
-    QuillController? controller,
     IconData? iconData,
     VoidCallback? afterButtonPressed,
     String? tooltip,
     QuillIconTheme? iconTheme,
+    String? defaultDisplayText,
   }) {
     return QuillToolbarFontFamilyButtonOptions(
       attribute: attribute ?? this.attribute,
       rawItemsMap: rawItemsMap ?? this.rawItemsMap,
-      controller: controller ?? this.controller,
       iconData: iconData ?? this.iconData,
       afterButtonPressed: afterButtonPressed ?? this.afterButtonPressed,
       tooltip: tooltip ?? this.tooltip,
@@ -121,6 +116,7 @@ class QuillToolbarFontFamilyButtonOptions extends QuillToolbarBaseButtonOptions<
       defaultItemColor: defaultItemColor ?? this.defaultItemColor,
       iconSize: iconSize ?? this.iconSize,
       iconButtonFactor: iconButtonFactor ?? this.iconButtonFactor,
+      defaultDisplayText: defaultDisplayText ?? this.defaultDisplayText,
     );
   }
 }

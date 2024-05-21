@@ -7,20 +7,25 @@ import '../../../models/documents/attribute.dart';
 import '../../../models/rules/insert.dart';
 import '../../../models/structs/link_dialog_action.dart';
 import '../../../models/themes/quill_dialog_theme.dart';
-import '../../../models/themes/quill_icon_theme.dart';
 import '../../others/link.dart';
-import '../../quill/quill_controller.dart';
+import '../base_button/base_value_button.dart';
 import '../base_toolbar.dart';
 
-class QuillToolbarLinkStyleButton extends StatefulWidget {
+typedef QuillToolbarLinkStyleBaseButton = QuillToolbarBaseButton<
+    QuillToolbarLinkStyleButtonOptions,
+    QuillToolbarLinkStyleButtonExtraOptions>;
+
+typedef QuillToolbarLinkStyleBaseButtonState<
+        W extends QuillToolbarLinkStyleBaseButton>
+    = QuillToolbarCommonButtonState<W, QuillToolbarLinkStyleButtonOptions,
+        QuillToolbarLinkStyleButtonExtraOptions>;
+
+class QuillToolbarLinkStyleButton extends QuillToolbarLinkStyleBaseButton {
   const QuillToolbarLinkStyleButton({
-    required this.controller,
-    this.options = const QuillToolbarLinkStyleButtonOptions(),
+    required super.controller,
+    super.options = const QuillToolbarLinkStyleButtonOptions(),
     super.key,
   });
-
-  final QuillController controller;
-  final QuillToolbarLinkStyleButtonOptions options;
 
   @override
   QuillToolbarLinkStyleButtonState createState() =>
@@ -28,7 +33,10 @@ class QuillToolbarLinkStyleButton extends StatefulWidget {
 }
 
 class QuillToolbarLinkStyleButtonState
-    extends State<QuillToolbarLinkStyleButton> {
+    extends QuillToolbarLinkStyleBaseButtonState {
+  @override
+  String get defaultTooltip => context.loc.insertURL;
+
   void _didChangeSelection() {
     setState(() {});
   }
@@ -54,47 +62,8 @@ class QuillToolbarLinkStyleButtonState
     controller.removeListener(_didChangeSelection);
   }
 
-  QuillController get controller {
-    return widget.controller;
-  }
-
-  QuillToolbarLinkStyleButtonOptions get options {
-    return widget.options;
-  }
-
-  double get iconSize {
-    final baseFontSize = baseButtonExtraOptions.globalIconSize;
-    final iconSize = options.iconSize;
-    return iconSize ?? baseFontSize;
-  }
-
-  double get iconButtonFactor {
-    final baseIconFactor = baseButtonExtraOptions.globalIconButtonFactor;
-    final iconButtonFactor = options.iconButtonFactor;
-    return iconButtonFactor ?? baseIconFactor;
-  }
-
-  VoidCallback? get afterButtonPressed {
-    return options.afterButtonPressed ??
-        baseButtonExtraOptions.afterButtonPressed;
-  }
-
-  QuillIconTheme? get iconTheme {
-    return options.iconTheme ?? baseButtonExtraOptions.iconTheme;
-  }
-
-  QuillToolbarBaseButtonOptions get baseButtonExtraOptions {
-    return context.requireQuillToolbarBaseButtonOptions;
-  }
-
-  String get tooltip {
-    return options.tooltip ??
-        baseButtonExtraOptions.tooltip ??
-        context.loc.insertURL;
-  }
-
   IconData get iconData {
-    return options.iconData ?? baseButtonExtraOptions.iconData ?? Icons.link;
+    return options.iconData ?? baseButtonExtraOptions?.iconData ?? Icons.link;
   }
 
   Color get dialogBarrierColor {
@@ -112,22 +81,10 @@ class QuillToolbarLinkStyleButtonState
     final isToggled = _getLinkAttributeValue() != null;
 
     final childBuilder =
-        options.childBuilder ?? baseButtonExtraOptions.childBuilder;
+        options.childBuilder ?? baseButtonExtraOptions?.childBuilder;
     if (childBuilder != null) {
       return childBuilder(
-        QuillToolbarLinkStyleButtonOptions(
-          afterButtonPressed: afterButtonPressed,
-          controller: controller,
-          dialogBarrierColor: dialogBarrierColor,
-          dialogTheme: options.dialogTheme,
-          iconData: iconData,
-          iconSize: iconSize,
-          iconButtonFactor: iconButtonFactor,
-          tooltip: tooltip,
-          linkDialogAction: options.linkDialogAction,
-          linkRegExp: linkRegExp,
-          iconTheme: iconTheme,
-        ),
+        options,
         QuillToolbarLinkStyleButtonExtraOptions(
           context: context,
           controller: controller,
@@ -138,25 +95,23 @@ class QuillToolbarLinkStyleButtonState
         ),
       );
     }
-    final theme = Theme.of(context);
     return QuillToolbarIconButton(
       tooltip: tooltip,
       icon: Icon(
         iconData,
         size: iconSize * iconButtonFactor,
-        color: isToggled
-            ? (iconTheme?.iconSelectedColor ?? theme.primaryIconTheme.color)
-            : (iconTheme?.iconUnselectedColor ?? theme.iconTheme.color),
+        // color: isToggled
+        //     ? iconTheme?.iconSelectedFillColor
+        //     : iconTheme?.iconUnselectedFillColor,
       ),
-      isFilled: isToggled,
+      isSelected: isToggled,
       onPressed: () => _openLinkDialog(context),
       afterPressed: afterButtonPressed,
+      iconTheme: iconTheme,
     );
   }
 
   Future<void> _openLinkDialog(BuildContext context) async {
-    // TODO: Add a custom call back to customize this just like in the search dialog
-    // button
     final value = await showDialog<_TextLink>(
       context: context,
       barrierColor: dialogBarrierColor,

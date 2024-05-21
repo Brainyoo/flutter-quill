@@ -2,7 +2,7 @@ import 'package:flutter/widgets.dart' show Color;
 
 import '../../../../widgets/quill/quill_controller.dart';
 import '../../quill_shared_configurations.dart' show QuillSharedConfigurations;
-import 'base_configurations.dart';
+import '../base_button_configurations.dart';
 
 class QuillToolbarColorButtonExtraOptions
     extends QuillToolbarBaseButtonExtraOptions {
@@ -18,27 +18,23 @@ class QuillToolbarColorButtonExtraOptions
 
   final Color? iconColor;
   final Color? iconColorBackground;
-  final Color fillColor;
-  final Color fillColorBackground;
+  final Color? fillColor;
+  final Color? fillColorBackground;
 }
 
 class QuillToolbarColorButtonOptions extends QuillToolbarBaseButtonOptions<
     QuillToolbarColorButtonOptions, QuillToolbarColorButtonExtraOptions> {
   const QuillToolbarColorButtonOptions({
     this.dialogBarrierColor,
-    this.iconSize,
-    this.iconButtonFactor,
+    super.iconSize,
+    super.iconButtonFactor,
     super.iconData,
     super.afterButtonPressed,
     super.childBuilder,
-    super.controller,
     super.iconTheme,
     super.tooltip,
     this.customOnPressedCallback,
   });
-
-  final double? iconSize;
-  final double? iconButtonFactor;
 
   /// By default will use the default `dialogBarrierColor` from
   /// [QuillSharedConfigurations]

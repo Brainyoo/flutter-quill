@@ -21,13 +21,18 @@ import 'quill_localizations_id.dart';
 import 'quill_localizations_it.dart';
 import 'quill_localizations_ja.dart';
 import 'quill_localizations_ko.dart';
+import 'quill_localizations_ku.dart';
 import 'quill_localizations_ms.dart';
+import 'quill_localizations_ne.dart';
 import 'quill_localizations_nl.dart';
 import 'quill_localizations_no.dart';
 import 'quill_localizations_pl.dart';
 import 'quill_localizations_pt.dart';
+import 'quill_localizations_ro.dart';
 import 'quill_localizations_ru.dart';
+import 'quill_localizations_sk.dart';
 import 'quill_localizations_sr.dart';
+import 'quill_localizations_sv.dart';
 import 'quill_localizations_sw.dart';
 import 'quill_localizations_tk.dart';
 import 'quill_localizations_tr.dart';
@@ -138,14 +143,21 @@ abstract class FlutterQuillLocalizations {
     Locale('it'),
     Locale('ja'),
     Locale('ko'),
+    Locale('ku'),
+    Locale('ku', 'CKB'),
     Locale('ms'),
+    Locale('ne'),
     Locale('nl'),
     Locale('no'),
     Locale('pl'),
     Locale('pt'),
     Locale('pt', 'BR'),
+    Locale('ro'),
+    Locale('ro', 'RO'),
     Locale('ru'),
+    Locale('sk'),
     Locale('sr'),
+    Locale('sv'),
     Locale('sw'),
     Locale('tk'),
     Locale('tr'),
@@ -198,6 +210,18 @@ abstract class FlutterQuillLocalizations {
   /// In en, this message translates to:
   /// **'Copy'**
   String get copy;
+
+  /// No description provided for @cut.
+  ///
+  /// In en, this message translates to:
+  /// **'Cut'**
+  String get cut => 'Cut';
+
+  /// No description provided for @paste.
+  ///
+  /// In en, this message translates to:
+  /// **'Paste'**
+  String get paste => 'Paste';
 
   /// No description provided for @remove.
   ///
@@ -445,6 +469,24 @@ abstract class FlutterQuillLocalizations {
   /// **'Heading 3'**
   String get heading3;
 
+  /// No description provided for @heading4.
+  ///
+  /// In en, this message translates to:
+  /// **'Heading 4'**
+  String get heading4;
+
+  /// No description provided for @heading5.
+  ///
+  /// In en, this message translates to:
+  /// **'Heading 5'**
+  String get heading5;
+
+  /// No description provided for @heading6.
+  ///
+  /// In en, this message translates to:
+  /// **'Heading 6'**
+  String get heading6;
+
   /// No description provided for @numberedList.
   ///
   /// In en, this message translates to:
@@ -571,6 +613,12 @@ abstract class FlutterQuillLocalizations {
   /// **'Saved using the local storage'**
   String get savedUsingLocalStorage;
 
+  /// A message with a single parameter
+  ///
+  /// In en, this message translates to:
+  /// **'The image has been saved at: {imagePath}'**
+  String theImageHasBeenSavedAt(String imagePath);
+
   /// No description provided for @errorWhileSavingImage.
   ///
   /// In en, this message translates to:
@@ -690,13 +738,18 @@ class _FlutterQuillLocalizationsDelegate
         'it',
         'ja',
         'ko',
+        'ku',
         'ms',
+        'ne',
         'nl',
         'no',
         'pl',
         'pt',
+        'ro',
         'ru',
+        'sk',
         'sr',
+        'sv',
         'sw',
         'tk',
         'tr',
@@ -721,11 +774,27 @@ FlutterQuillLocalizations lookupFlutterQuillLocalizations(Locale locale) {
         }
         break;
       }
+    case 'ku':
+      {
+        switch (locale.countryCode) {
+          case 'CKB':
+            return FlutterQuillLocalizationsKuCkb();
+        }
+        break;
+      }
     case 'pt':
       {
         switch (locale.countryCode) {
           case 'BR':
             return FlutterQuillLocalizationsPtBr();
+        }
+        break;
+      }
+    case 'ro':
+      {
+        switch (locale.countryCode) {
+          case 'RO':
+            return FlutterQuillLocalizationsRoRo();
         }
         break;
       }
@@ -775,8 +844,12 @@ FlutterQuillLocalizations lookupFlutterQuillLocalizations(Locale locale) {
       return FlutterQuillLocalizationsJa();
     case 'ko':
       return FlutterQuillLocalizationsKo();
+    case 'ku':
+      return FlutterQuillLocalizationsKu();
     case 'ms':
       return FlutterQuillLocalizationsMs();
+    case 'ne':
+      return FlutterQuillLocalizationsNe();
     case 'nl':
       return FlutterQuillLocalizationsNl();
     case 'no':
@@ -785,10 +858,16 @@ FlutterQuillLocalizations lookupFlutterQuillLocalizations(Locale locale) {
       return FlutterQuillLocalizationsPl();
     case 'pt':
       return FlutterQuillLocalizationsPt();
+    case 'ro':
+      return FlutterQuillLocalizationsRo();
     case 'ru':
       return FlutterQuillLocalizationsRu();
+    case 'sk':
+      return FlutterQuillLocalizationsSk();
     case 'sr':
       return FlutterQuillLocalizationsSr();
+    case 'sv':
+      return FlutterQuillLocalizationsSv();
     case 'sw':
       return FlutterQuillLocalizationsSw();
     case 'tk':

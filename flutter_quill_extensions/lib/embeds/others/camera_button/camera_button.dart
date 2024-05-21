@@ -5,11 +5,13 @@ import 'package:flutter_quill/flutter_quill.dart'
         QuillIconTheme,
         QuillSimpleToolbarExt,
         QuillToolbarBaseButtonOptions,
-        QuillToolbarIconButton;
+        QuillToolbarIconButton,
+        kDefaultIconSize,
+        kDefaultIconButtonFactor;
 import 'package:flutter_quill/translations.dart';
 
+import '../../../models/config/camera/camera_configurations.dart';
 import '../../../models/config/shared_configurations.dart';
-import '../../../models/config/toolbar/buttons/camera.dart';
 import '../../../services/image_picker/image_options.dart';
 import 'camera_types.dart';
 import 'select_camera_action.dart';
@@ -25,40 +27,39 @@ class QuillToolbarCameraButton extends StatelessWidget {
   final QuillToolbarCameraButtonOptions options;
 
   double _iconSize(BuildContext context) {
-    final baseFontSize = baseButtonExtraOptions(context).globalIconSize;
+    final baseFontSize = baseButtonExtraOptions(context)?.iconSize;
     final iconSize = options.iconSize;
-    return iconSize ?? baseFontSize;
+    return iconSize ?? baseFontSize ?? kDefaultIconSize;
   }
 
   double _iconButtonFactor(BuildContext context) {
-    final baseIconFactor =
-        baseButtonExtraOptions(context).globalIconButtonFactor;
+    final baseIconFactor = baseButtonExtraOptions(context)?.iconButtonFactor;
     final iconButtonFactor = options.iconButtonFactor;
-    return iconButtonFactor ?? baseIconFactor;
+    return iconButtonFactor ?? baseIconFactor ?? kDefaultIconButtonFactor;
   }
 
   VoidCallback? _afterButtonPressed(BuildContext context) {
     return options.afterButtonPressed ??
-        baseButtonExtraOptions(context).afterButtonPressed;
+        baseButtonExtraOptions(context)?.afterButtonPressed;
   }
 
   QuillIconTheme? _iconTheme(BuildContext context) {
-    return options.iconTheme ?? baseButtonExtraOptions(context).iconTheme;
+    return options.iconTheme ?? baseButtonExtraOptions(context)?.iconTheme;
   }
 
-  QuillToolbarBaseButtonOptions baseButtonExtraOptions(BuildContext context) {
-    return context.requireQuillToolbarBaseButtonOptions;
+  QuillToolbarBaseButtonOptions? baseButtonExtraOptions(BuildContext context) {
+    return context.quillToolbarBaseButtonOptions;
   }
 
   IconData _iconData(BuildContext context) {
     return options.iconData ??
-        baseButtonExtraOptions(context).iconData ??
+        baseButtonExtraOptions(context)?.iconData ??
         Icons.photo_camera;
   }
 
   String _tooltip(BuildContext context) {
     return options.tooltip ??
-        baseButtonExtraOptions(context).tooltip ??
+        baseButtonExtraOptions(context)?.tooltip ??
         context.loc.camera;
   }
 
@@ -79,14 +80,13 @@ class QuillToolbarCameraButton extends StatelessWidget {
     final iconButtonFactor = _iconButtonFactor(context);
 
     final childBuilder =
-        options.childBuilder ?? baseButtonExtraOptions(context).childBuilder;
+        options.childBuilder ?? baseButtonExtraOptions(context)?.childBuilder;
 
     if (childBuilder != null) {
       childBuilder(
         QuillToolbarCameraButtonOptions(
           afterButtonPressed: _afterButtonPressed(context),
           iconData: options.iconData,
-          fillColor: options.fillColor,
           iconSize: options.iconSize,
           iconButtonFactor: iconButtonFactor,
           iconTheme: options.iconTheme,
@@ -101,16 +101,16 @@ class QuillToolbarCameraButton extends StatelessWidget {
       );
     }
 
-    final theme = Theme.of(context);
-
-    final iconColor = iconTheme?.iconUnselectedColor ?? theme.iconTheme.color;
-
     return QuillToolbarIconButton(
-      icon: Icon(iconData, size: iconButtonFactor * iconSize, color: iconColor),
+      icon: Icon(
+        iconData,
+        size: iconButtonFactor * iconSize,
+      ),
       tooltip: tooltip,
-      isFilled: false,
+      isSelected: false,
       // isDesktop(supportWeb: false) ? null :
       onPressed: () => _sharedOnPressed(context),
+      iconTheme: iconTheme,
     );
   }
 

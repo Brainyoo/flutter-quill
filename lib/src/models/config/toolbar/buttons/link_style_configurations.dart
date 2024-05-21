@@ -21,19 +21,16 @@ class QuillToolbarLinkStyleButtonOptions extends QuillToolbarBaseButtonOptions<
     this.linkRegExp,
     this.linkDialogAction,
     this.dialogBarrierColor,
-    this.iconSize,
-    this.iconButtonFactor,
+    super.iconSize,
+    super.iconButtonFactor,
     super.iconData,
     super.globalIconSize,
     super.afterButtonPressed,
     super.tooltip,
     super.iconTheme,
     super.childBuilder,
-    super.controller,
   });
 
-  final double? iconSize;
-  final double? iconButtonFactor;
   final QuillDialogTheme? dialogTheme;
   final RegExp? linkRegExp;
   final LinkDialogAction? linkDialogAction;

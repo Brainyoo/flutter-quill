@@ -13,15 +13,15 @@ import 'package:hydrated_bloc/hydrated_bloc.dart'
 import 'package:path_provider/path_provider.dart'
     show getApplicationDocumentsDirectory;
 
-import 'presentation/home/widgets/home_screen.dart';
-import 'presentation/quill/quill_screen.dart';
-import 'presentation/quill/samples/quill_default_sample.dart';
-import 'presentation/quill/samples/quill_images_sample.dart';
-import 'presentation/quill/samples/quill_text_sample.dart';
-import 'presentation/quill/samples/quill_videos_sample.dart';
-import 'presentation/settings/cubit/settings_cubit.dart';
-import 'presentation/settings/widgets/settings_screen.dart';
-import 'presentation/simple/simple_screen.dart';
+import 'screens/home/widgets/home_screen.dart';
+import 'screens/quill/quill_screen.dart';
+import 'screens/quill/samples/quill_default_sample.dart';
+import 'screens/quill/samples/quill_images_sample.dart';
+import 'screens/quill/samples/quill_text_sample.dart';
+import 'screens/quill/samples/quill_videos_sample.dart';
+import 'screens/settings/cubit/settings_cubit.dart';
+import 'screens/settings/widgets/settings_screen.dart';
+import 'screens/simple/simple_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -48,8 +48,22 @@ class MyApp extends StatelessWidget {
         builder: (context, state) {
           return MaterialApp(
             title: 'Flutter Quill Demo',
-            theme: ThemeData.light(useMaterial3: true),
-            darkTheme: ThemeData.dark(useMaterial3: true),
+            theme: ThemeData(
+              useMaterial3: true,
+              visualDensity: VisualDensity.adaptivePlatformDensity,
+              colorScheme: ColorScheme.fromSeed(
+                brightness: Brightness.light,
+                seedColor: Colors.red,
+              ),
+            ),
+            darkTheme: ThemeData(
+              useMaterial3: true,
+              visualDensity: VisualDensity.adaptivePlatformDensity,
+              colorScheme: ColorScheme.fromSeed(
+                brightness: Brightness.dark,
+                seedColor: Colors.red,
+              ),
+            ),
             themeMode: state.themeMode,
             debugShowCheckedModeBanner: false,
             localizationsDelegates: const [

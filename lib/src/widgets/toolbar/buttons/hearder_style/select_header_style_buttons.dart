@@ -1,24 +1,31 @@
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 
-import '../../../../../extensions.dart';
 import '../../../../extensions/quill_configurations_ext.dart';
 import '../../../../l10n/extensions/localizations.dart';
 import '../../../../models/documents/attribute.dart';
 import '../../../../models/documents/style.dart';
-import '../../../../models/themes/quill_icon_theme.dart';
-import '../../../quill/quill_controller.dart';
+import '../../base_button/base_value_button.dart';
 import '../../base_toolbar.dart';
 
-class QuillToolbarSelectHeaderStyleButtons extends StatefulWidget {
+typedef QuillToolbarSelectHeaderStyleBaseButtons = QuillToolbarBaseButton<
+    QuillToolbarSelectHeaderStyleButtonsOptions,
+    QuillToolbarSelectHeaderStyleButtonsExtraOptions>;
+
+typedef QuillToolbarSelectHeaderStyleBaseButtonsState<
+        W extends QuillToolbarSelectHeaderStyleBaseButtons>
+    = QuillToolbarCommonButtonState<
+        W,
+        QuillToolbarSelectHeaderStyleButtonsOptions,
+        QuillToolbarSelectHeaderStyleButtonsExtraOptions>;
+
+class QuillToolbarSelectHeaderStyleButtons
+    extends QuillToolbarSelectHeaderStyleBaseButtons {
   const QuillToolbarSelectHeaderStyleButtons({
-    required this.controller,
-    this.options = const QuillToolbarSelectHeaderStyleButtonsOptions(),
+    required super.controller,
+    super.options = const QuillToolbarSelectHeaderStyleButtonsOptions(),
     super.key,
   });
-
-  final QuillController controller;
-  final QuillToolbarSelectHeaderStyleButtonsOptions options;
 
   @override
   QuillToolbarSelectHeaderStyleButtonsState createState() =>
@@ -26,8 +33,11 @@ class QuillToolbarSelectHeaderStyleButtons extends StatefulWidget {
 }
 
 class QuillToolbarSelectHeaderStyleButtonsState
-    extends State<QuillToolbarSelectHeaderStyleButtons> {
+    extends QuillToolbarSelectHeaderStyleBaseButtonsState {
   Attribute? _selectedAttribute;
+
+  @override
+  String get defaultTooltip => context.loc.headerStyle;
 
   Style get _selectionStyle => controller.getSelectionStyle();
 
@@ -47,51 +57,11 @@ class QuillToolbarSelectHeaderStyleButtonsState
     controller.addListener(_didChangeEditingValue);
   }
 
-  QuillToolbarSelectHeaderStyleButtonsOptions get options {
-    return widget.options;
-  }
-
-  QuillController get controller {
-    return widget.controller;
-  }
-
-  double get iconSize {
-    final baseFontSize = baseButtonExtraOptions.globalIconSize;
-    final iconSize = options.iconSize;
-    return iconSize ?? baseFontSize;
-  }
-
-  double get iconButtonFactor {
-    final baseIconFactor = baseButtonExtraOptions.globalIconButtonFactor;
-    final iconButtonFactor = options.iconButtonFactor;
-    return iconButtonFactor ?? baseIconFactor;
-  }
-
-  VoidCallback? get afterButtonPressed {
-    return options.afterButtonPressed ??
-        baseButtonExtraOptions.afterButtonPressed;
-  }
-
-  QuillIconTheme? get iconTheme {
-    return options.iconTheme ?? baseButtonExtraOptions.iconTheme;
-  }
-
-  QuillToolbarBaseButtonOptions get baseButtonExtraOptions {
-    return context.requireQuillToolbarBaseButtonOptions;
-  }
-
-  String get tooltip {
-    return options.tooltip ??
-        baseButtonExtraOptions.tooltip ??
-        context.loc.headerStyle;
-  }
-
   Axis get axis {
     return options.axis ??
         context.quillSimpleToolbarConfigurations?.axis ??
         context.quillToolbarConfigurations?.axis ??
-        (throw ArgumentError(
-            'There is no default value for the Axis of the toolbar'));
+        Axis.horizontal;
   }
 
   void _sharedOnPressed(Attribute attribute) {
@@ -101,7 +71,7 @@ class QuillToolbarSelectHeaderStyleButtonsState
     afterButtonPressed?.call();
   }
 
-  List<Attribute> get _attrbuites {
+  List<Attribute> get _attributes {
     return options.attributes ??
         const [
           Attribute.header,
@@ -114,7 +84,7 @@ class QuillToolbarSelectHeaderStyleButtonsState
   @override
   Widget build(BuildContext context) {
     assert(
-      _attrbuites.every(
+      _attributes.every(
         (element) => _valueToText.keys.contains(element),
       ),
       'All attributes must be one of them: header, h1, h2 or h3',
@@ -126,63 +96,37 @@ class QuillToolbarSelectHeaderStyleButtonsState
     );
 
     final childBuilder =
-        options.childBuilder ?? baseButtonExtraOptions.childBuilder;
+        options.childBuilder ?? baseButtonExtraOptions?.childBuilder;
 
-    final children = _attrbuites.map((attribute) {
+    final children = _attributes.map((attribute) {
       if (childBuilder != null) {
         return childBuilder(
-          QuillToolbarSelectHeaderStyleButtonsOptions(
-            afterButtonPressed: afterButtonPressed,
-            attributes: _attrbuites,
-            axis: axis,
-            iconSize: iconSize,
-            iconButtonFactor: iconButtonFactor,
-            iconTheme: iconTheme,
-            tooltip: tooltip,
-          ),
-          QuillToolbarSelectHeaderStyleButtonExtraOptions(
+          options,
+          QuillToolbarSelectHeaderStyleButtonsExtraOptions(
             controller: controller,
             context: context,
             onPressed: () => _sharedOnPressed(attribute),
           ),
         );
       }
-      final theme = Theme.of(context);
+
       final isSelected = _selectedAttribute == attribute;
       return Padding(
         padding: const EdgeInsets.symmetric(horizontal: !kIsWeb ? 1.0 : 5.0),
-        child: ConstrainedBox(
-          constraints: BoxConstraints.tightFor(
-            width: iconSize * iconButtonFactor,
-            height: iconSize * iconButtonFactor,
-          ),
-          child: UtilityWidgets.maybeTooltip(
-            message: tooltip,
-            child: RawMaterialButton(
-              hoverElevation: 0,
-              highlightElevation: 0,
-              elevation: 0,
-              visualDensity: VisualDensity.compact,
-              shape: RoundedRectangleBorder(
-                  borderRadius:
-                      BorderRadius.circular(iconTheme?.borderRadius ?? 2)),
-              fillColor: isSelected
-                  ? (iconTheme?.iconSelectedFillColor ?? theme.primaryColor)
-                  : (iconTheme?.iconUnselectedFillColor ?? theme.canvasColor),
-              onPressed: () => _sharedOnPressed(attribute),
-              child: Text(
-                _valueToText[attribute] ??
-                    (throw ArgumentError.notNull(
-                      'attrbuite',
-                    )),
-                style: style.copyWith(
-                  color: isSelected
-                      ? (iconTheme?.iconSelectedColor ??
-                          theme.primaryIconTheme.color)
-                      : (iconTheme?.iconUnselectedColor ??
-                          theme.iconTheme.color),
-                ),
-              ),
+        child: QuillToolbarIconButton(
+          tooltip: tooltip,
+          iconTheme: iconTheme,
+          isSelected: isSelected,
+          onPressed: () => _sharedOnPressed(attribute),
+          icon: Text(
+            _valueToText[attribute] ??
+                (throw ArgumentError.notNull(
+                  'attribute',
+                )),
+            style: style.copyWith(
+              color: isSelected
+                  ? iconTheme?.iconButtonSelectedData?.color
+                  : iconTheme?.iconButtonUnselectedData?.color,
             ),
           ),
         ),

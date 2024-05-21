@@ -48,6 +48,9 @@
   "heading1": "Heading 1",
   "heading2": "Heading 2",
   "heading3": "Heading 3",
+  "heading4": "Heading 4",
+  "heading5": "Heading 5",
+  "heading6": "Heading 6",
   "numberedList": "Numbered list",
   "bulletList": "Bullet list",
   "checkedList": "Checked list",
@@ -69,6 +72,16 @@
   "moveToNextOccurrence": "Move to next occurrence",
   "savedUsingTheNetwork": "Saved using the network",
   "savedUsingLocalStorage": "Saved using the local storage",
+  "theImageHasBeenSavedAt": "The image has been saved at: {imagePath}",
+  "@theImageHasBeenSavedAt": {
+    "description": "A message with a single parameter",
+    "placeholders": {
+      "imagePath": {
+        "type": "String",
+        "example": "path/to/location"
+      }
+    }
+  },
   "errorWhileSavingImage": "Error while saving image",
   "pleaseEnterTextForYourLink": "Please enter a text for your link (e.g., 'Learn more')",
   "pleaseEnterTheLinkURL": "Please enter the link URL (e.g., 'https://example.com')",

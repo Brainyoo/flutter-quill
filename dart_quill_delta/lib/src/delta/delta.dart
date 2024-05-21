@@ -122,7 +122,8 @@ class Delta {
   List<Operation> toList() => List.from(operations);
 
   /// Returns JSON-serializable version of this delta.
-  List toJson() => toList().map((operation) => operation.toJson()).toList();
+  List<Map<String, dynamic>> toJson() =>
+      toList().map((operation) => operation.toJson()).toList();
 
   /// Returns `true` if this delta is empty.
   bool get isEmpty => operations.isEmpty;
@@ -146,7 +147,7 @@ class Delta {
   Operation get last => operations.last;
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     if (identical(this, other)) return true;
     if (other is! Delta) return false;
     final typedOther = other;

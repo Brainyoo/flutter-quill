@@ -23,40 +23,39 @@ class QuillToolbarSearchButton extends StatelessWidget {
   }
 
   double _iconSize(BuildContext context) {
-    final baseFontSize = baseButtonExtraOptions(context).globalIconSize;
+    final baseFontSize = baseButtonExtraOptions(context)?.iconSize;
     final iconSize = options.iconSize;
-    return iconSize ?? baseFontSize;
+    return iconSize ?? baseFontSize ?? kDefaultIconSize;
   }
 
   double _iconButtonFactor(BuildContext context) {
-    final baseIconFactor =
-        baseButtonExtraOptions(context).globalIconButtonFactor;
+    final baseIconFactor = baseButtonExtraOptions(context)?.iconButtonFactor;
     final iconButtonFactor = options.iconButtonFactor;
-    return iconButtonFactor ?? baseIconFactor;
+    return iconButtonFactor ?? baseIconFactor ?? kDefaultIconButtonFactor;
   }
 
   VoidCallback? _afterButtonPressed(BuildContext context) {
     return options.afterButtonPressed ??
-        baseButtonExtraOptions(context).afterButtonPressed;
+        baseButtonExtraOptions(context)?.afterButtonPressed;
   }
 
   QuillIconTheme? _iconTheme(BuildContext context) {
-    return options.iconTheme ?? baseButtonExtraOptions(context).iconTheme;
+    return options.iconTheme ?? baseButtonExtraOptions(context)?.iconTheme;
   }
 
-  QuillToolbarBaseButtonOptions baseButtonExtraOptions(BuildContext context) {
-    return context.requireQuillToolbarBaseButtonOptions;
+  QuillToolbarBaseButtonOptions? baseButtonExtraOptions(BuildContext context) {
+    return context.quillToolbarBaseButtonOptions;
   }
 
   IconData _iconData(BuildContext context) {
     return options.iconData ??
-        baseButtonExtraOptions(context).iconData ??
+        baseButtonExtraOptions(context)?.iconData ??
         Icons.search;
   }
 
   String _tooltip(BuildContext context) {
     return options.tooltip ??
-        baseButtonExtraOptions(context).tooltip ??
+        baseButtonExtraOptions(context)?.tooltip ??
         (context.loc.search);
   }
 
@@ -81,22 +80,11 @@ class QuillToolbarSearchButton extends StatelessWidget {
     final afterButtonPressed = _afterButtonPressed(context);
 
     final childBuilder =
-        options.childBuilder ?? baseButtonExtraOptions(context).childBuilder;
+        options.childBuilder ?? baseButtonExtraOptions(context)?.childBuilder;
 
     if (childBuilder != null) {
       return childBuilder(
-        QuillToolbarSearchButtonOptions(
-          afterButtonPressed: afterButtonPressed,
-          controller: controller,
-          dialogBarrierColor: _dialogBarrierColor(context),
-          dialogTheme: _dialogTheme(context),
-          fillColor: options.fillColor,
-          iconData: iconData,
-          iconSize: iconSize,
-          iconButtonFactor: iconButtonFactor,
-          tooltip: tooltip,
-          iconTheme: iconTheme,
-        ),
+        options,
         QuillToolbarSearchButtonExtraOptions(
           controller: controller,
           context: context,
@@ -108,20 +96,22 @@ class QuillToolbarSearchButton extends StatelessWidget {
       );
     }
 
-    final theme = Theme.of(context);
+    // final theme = Theme.of(context);
 
-    final iconColor = iconTheme?.iconUnselectedColor ?? theme.iconTheme.color;
+    // final iconColor =
+    //     iconTheme?.iconUnselectedFillColor ?? theme.iconTheme.color;
 
     return QuillToolbarIconButton(
       tooltip: tooltip,
       icon: Icon(
         iconData,
         size: iconSize * iconButtonFactor,
-        color: iconColor,
+        // color: iconColor,
       ),
-      isFilled: false,
+      isSelected: false,
       onPressed: () => _sharedOnPressed(context),
       afterPressed: afterButtonPressed,
+      iconTheme: iconTheme,
     );
   }
 

@@ -1,5 +1,7 @@
 import 'dart:async' show StreamController;
 
+import 'package:meta/meta.dart';
+
 import '../../../quill_delta.dart';
 import '../../widgets/quill/embeds.dart';
 import '../rules/rule.dart';
@@ -8,6 +10,7 @@ import '../structs/history_changed.dart';
 import '../structs/offset_value.dart';
 import '../structs/segment_leaf_node.dart';
 import 'attribute.dart';
+import 'delta_x.dart';
 import 'history.dart';
 import 'nodes/block.dart';
 import 'nodes/container.dart';
@@ -108,23 +111,42 @@ class Document {
   /// Returns an instance of [Delta] actually composed into this document.
   Delta replace(int index, int len, Object? data) {
     assert(index >= 0);
-    assert(data is String || data is Embeddable);
-
-    final dataIsNotEmpty = (data is String) ? data.isNotEmpty : true;
-
-    assert(dataIsNotEmpty || len > 0);
+    assert(data is String || data is Embeddable || data is Delta);
 
     var delta = Delta();
 
-    // We have to insert before applying delete rules
-    // Otherwise delete would be operating on stale document snapshot.
-    if (dataIsNotEmpty) {
-      delta = insert(index, data, replaceLength: len);
-    }
+    if (data is Delta) {
+      // move to insertion point and add the inserted content
+      if (index > 0) {
+        delta.retain(index);
+      }
 
-    if (len > 0) {
-      final deleteDelta = delete(index, len);
-      delta = delta.compose(deleteDelta);
+      // remove any text we are replacing
+      if (len > 0) {
+        delta.delete(len);
+      }
+
+      // add the pasted content
+      for (final op in data.operations) {
+        delta.push(op);
+      }
+
+      compose(delta, ChangeSource.local);
+    } else {
+      final dataIsNotEmpty = (data is String) ? data.isNotEmpty : true;
+
+      assert(dataIsNotEmpty || len > 0);
+
+      // We have to insert before applying delete rules
+      // Otherwise delete would be operating on stale document snapshot.
+      if (dataIsNotEmpty) {
+        delta = insert(index, data, replaceLength: len);
+      }
+
+      if (len > 0) {
+        final deleteDelta = delete(index, len);
+        delta = delta.compose(deleteDelta);
+      }
     }
 
     return delta;
@@ -162,11 +184,7 @@ class Document {
       return (res.node as Line).collectStyle(res.offset, len);
     }
     if (res.offset == 0) {
-      rangeStyle = (res.node as Line).collectStyle(res.offset, len);
-      return rangeStyle.removeAll({
-        for (final attr in rangeStyle.values)
-          if (attr.isInline) attr
-      });
+      return rangeStyle = (res.node as Line).collectStyle(res.offset, len);
     }
     rangeStyle = (res.node as Line).collectStyle(res.offset - 1, len);
     final linkAttribute = rangeStyle.attributes[Attribute.link.key];
@@ -213,7 +231,7 @@ class Document {
     if (res.node is Line) {
       return res;
     }
-    final block = res.node as Block;
+    final block = res.node as Block; // TODO: Can be nullable, handle this case
     return block.queryChild(res.offset, true);
   }
 
@@ -400,7 +418,8 @@ class Document {
 
   void _loadDocument(Delta doc) {
     if (doc.isEmpty) {
-      throw ArgumentError.value(doc, 'Document Delta cannot be empty.');
+      throw ArgumentError.value(
+          doc.toString(), 'Document Delta cannot be empty.');
     }
 
     // print(doc.last.data.runtimeType);
@@ -441,6 +460,12 @@ class Document {
     return delta.length == 1 &&
         delta.first.data == '\n' &&
         delta.first.key == 'insert';
+  }
+
+  /// Convert the HTML Raw string to [Document]
+  @experimental
+  static Document fromHtml(String html) {
+    return Document.fromDelta(DeltaX.fromHtml(html));
   }
 }
 

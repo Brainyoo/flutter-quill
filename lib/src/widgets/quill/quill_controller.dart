@@ -1,20 +1,14 @@
 import 'dart:math' as math;
 
-import 'package:flutter/services.dart';
+import 'package:flutter/services.dart' show ClipboardData, Clipboard;
 import 'package:flutter/widgets.dart';
-import 'package:html2md/html2md.dart' as html2md;
-import 'package:markdown/markdown.dart' as md;
+import 'package:html/parser.dart' as html_parser;
+import 'package:meta/meta.dart';
+import 'package:super_clipboard/super_clipboard.dart';
 
-import '../../../markdown_quill.dart';
+import '../../../flutter_quill.dart';
 import '../../../quill_delta.dart';
-import '../../models/documents/attribute.dart';
-import '../../models/documents/document.dart';
-import '../../models/documents/nodes/embeddable.dart';
-import '../../models/documents/nodes/leaf.dart';
-import '../../models/documents/style.dart';
-import '../../models/structs/doc_change.dart';
-import '../../models/structs/image_url.dart';
-import '../../models/structs/offset_value.dart';
+import '../../models/documents/delta_x.dart';
 import '../../utils/delta.dart';
 
 typedef ReplaceTextCallback = bool Function(int index, int len, Object? data);
@@ -24,21 +18,30 @@ class QuillController extends ChangeNotifier {
   QuillController({
     required Document document,
     required TextSelection selection,
-    bool keepStyleOnNewLine = false,
+    this.configurations = const QuillControllerConfigurations(),
+    this.keepStyleOnNewLine = true,
     this.onReplaceText,
     this.onDelete,
     this.onSelectionCompleted,
     this.onSelectionChanged,
+    this.readOnly = false,
+    this.editorFocusNode,
   })  : _document = document,
-        _selection = selection,
-        _keepStyleOnNewLine = keepStyleOnNewLine;
+        _selection = selection;
 
-  factory QuillController.basic() {
+  factory QuillController.basic(
+      {QuillControllerConfigurations configurations =
+          const QuillControllerConfigurations(),
+      FocusNode? editorFocusNode}) {
     return QuillController(
+      configurations: configurations,
+      editorFocusNode: editorFocusNode,
       document: Document(),
       selection: const TextSelection.collapsed(offset: 0),
     );
   }
+
+  final QuillControllerConfigurations configurations;
 
   /// Document managed by this controller.
   Document _document;
@@ -54,6 +57,7 @@ class QuillController extends ChangeNotifier {
     notifyListeners();
   }
 
+  @experimental
   void setContents(
     Delta delta, {
     ChangeSource changeSource = ChangeSource.local,
@@ -68,29 +72,9 @@ class QuillController extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// The current font family, null to use the default one
-  String? _selectedFontFamily;
-
-  /// The current font family, null to use the default one
-  String? get selectedFontFamily => _selectedFontFamily;
-
-  void selectFontFamily(String? newFontFamily) {
-    _selectedFontFamily = newFontFamily;
-  }
-
-  /// The current font size, null to use the default one
-  String? _selectedFontSize;
-
-  /// The current font size, null to use the default one
-  String? get selectedFontSize => _selectedFontSize;
-
-  void selectFontSize(String? newFontSize) {
-    _selectedFontSize = newFontSize;
-  }
-
   /// Tells whether to keep or reset the [toggledStyle]
   /// when user adds a new line.
-  final bool _keepStyleOnNewLine;
+  final bool keepStyleOnNewLine;
 
   /// Currently selected text within the [document].
   TextSelection get selection => _selection;
@@ -231,19 +215,13 @@ class QuillController extends ChangeNotifier {
     }
   }
 
-  void _handleHistoryChange(int? len) {
-    if (len! != 0) {
-      // if (this.selection.extentOffset >= document.length) {
-      // // cursor exceeds the length of document, position it in the end
-      // updateSelection(
-      // TextSelection.collapsed(offset: document.length), ChangeSource.LOCAL);
-      updateSelection(
-          TextSelection.collapsed(offset: selection.baseOffset + len),
-          ChangeSource.local);
-    } else {
-      // no need to move cursor
-      notifyListeners();
-    }
+  void _handleHistoryChange(int len) {
+    updateSelection(
+      TextSelection.collapsed(
+        offset: len,
+      ),
+      ChangeSource.local,
+    );
   }
 
   void redo() {
@@ -269,8 +247,9 @@ class QuillController extends ChangeNotifier {
     Object? data,
     TextSelection? textSelection, {
     bool ignoreFocus = false,
+    bool shouldNotifyListeners = true,
   }) {
-    assert(data is String || data is Embeddable);
+    assert(data is String || data is Embeddable || data is Delta);
 
     if (onReplaceText != null && !onReplaceText!(index, len, data)) {
       return;
@@ -282,7 +261,9 @@ class QuillController extends ChangeNotifier {
       var shouldRetainDelta = toggledStyle.isNotEmpty &&
           delta.isNotEmpty &&
           delta.length <= 2 &&
-          delta.last.isInsert;
+          delta.last.isInsert &&
+          // pasted text should not use toggledStyle
+          (data is! String || data.length < 2);
       if (shouldRetainDelta &&
           toggledStyle.isNotEmpty &&
           delta.length == 2 &&
@@ -304,7 +285,7 @@ class QuillController extends ChangeNotifier {
 
     if (textSelection != null) {
       if (delta == null || delta.isEmpty) {
-        _updateSelection(textSelection, ChangeSource.local);
+        _updateSelection(textSelection);
       } else {
         final user = Delta()
           ..retain(index)
@@ -312,19 +293,20 @@ class QuillController extends ChangeNotifier {
           ..delete(len);
         final positionDelta = getPositionDelta(user, delta);
         _updateSelection(
-          textSelection.copyWith(
-            baseOffset: textSelection.baseOffset + positionDelta,
-            extentOffset: textSelection.extentOffset + positionDelta,
-          ),
-          ChangeSource.local,
-        );
+            textSelection.copyWith(
+              baseOffset: textSelection.baseOffset + positionDelta,
+              extentOffset: textSelection.extentOffset + positionDelta,
+            ),
+            insertNewline: data == '\n');
       }
     }
 
     if (ignoreFocus) {
       ignoreFocusOnTextChange = true;
     }
-    notifyListeners();
+    if (shouldNotifyListeners) {
+      notifyListeners();
+    }
     ignoreFocusOnTextChange = false;
   }
 
@@ -342,7 +324,12 @@ class QuillController extends ChangeNotifier {
     });
   }
 
-  void formatText(int index, int len, Attribute? attribute) {
+  void formatText(
+    int index,
+    int len,
+    Attribute? attribute, {
+    bool shouldNotifyListeners = true,
+  }) {
     if (len == 0 &&
         attribute!.isInline &&
         attribute.key != Attribute.link.key) {
@@ -359,13 +346,21 @@ class QuillController extends ChangeNotifier {
         baseOffset: change.transformPosition(selection.baseOffset),
         extentOffset: change.transformPosition(selection.extentOffset));
     if (selection != adjustedSelection) {
-      _updateSelection(adjustedSelection, ChangeSource.local);
+      _updateSelection(adjustedSelection);
     }
-    notifyListeners();
+    if (shouldNotifyListeners) {
+      notifyListeners();
+    }
   }
 
-  void formatSelection(Attribute? attribute) {
-    formatText(selection.start, selection.end - selection.start, attribute);
+  void formatSelection(Attribute? attribute,
+      {bool shouldNotifyListeners = true}) {
+    formatText(
+      selection.start,
+      selection.end - selection.start,
+      attribute,
+      shouldNotifyListeners: shouldNotifyListeners,
+    );
   }
 
   void moveCursorToStart() {
@@ -390,7 +385,7 @@ class QuillController extends ChangeNotifier {
   }
 
   void updateSelection(TextSelection textSelection, ChangeSource source) {
-    _updateSelection(textSelection, source);
+    _updateSelection(textSelection);
     notifyListeners();
   }
 
@@ -407,7 +402,7 @@ class QuillController extends ChangeNotifier {
       ),
     );
     if (selection != textSelection) {
-      _updateSelection(textSelection, source);
+      _updateSelection(textSelection);
     }
 
     notifyListeners();
@@ -441,18 +436,23 @@ class QuillController extends ChangeNotifier {
     super.dispose();
   }
 
-  void _updateSelection(TextSelection textSelection, ChangeSource source) {
+  void _updateSelection(TextSelection textSelection,
+      {bool insertNewline = false}) {
     _selection = textSelection;
     final end = document.length - 1;
     _selection = selection.copyWith(
         baseOffset: math.min(selection.baseOffset, end),
         extentOffset: math.min(selection.extentOffset, end));
-    if (_keepStyleOnNewLine) {
-      final style = getSelectionStyle();
-      final ignoredStyles = style.attributes.values.where(
-        (s) => !s.isInline || s.key == Attribute.link.key,
-      );
-      toggledStyle = style.removeAll(ignoredStyles.toSet());
+    if (keepStyleOnNewLine) {
+      if (insertNewline && selection.start > 0) {
+        final style = document.collectStyle(selection.start - 1, 0);
+        final ignoredStyles = style.attributes.values.where(
+          (s) => !s.isInline || s.key == Attribute.link.key,
+        );
+        toggledStyle = style.removeAll(ignoredStyles.toSet());
+      } else {
+        toggledStyle = const Style();
+      }
     } else {
       toggledStyle = const Style();
     }
@@ -464,9 +464,21 @@ class QuillController extends ChangeNotifier {
     return document.querySegmentLeafNode(offset).leaf;
   }
 
-  /// Clipboard for image url and its corresponding style
-  ImageUrl? _copiedImageUrl;
+  // Notify toolbar buttons directly with attributes
+  Map<String, Attribute> toolbarButtonToggler = const {};
 
+  /// Clipboard caches last copy to allow paste with styles. Static to allow paste between multiple instances of editor.
+  static String _pastePlainText = '';
+  static List<OffsetValue> _pasteStyleAndEmbed = <OffsetValue>[];
+
+  String get pastePlainText => _pastePlainText;
+  List<OffsetValue> get pasteStyleAndEmbed => _pasteStyleAndEmbed;
+  bool readOnly;
+
+  /// Used to give focus to the editor following a toolbar action
+  FocusNode? editorFocusNode;
+
+  ImageUrl? _copiedImageUrl;
   ImageUrl? get copiedImageUrl => _copiedImageUrl;
 
   set copiedImageUrl(ImageUrl? value) {
@@ -474,40 +486,138 @@ class QuillController extends ChangeNotifier {
     Clipboard.setData(const ClipboardData(text: ''));
   }
 
-  // Notify toolbar buttons directly with attributes
-  Map<String, Attribute> toolbarButtonToggler = const {};
+  bool clipboardSelection(bool copy) {
+    copiedImageUrl = null;
+    _pastePlainText = getPlainText();
+    _pasteStyleAndEmbed = getAllIndividualSelectionStylesAndEmbed();
 
-  /// Convert the HTML Raw string to [Delta]
-  ///
-  /// It will run using the following steps:
-  ///
-  /// 1. Convert the html to markdown string using `html2md` package
-  /// 2. Convert the markdown string to quill delta json string
-  /// 3. Decode the delta json string to [Delta]
-  ///
-  /// for more [info](https://github.com/singerdmx/flutter-quill/issues/1100)
-  static Delta fromHtml(String html) {
-    final markdown = html2md
-        .convert(
-          html,
-        )
-        .replaceAll('unsafe:', '');
+    if (!selection.isCollapsed) {
+      Clipboard.setData(ClipboardData(text: _pastePlainText));
+      if (!copy) {
+        if (readOnly) return false;
+        final sel = selection;
+        replaceText(sel.start, sel.end - sel.start, '',
+            TextSelection.collapsed(offset: sel.start));
+      }
+      return true;
+    }
+    return false;
+  }
 
-    final mdDocument = md.Document(encodeHtml: false);
+  /// Returns whether paste operation was handled here.
+  /// updateEditor is called if paste operation was successful.
+  Future<bool> clipboardPaste({void Function()? updateEditor}) async {
+    if (readOnly || !selection.isValid) return true;
 
-    final mdToDelta = MarkdownToDelta(markdownDocument: mdDocument);
+    if (await _pasteHTML()) {
+      updateEditor?.call();
+      return true;
+    }
 
-    return mdToDelta.convert(markdown);
+    // Snapshot the input before using `await`.
+    // See https://github.com/flutter/flutter/issues/11427
+    final plainText = await Clipboard.getData(Clipboard.kTextPlain);
+    if (plainText != null) {
+      replaceTextWithEmbeds(
+        selection.start,
+        selection.end - selection.start,
+        plainText.text!,
+        TextSelection.collapsed(
+            offset: selection.start + plainText.text!.length),
+      );
+      updateEditor?.call();
+      return true;
+    }
 
-    // final deltaJsonString = markdownToDelta(markdown);
-    // final deltaJson = jsonDecode(deltaJsonString);
-    // if (deltaJson is! List) {
-    //   throw ArgumentError(
-    //     'The delta json string should be of type list when jsonDecode() it',
-    //   );
-    // }
-    // return Delta.fromJson(
-    //   deltaJson,
-    // );
+    if (await configurations.onClipboardPaste?.call() == true) {
+      updateEditor?.call();
+      return true;
+    }
+
+    return false;
+  }
+
+  Future<bool> _pasteHTML() async {
+    final clipboard = SystemClipboard.instance;
+    if (clipboard != null) {
+      final reader = await clipboard.read();
+      if (reader.canProvide(Formats.htmlText)) {
+        final html = await reader.readValue(Formats.htmlText);
+        if (html == null) {
+          return false;
+        }
+        final htmlBody = html_parser.parse(html).body?.outerHtml;
+        final deltaFromClipboard = DeltaX.fromHtml(htmlBody ?? html);
+
+        replaceText(
+          selection.start,
+          selection.end - selection.start,
+          deltaFromClipboard,
+          TextSelection.collapsed(offset: selection.end),
+        );
+
+        return true;
+      }
+    }
+    return false;
+  }
+
+  void replaceTextWithEmbeds(
+    int index,
+    int len,
+    String insertedText,
+    TextSelection? textSelection, {
+    bool ignoreFocus = false,
+    bool shouldNotifyListeners = true,
+  }) {
+    final containsEmbed =
+        insertedText.codeUnits.contains(Embed.kObjectReplacementInt);
+    insertedText =
+        containsEmbed ? _adjustInsertedText(insertedText) : insertedText;
+
+    replaceText(index, len, insertedText, textSelection,
+        ignoreFocus: ignoreFocus, shouldNotifyListeners: shouldNotifyListeners);
+
+    _applyPasteStyleAndEmbed(insertedText, index, containsEmbed);
+  }
+
+  void _applyPasteStyleAndEmbed(
+      String insertedText, int start, bool containsEmbed) {
+    if (insertedText == pastePlainText && pastePlainText != '' ||
+        containsEmbed) {
+      final pos = start;
+      for (final p in pasteStyleAndEmbed) {
+        final offset = p.offset;
+        final styleAndEmbed = p.value;
+
+        final local = pos + offset;
+        if (styleAndEmbed is Embeddable) {
+          replaceText(local, 0, styleAndEmbed, null);
+        } else {
+          final style = styleAndEmbed as Style;
+          if (style.isInline) {
+            formatTextStyle(local, p.length!, style);
+          } else if (style.isBlock) {
+            final node = document.queryChild(local).node;
+            if (node != null && p.length == node.length - 1) {
+              for (final attribute in style.values) {
+                document.format(local, 0, attribute);
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  String _adjustInsertedText(String text) {
+    final sb = StringBuffer();
+    for (var i = 0; i < text.length; i++) {
+      if (text.codeUnitAt(i) == Embed.kObjectReplacementInt) {
+        continue;
+      }
+      sb.write(text[i]);
+    }
+    return sb.toString();
   }
 }
