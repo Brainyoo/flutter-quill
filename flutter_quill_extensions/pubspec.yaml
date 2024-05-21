@@ -51,6 +51,9 @@ dependencies:
   gal_linux: ^0.1.0
   image_picker: ^1.0.4
 
+dependency_overrides:
+  intl: any
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

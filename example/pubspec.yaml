@@ -62,6 +62,7 @@ dependency_overrides:
     path: ../quill_html_converter
   quill_pdf_converter:
     path: ../quill_pdf_converter
+  intl: any
 
   pdf_widget_wrapper: ^1.0.4
 
