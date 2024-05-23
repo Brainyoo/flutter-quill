@@ -6,7 +6,6 @@ import '../../../models/config/video/editor/video_configurations.dart';
 import '../../../utils/element_utils/element_utils.dart';
 import '../../../utils/utils.dart';
 import '../../widgets/video_app.dart';
-import '../../widgets/youtube_video_app.dart';
 
 class QuillEditorVideoEmbedBuilder extends EmbedBuilder {
   const QuillEditorVideoEmbedBuilder({
@@ -33,12 +32,6 @@ class QuillEditorVideoEmbedBuilder extends EmbedBuilder {
     assert(!kIsWeb, 'Please provide video EmbedBuilder for Web');
 
     final videoUrl = node.value.data;
-    if (isYouTubeUrl(videoUrl)) {
-      return YoutubeVideoApp(
-        videoUrl: videoUrl,
-        readOnly: readOnly,
-      );
-    }
     final ((elementSize), margin, alignment) = getElementAttributes(
       node,
       context,
