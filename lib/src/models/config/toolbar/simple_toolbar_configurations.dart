@@ -181,6 +181,9 @@ class QuillSimpleToolbarConfigurations extends QuillSharedToolbarProperties {
     bool showSearchButton = false,
     bool showSubscript = false,
     bool showSuperscript = false,
+    bool showClipboardCut = false,
+    bool showClipboardCopy = false,
+    bool showClipboardPaste = false,
     LinkStyleType linkStyleType = LinkStyleType.original,
 
     /// The decoration to use for the toolbar.
@@ -247,6 +250,9 @@ class QuillSimpleToolbarConfigurations extends QuillSharedToolbarProperties {
         showSearchButton: showSearchButton,
         showSubscript: showSubscript,
         showSuperscript: showSuperscript,
+        showClipboardCut: showClipboardCut,
+        showClipboardCopy: showClipboardCopy,
+        showClipboardPaste: showClipboardPaste,
         linkStyleType: linkStyleType,
         decoration: decoration,
         embedButtons: embedButtons,
