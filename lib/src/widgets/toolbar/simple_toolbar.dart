@@ -18,7 +18,7 @@ class QuillSimpleToolbar extends StatelessWidget
   /// The configurations for the toolbar widget of flutter quill
   final QuillSimpleToolbarConfigurations configurations;
 
-  double get _toolbarSize => configurations.toolbarSize * 1.4;
+  double get _toolbarSize => configurations.toolbarSize;
 
   @override
   Widget build(BuildContext context) {
