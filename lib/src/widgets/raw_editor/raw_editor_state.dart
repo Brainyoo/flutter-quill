@@ -954,8 +954,8 @@ class QuillRawEditorState extends EditorState
 
     for (final node in doc.root.children) {
       final attrs = node.style.attributes;
-
-      if (prevNodeOl && attrs[Attribute.list.key] != Attribute.ol) {
+      //TODO Pull Request erstellen geht um listen in listen
+      if (prevNodeOl && attrs[Attribute.list.key] != Attribute.ol && attrs[Attribute.list.key] != Attribute.ul) {
         clearIndents = true;
       }
 
