@@ -8,6 +8,7 @@ import 'package:intl/intl.dart' as intl;
 import 'quill_localizations_ar.dart';
 import 'quill_localizations_bg.dart';
 import 'quill_localizations_bn.dart';
+import 'quill_localizations_ca.dart';
 import 'quill_localizations_cs.dart';
 import 'quill_localizations_da.dart';
 import 'quill_localizations_de.dart';
@@ -129,6 +130,7 @@ abstract class FlutterQuillLocalizations {
     Locale('ar'),
     Locale('bg'),
     Locale('bn'),
+    Locale('ca'),
     Locale('cs'),
     Locale('da'),
     Locale('de'),
@@ -210,18 +212,6 @@ abstract class FlutterQuillLocalizations {
   /// In en, this message translates to:
   /// **'Copy'**
   String get copy;
-
-  /// No description provided for @cut.
-  ///
-  /// In en, this message translates to:
-  /// **'Cut'**
-  String get cut => 'Cut';
-
-  /// No description provided for @paste.
-  ///
-  /// In en, this message translates to:
-  /// **'Paste'**
-  String get paste => 'Paste';
 
   /// No description provided for @remove.
   ///
@@ -427,6 +417,12 @@ abstract class FlutterQuillLocalizations {
   /// **'Align right'**
   String get alignRight;
 
+  /// Justify the text over the full window width
+  ///
+  /// In en, this message translates to:
+  /// **'Align justify'**
+  String get alignJustify;
+
   /// No description provided for @justifyWinWidth.
   ///
   /// In en, this message translates to:
@@ -583,6 +579,12 @@ abstract class FlutterQuillLocalizations {
   /// **'Color'**
   String get color;
 
+  /// No description provided for @lineheight.
+  ///
+  /// In en, this message translates to:
+  /// **'Line height'**
+  String get lineheight;
+
   /// No description provided for @findText.
   ///
   /// In en, this message translates to:
@@ -667,6 +669,18 @@ abstract class FlutterQuillLocalizations {
   /// **'Case sensitivity and whole word search'**
   String get caseSensitivityAndWholeWordSearch;
 
+  /// No description provided for @caseSensitive.
+  ///
+  /// In en, this message translates to:
+  /// **'Case sensitive'**
+  String get caseSensitive;
+
+  /// No description provided for @wholeWord.
+  ///
+  /// In en, this message translates to:
+  /// **'Whole word'**
+  String get wholeWord;
+
   /// No description provided for @insertImage.
   ///
   /// In en, this message translates to:
@@ -708,6 +722,36 @@ abstract class FlutterQuillLocalizations {
   /// In en, this message translates to:
   /// **'Paste a video using a link'**
   String get pasteAVideoUsingALink;
+
+  /// No description provided for @close.
+  ///
+  /// In en, this message translates to:
+  /// **'Close'**
+  String get close;
+
+  /// No description provided for @searchSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Search settings'**
+  String get searchSettings;
+
+  /// No description provided for @cut.
+  ///
+  /// In en, this message translates to:
+  /// **'Cut'**
+  String get cut;
+
+  /// No description provided for @paste.
+  ///
+  /// In en, this message translates to:
+  /// **'Paste'**
+  String get paste;
+
+  /// No description provided for @insertTable.
+  ///
+  /// In en, this message translates to:
+  /// **'Insert table'**
+  String get insertTable;
 }
 
 class _FlutterQuillLocalizationsDelegate
@@ -725,6 +769,7 @@ class _FlutterQuillLocalizationsDelegate
         'ar',
         'bg',
         'bn',
+        'ca',
         'cs',
         'da',
         'de',
@@ -818,6 +863,8 @@ FlutterQuillLocalizations lookupFlutterQuillLocalizations(Locale locale) {
       return FlutterQuillLocalizationsBg();
     case 'bn':
       return FlutterQuillLocalizationsBn();
+    case 'ca':
+      return FlutterQuillLocalizationsCa();
     case 'cs':
       return FlutterQuillLocalizationsCs();
     case 'da':

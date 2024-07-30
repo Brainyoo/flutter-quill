@@ -24,11 +24,11 @@ jobs:
       - name: 🔍 Verify Flutter installation
         run: flutter --version
 
-      - name: 🚧 Enable local development environment (use the local packages)
-        run: ./scripts/enable_local_dev.sh
-
       - name: 📥 Install Flutter dependencies
         run: flutter pub get
+
+      - name: 🚧 Enable local development environment (use the local packages)
+        run: dart ./scripts/enable_local_dev.dart
 
       - name: 📦 Install dart_quill_delta dependencies
         run: flutter pub get -C dart_quill_delta
@@ -38,12 +38,6 @@ jobs:
 
       - name: 📦 Install flutter_quill_test dependencies
         run: flutter pub get -C flutter_quill_test
-      
-      - name: 📦 Install quill_html_converter dependencies
-        run: flutter pub get -C quill_html_converter
-      
-      - name: 📦 Install quill_pdf_converter dependencies
-        run: flutter pub get -C quill_pdf_converter
 
       - name: 🔍 Run Flutter analysis
         run: flutter analyze
@@ -59,3 +53,6 @@ jobs:
 
       - name: 🧪 Run Flutter tests
         run: flutter test
+
+      - name: 🔍 Check the translations
+        run: dart ./scripts/ensure_translations_correct.dart
