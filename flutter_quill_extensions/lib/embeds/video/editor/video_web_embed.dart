@@ -1,8 +1,6 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:universal_html/html.dart' as html;
-import 'package:youtube_player_flutter/youtube_player_flutter.dart'
-    show YoutubePlayer;
 
 import '../../../models/config/video/editor/video_web_configurations.dart';
 import '../../../utils/dart_ui/dart_ui_fake.dart'
@@ -32,14 +30,7 @@ class QuillEditorWebVideoEmbedBuilder extends EmbedBuilder {
     bool inline,
     TextStyle textStyle,
   ) {
-    var videoUrl = node.value.data;
-    if (isYouTubeUrl(videoUrl)) {
-      final youtubeID = YoutubePlayer.convertUrlToId(videoUrl);
-      if (youtubeID != null) {
-        videoUrl = 'https://www.youtube.com/embed/$youtubeID';
-      }
-    }
-
+    final videoUrl = node.value.data;
     final (height, width, margin, alignment) = getWebElementAttributes(node);
 
     ui.PlatformViewRegistry().registerViewFactory(
