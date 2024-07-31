@@ -1,8 +1,9 @@
 import 'package:flutter/foundation.dart' show immutable;
 import 'package:flutter/widgets.dart'
-    show Axis, WrapAlignment, WrapCrossAlignment;
+    show Axis, Color, Decoration, WrapAlignment, WrapCrossAlignment;
 
 import '../../controller/quill_controller.dart';
+import '../../editor_toolbar_controller_shared/quill_configurations.dart';
 import '../buttons/hearder_style/select_header_style_buttons.dart';
 import '../buttons/hearder_style/select_header_style_dropdown_button.dart';
 import '../buttons/link_style2_button.dart';
@@ -10,9 +11,9 @@ import '../buttons/link_style_button.dart';
 import '../buttons/search/legacy/legacy_search_button.dart';
 import '../buttons/search/search_button.dart';
 import '../embed/embed_button_builder.dart';
+import '../structs/link_dialog_action.dart';
 import '../theme/quill_dialog_theme.dart';
 import '../theme/quill_icon_theme.dart';
-import 'simple_toolbar_button_options.dart';
 import 'toolbar_shared_configurations.dart';
 
 export '../buttons/search/search_dialog.dart';
@@ -153,6 +154,134 @@ class QuillSimpleToolbarConfigurations extends QuillSharedToolbarProperties {
     /// will be [kDefaultIconSize] * 2
     super.toolbarSize,
   }) : _toolbarSize = toolbarSize;
+
+  factory QuillSimpleToolbarConfigurations.only({
+    QuillController? controller,
+    QuillSharedConfigurations sharedConfigurations =
+        const QuillSharedConfigurations(),
+    double toolbarSectionSpacing = kToolbarSectionSpacing,
+    WrapAlignment toolbarIconAlignment = WrapAlignment.center,
+    WrapCrossAlignment toolbarIconCrossAlignment = WrapCrossAlignment.center,
+    QuillSimpleToolbarButtonOptions buttonOptions =
+        const QuillSimpleToolbarButtonOptions(),
+    List<QuillToolbarCustomButtonOptions> customButtons = const [],
+    Map<String, String>? fontFamilyValues,
+    bool multiRowsDisplay = false,
+    Map<String, String>? fontSizesValues,
+    bool showDividers = false,
+    bool showFontFamily = false,
+    bool showFontSize = false,
+    bool showBoldButton = false,
+    bool showItalicButton = false,
+    bool showSmallButton = false,
+    bool showUnderLineButton = false,
+    bool showStrikeThrough = false,
+    bool showInlineCode = false,
+    bool showColorButton = false,
+    bool showBackgroundColorButton = false,
+    bool showClearFormat = false,
+    bool showAlignmentButtons = false,
+    bool showLeftAlignment = false,
+    bool showCenterAlignment = false,
+    bool showRightAlignment = false,
+    bool showJustifyAlignment = false,
+    bool showHeaderStyle = false,
+    bool showListNumbers = false,
+    bool showListBullets = false,
+    bool showListCheck = false,
+    bool showCodeBlock = false,
+    bool showQuote = false,
+    bool showIndent = false,
+    bool showLink = false,
+    bool showUndo = false,
+    bool showRedo = false,
+    bool showDirection = false,
+    bool showSearchButton = false,
+    bool showSubscript = false,
+    bool showSuperscript = false,
+    bool showClipboardCut = false,
+    bool showClipboardCopy = false,
+    bool showClipboardPaste = false,
+    LinkStyleType linkStyleType = LinkStyleType.original,
+
+    /// The decoration to use for the toolbar.
+    Decoration? decoration,
+
+    /// Toolbar items to display for controls of embed blocks
+    List<EmbedButtonBuilder>? embedButtons,
+    LinkDialogAction? linkDialogAction,
+
+    ///The theme to use for the icons in the toolbar, uses type [QuillIconTheme]
+    // this.iconTheme,
+    QuillDialogTheme? dialogTheme,
+    Axis axis = Axis.horizontal,
+    Color? color,
+    Color? sectionDividerColor,
+    double? sectionDividerSpace,
+
+    /// By default it will calculated based on the [globalIconSize] from
+    /// [base] in [QuillToolbarButtonOptions]
+    /// You can change it but the the change only apply if
+    /// the [multiRowsDisplay] is false, if [multiRowsDisplay] then the value
+    /// will be [kDefaultIconSize] * 2
+    double? toolbarSize,
+  }) =>
+      QuillSimpleToolbarConfigurations(
+        controller: controller,
+        sharedConfigurations: sharedConfigurations,
+        toolbarSectionSpacing: toolbarSectionSpacing,
+        toolbarIconAlignment: toolbarIconAlignment,
+        toolbarIconCrossAlignment: toolbarIconCrossAlignment,
+        buttonOptions: buttonOptions,
+        customButtons: customButtons,
+        fontFamilyValues: fontFamilyValues,
+        multiRowsDisplay: multiRowsDisplay,
+        fontSizesValues: fontSizesValues,
+        showDividers: showDividers,
+        showFontFamily: showFontFamily,
+        showFontSize: showFontSize,
+        showBoldButton: showBoldButton,
+        showItalicButton: showItalicButton,
+        showSmallButton: showSmallButton,
+        showUnderLineButton: showUnderLineButton,
+        showStrikeThrough: showStrikeThrough,
+        showInlineCode: showInlineCode,
+        showColorButton: showColorButton,
+        showBackgroundColorButton: showBackgroundColorButton,
+        showClearFormat: showClearFormat,
+        showAlignmentButtons: showAlignmentButtons,
+        showLeftAlignment: showLeftAlignment,
+        showCenterAlignment: showCenterAlignment,
+        showRightAlignment: showRightAlignment,
+        showJustifyAlignment: showJustifyAlignment,
+        showHeaderStyle: showHeaderStyle,
+        showListNumbers: showListNumbers,
+        showListBullets: showListBullets,
+        showListCheck: showListCheck,
+        showCodeBlock: showCodeBlock,
+        showQuote: showQuote,
+        showIndent: showIndent,
+        showLink: showLink,
+        showUndo: showUndo,
+        showRedo: showRedo,
+        showDirection: showDirection,
+        showSearchButton: showSearchButton,
+        showSubscript: showSubscript,
+        showSuperscript: showSuperscript,
+        showClipboardCut: showClipboardCut,
+        showClipboardCopy: showClipboardCopy,
+        showClipboardPaste: showClipboardPaste,
+        linkStyleType: linkStyleType,
+        decoration: decoration,
+        embedButtons: embedButtons,
+        linkDialogAction: linkDialogAction,
+        dialogTheme: dialogTheme,
+        axis: axis,
+        color: color,
+        sectionDividerColor: sectionDividerColor,
+        sectionDividerSpace: sectionDividerSpace,
+        toolbarSize: toolbarSize,
+      );
 
   final double? _toolbarSize;
 
