@@ -77,7 +77,7 @@ class QuillRawEditorState extends EditorState
   // Cursors
   late CursorCont _cursorCont;
 
-  QuillController get controller => widget.configurations.controller;
+  QuillController get controller => widget.controller;
 
   // Focus
   bool _didAutoFocus = false;
@@ -1310,9 +1310,8 @@ class QuillRawEditorState extends EditorState
     _cursorCont.show.value = widget.configurations.showCursor;
     _cursorCont.style = widget.configurations.cursorStyle;
 
-    if (controller != oldWidget.configurations.controller) {
-      oldWidget.configurations.controller
-          .removeListener(_didChangeTextEditingValue);
+    if (controller != oldWidget.controller) {
+      oldWidget.controller.removeListener(_didChangeTextEditingValue);
       controller.addListener(_didChangeTextEditingValue);
       updateRemoteValueIfNeeded();
     }
@@ -1329,7 +1328,7 @@ class QuillRawEditorState extends EditorState
       updateKeepAlive();
     }
 
-    if (controller.selection != oldWidget.configurations.controller.selection) {
+    if (controller.selection != oldWidget.controller.selection) {
       _selectionOverlay?.update(textEditingValue);
     }
 
@@ -1384,7 +1383,7 @@ class QuillRawEditorState extends EditorState
   /// operating on stale data.
   void _markNeedsBuild() {
     if (_dirty) {
-      // No need to rebuilt if it already darty
+      // No need to rebuilt if it already dirty
       return;
     }
     setState(() {
@@ -1662,7 +1661,7 @@ class QuillRawEditorState extends EditorState
     final QuillEditorTextBoundary boundary;
 
     // final TextEditingValue textEditingValue =
-    //     _textEditingValueforTextLayoutMetrics;
+    //     _textEditingValueForTextLayoutMetrics;
     atomicTextBoundary = QuillEditorCharacterBoundary(textEditingValue);
     // This isn't enough. Newline characters.
     boundary = QuillEditorExpandedTextBoundary(

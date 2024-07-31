@@ -35,13 +35,12 @@ import '../../../editor/widgets/cursor.dart';
 import '../../../editor/widgets/default_styles.dart';
 import '../../../editor/widgets/delegate.dart';
 import '../../../editor/widgets/link.dart';
+import '../../../editor_toolbar_shared/config/quill_shortcut_configuration.dart';
 import '../../../toolbar/theme/quill_dialog_theme.dart';
-import '../quill_shortcut_configuration.dart';
 
 @immutable
 class QuillRawEditorConfigurations extends Equatable {
   const QuillRawEditorConfigurations({
-    required this.controller,
     required this.focusNode,
     required this.scrollController,
     required this.scrollBottomInset,
@@ -50,6 +49,9 @@ class QuillRawEditorConfigurations extends Equatable {
     required this.selectionCtrls,
     required this.embedBuilder,
     required this.autoFocus,
+    @Deprecated(
+        'controller should be passed directly to the editor - this parameter will be removed in future versions.')
+    this.controller,
     this.showCursor = true,
     this.scrollable = true,
     this.padding = EdgeInsets.zero,
@@ -95,7 +97,8 @@ class QuillRawEditorConfigurations extends Equatable {
   });
 
   /// Controls the document being edited.
-  final QuillController controller;
+  @Deprecated('controller will be removed in future versions.')
+  final QuillController? controller;
 
   /// Controls whether this editor has keyboard focus.
   final FocusNode focusNode;

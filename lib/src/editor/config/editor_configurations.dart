@@ -7,6 +7,7 @@ import 'package:meta/meta.dart' show experimental;
 
 import '../../controller/quill_controller.dart';
 import '../../editor_toolbar_shared/config/quill_shared_configurations.dart';
+import '../../editor_toolbar_shared/config/quill_shortcut_configuration.dart';
 import '../../toolbar/theme/quill_dialog_theme.dart';
 import '../editor_builder.dart';
 import '../embed/embed_editor_builder.dart';
@@ -24,7 +25,9 @@ class QuillEditorConfigurations extends Equatable {
   /// Important note for the maintainers
   /// When editing this class please update the [copyWith] function too.
   const QuillEditorConfigurations({
-    required this.controller,
+    @Deprecated(
+        'controller should be passed directly to the editor - this parameter will be removed in future versions.')
+    this.controller,
     this.sharedConfigurations = const QuillSharedConfigurations(),
     this.scrollable = true,
     this.padding = EdgeInsets.zero,
@@ -87,7 +90,8 @@ class QuillEditorConfigurations extends Equatable {
 
   final QuillSharedConfigurations sharedConfigurations;
 
-  final QuillController controller;
+  @Deprecated('controller will be removed in future versions.')
+  final QuillController? controller;
 
   /// The text placeholder in the quill editor
   final String? placeholder;
@@ -98,7 +102,8 @@ class QuillEditorConfigurations extends Equatable {
   /// by any shortcut or keyboard operation. The text is still selectable.
   ///
   /// Defaults to `false`. Must not be `null`.
-  bool get readOnly => controller.readOnly;
+  // ignore: deprecated_member_use_from_same_package
+  bool get readOnly => controller?.readOnly != false;
 
   /// Override [readOnly] for checkbox.
   ///
@@ -384,7 +389,8 @@ class QuillEditorConfigurations extends Equatable {
   @override
   List<Object?> get props => [
         placeholder,
-        controller.readOnly,
+        // ignore: deprecated_member_use_from_same_package
+        controller?.readOnly,
       ];
 
   // We might use code generator like freezed but sometimes it can be limited
@@ -449,6 +455,7 @@ class QuillEditorConfigurations extends Equatable {
   }) {
     return QuillEditorConfigurations(
       sharedConfigurations: sharedConfigurations ?? this.sharedConfigurations,
+      // ignore: deprecated_member_use_from_same_package
       controller: controller ?? this.controller,
       placeholder: placeholder ?? this.placeholder,
       checkBoxReadOnly: checkBoxReadOnly ?? this.checkBoxReadOnly,
