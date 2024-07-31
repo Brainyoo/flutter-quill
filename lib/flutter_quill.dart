@@ -32,6 +32,7 @@ export 'src/editor_toolbar_controller_shared/copy_cut_service/copy_cut_service.d
 export 'src/editor_toolbar_controller_shared/copy_cut_service/copy_cut_service_provider.dart';
 export 'src/editor_toolbar_controller_shared/copy_cut_service/default_copy_cut_service.dart';
 export 'src/editor_toolbar_controller_shared/quill_configurations.dart';
+export 'src/editor_toolbar_shared/config/quill_shortcut_configuration.dart';
 export 'src/editor_toolbar_shared/quill_configurations_ext.dart';
 export 'src/toolbar/base_toolbar.dart';
 export 'src/toolbar/buttons/alignment/select_alignment_button.dart';
