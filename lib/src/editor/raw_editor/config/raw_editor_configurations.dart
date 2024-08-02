@@ -35,6 +35,7 @@ import '../../../editor/widgets/cursor.dart';
 import '../../../editor/widgets/default_styles.dart';
 import '../../../editor/widgets/delegate.dart';
 import '../../../editor/widgets/link.dart';
+import '../../../editor_toolbar_shared/config/quill_action_configuration.dart';
 import '../../../editor_toolbar_shared/config/quill_shortcut_configuration.dart';
 import '../../../toolbar/theme/quill_dialog_theme.dart';
 
@@ -94,6 +95,7 @@ class QuillRawEditorConfigurations extends Equatable {
     this.magnifierConfiguration,
     this.onPerformAction,
     this.shortcutConfiguration = const QuillShortcutConfiguration(),
+    this.actionConfiguration = const QuillActionConfiguration(),
   });
 
   /// Controls the document being edited.
@@ -351,6 +353,8 @@ class QuillRawEditorConfigurations extends Equatable {
   final void Function(TextInputAction action)? onPerformAction;
 
   final QuillShortcutConfiguration shortcutConfiguration;
+
+  final QuillActionConfiguration actionConfiguration;
 
   @override
   List<Object?> get props => [
