@@ -6,6 +6,7 @@ import 'package:flutter/widgets.dart';
 import 'package:meta/meta.dart' show experimental;
 
 import '../../controller/quill_controller.dart';
+import '../../editor_toolbar_shared/config/quill_action_configuration.dart';
 import '../../editor_toolbar_shared/config/quill_shared_configurations.dart';
 import '../../editor_toolbar_shared/config/quill_shortcut_configuration.dart';
 import '../../toolbar/theme/quill_dialog_theme.dart';
@@ -86,6 +87,7 @@ class QuillEditorConfigurations extends Equatable {
     this.readOnlyMouseCursor = SystemMouseCursors.text,
     this.onPerformAction,
     this.shortcutConfiguration = const QuillShortcutConfiguration(),
+    this.actionConfiguration = const QuillActionConfiguration(),
   });
 
   final QuillSharedConfigurations sharedConfigurations;
@@ -385,6 +387,8 @@ class QuillEditorConfigurations extends Equatable {
   final void Function(TextInputAction action)? onPerformAction;
 
   final QuillShortcutConfiguration shortcutConfiguration;
+
+  final QuillActionConfiguration actionConfiguration;
   
   @override
   List<Object?> get props => [
@@ -452,6 +456,7 @@ class QuillEditorConfigurations extends Equatable {
     EdgeInsets? scribbleAreaInsets,
     void Function(TextInputAction action)? onPerformAction,
     QuillShortcutConfiguration? shortcutConfiguration,
+    QuillActionConfiguration? actionConfiguration,
   }) {
     return QuillEditorConfigurations(
       sharedConfigurations: sharedConfigurations ?? this.sharedConfigurations,
@@ -521,6 +526,7 @@ class QuillEditorConfigurations extends Equatable {
       scribbleAreaInsets: scribbleAreaInsets ?? this.scribbleAreaInsets,
       onPerformAction: onPerformAction ?? this.onPerformAction,
       shortcutConfiguration: shortcutConfiguration ?? this.shortcutConfiguration,
+      actionConfiguration: actionConfiguration ?? this.actionConfiguration,
     );
   }
 }

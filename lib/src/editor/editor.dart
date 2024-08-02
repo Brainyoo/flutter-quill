@@ -357,6 +357,7 @@ class QuillEditorState extends State<QuillEditor>
               textInputAction: configurations.textInputAction,
               onPerformAction: configurations.onPerformAction,
               shortcutConfiguration: configurations.shortcutConfiguration,
+              actionConfiguration: configurations.actionConfiguration,
             ),
           ),
         ),
