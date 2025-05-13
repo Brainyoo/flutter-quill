@@ -537,6 +537,7 @@ class QuillEditorConfig {
     EdgeInsets? scribbleAreaInsets,
     void Function(TextInputAction action)? onPerformAction,
     QuillActionConfiguration? actionConfiguration,
+    QuillShortcutConfiguration? shortcutConfiguration,
   }) {
     return QuillEditorConfig(
       customLeadingBlockBuilder:
@@ -607,6 +608,8 @@ class QuillEditorConfig {
       scribbleAreaInsets: scribbleAreaInsets ?? this.scribbleAreaInsets,
       onPerformAction: onPerformAction ?? this.onPerformAction,
       actionConfiguration: actionConfiguration ?? this.actionConfiguration,
+      shortcutConfiguration:
+          shortcutConfiguration ?? this.shortcutConfiguration,
     );
   }
 }
