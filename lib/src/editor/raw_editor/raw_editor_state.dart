@@ -48,6 +48,8 @@ class QuillRawEditorState extends EditorState
         RawEditorStateSelectionDelegateMixin {
   late final EditorKeyboardShortcutsActionsManager _shortcutActionsManager;
 
+  late Map<Type, Action<Intent>> _actions;
+
   final GlobalKey _editorKey = GlobalKey();
 
   KeyboardVisibilityController? _keyboardVisibilityController;
@@ -484,7 +486,7 @@ class QuillRawEditorState extends EditorState
       child: QuillStyles(
         data: _styles!,
         child: EditorKeyboardShortcuts(
-          actions: _shortcutActionsManager.actions,
+          actions: _actions,
           onKeyPressed: widget.config.onKeyPressed,
           characterEvents: widget.config.characterShortcutEvents,
           spaceEvents: widget.config.spaceShortcutEvents,
@@ -810,6 +812,8 @@ class QuillRawEditorState extends EditorState
       context: context,
     );
 
+    _actions = _shortcutActionsManager.actions;
+
     if (_clipboardStatus != null) {
       _clipboardStatus!.addListener(_onChangedClipboardStatus);
     }
@@ -950,6 +954,11 @@ class QuillRawEditorState extends EditorState
     // in case customStyles changed in new widget
     if (widget.config.customStyles != null) {
       _styles = _styles!.merge(widget.config.customStyles!);
+    }
+
+    if (widget.config.actionConfiguration !=
+        oldWidget.config.actionConfiguration) {
+      _actions = _shortcutActionsManager.actions;
     }
   }
 

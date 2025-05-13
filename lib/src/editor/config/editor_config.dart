@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:meta/meta.dart' show experimental;
 
 import '../../document/nodes/node.dart';
+import '../../editor_toolbar_shared/config/quill_action_configuration.dart';
 import '../../toolbar/theme/quill_dialog_theme.dart';
 import '../embed/embed_editor_builder.dart';
 import '../raw_editor/builders/leading_block_builder.dart';
@@ -19,6 +20,7 @@ import '../widgets/delegate.dart';
 import '../widgets/link.dart' hide linkPrefixes;
 import '../widgets/text/magnifier.dart';
 import '../widgets/text/utils/text_block_utils.dart';
+import 'quill_shortcut_configuration.dart';
 import 'search_config.dart';
 
 // IMPORTANT For project authors: The QuillEditorConfig.copyWith()
@@ -86,6 +88,8 @@ class QuillEditorConfig {
     this.readOnlyMouseCursor = SystemMouseCursors.text,
     this.onPerformAction,
     @experimental this.customLeadingBlockBuilder,
+    this.actionConfiguration = const QuillActionConfiguration(),
+    this.shortcutConfiguration = const QuillShortcutConfiguration(),
   });
 
   @experimental
@@ -471,8 +475,9 @@ class QuillEditorConfig {
   /// Called when a text input action is performed.
   final void Function(TextInputAction action)? onPerformAction;
 
-  // IMPORTANT For project authors: The copyWith()
-  // should be manually updated each time we add or remove a property
+  final QuillShortcutConfiguration shortcutConfiguration;
+
+  final QuillActionConfiguration actionConfiguration;
 
   QuillEditorConfig copyWith({
     LeadingBlockNodeBuilder? customLeadingBlockBuilder,
@@ -531,6 +536,7 @@ class QuillEditorConfig {
     void Function()? onScribbleActivated,
     EdgeInsets? scribbleAreaInsets,
     void Function(TextInputAction action)? onPerformAction,
+    QuillActionConfiguration? actionConfiguration,
   }) {
     return QuillEditorConfig(
       customLeadingBlockBuilder:
@@ -600,6 +606,7 @@ class QuillEditorConfig {
       onScribbleActivated: onScribbleActivated ?? this.onScribbleActivated,
       scribbleAreaInsets: scribbleAreaInsets ?? this.scribbleAreaInsets,
       onPerformAction: onPerformAction ?? this.onPerformAction,
+      actionConfiguration: actionConfiguration ?? this.actionConfiguration,
     );
   }
 }
