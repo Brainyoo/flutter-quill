@@ -11,7 +11,3 @@ final videoRegExp = RegExp(
   r'\bhttps?://\S+\.(mp4|mov|avi|mkv|flv|wmv|webm)\b',
   caseSensitive: false,
 );
-final youtubeRegExp = RegExp(
-  r'^((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube(-nocookie)?\.com|youtu.be))(\/(?:[\w\-]+\?v=|embed\/|live\/|v\/)?)([\w\-]+)(\S+)?$',
-  caseSensitive: false,
-);

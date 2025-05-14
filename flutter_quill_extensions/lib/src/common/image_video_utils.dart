@@ -103,9 +103,6 @@ class TypeLinkDialogState extends State<TypeLinkDialog> {
     }
     switch (widget.linkType) {
       case LinkType.video:
-        if (youtubeRegExp.hasMatch(_link)) {
-          return youtubeRegExp;
-        }
         return videoRegExp;
       case LinkType.image:
         return imageRegExp;
