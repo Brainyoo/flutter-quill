@@ -472,7 +472,6 @@ class QuillRawEditorState extends EditorState
             minHeight: widget.config.minHeight ?? 0.0,
             maxHeight: widget.config.maxHeight ?? double.infinity,
           );
-
     return TextFieldTapRegion(
       enabled: widget.config.onTapOutsideEnabled,
       onTapOutside: (event) {
@@ -497,6 +496,7 @@ class QuillRawEditorState extends EditorState
           enableAlwaysIndentOnTab: widget.config.enableAlwaysIndentOnTab,
           customShortcuts: widget.config.customShortcuts,
           customActions: widget.config.customActions,
+          actionConfiguration: widget.config.actionConfiguration,
           child: child,
         ),
       ),
