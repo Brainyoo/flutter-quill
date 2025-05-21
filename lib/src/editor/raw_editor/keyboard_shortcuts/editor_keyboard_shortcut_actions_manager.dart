@@ -179,6 +179,9 @@ class EditorKeyboardShortcutsActionsManager {
           QuillEditorUpdateTextSelectionAction<
                   ExtendSelectionToDocumentBoundaryIntent>(
               rawEditorState, true, _documentBoundary)),
+    if (_actionConfig.enableExpandSelectionToDocumentBoundaryIntent)
+      ExpandSelectionToDocumentBoundaryIntent: _makeOverridable(
+          ExpandSelectionToDocumentBoundaryAction(rawEditorState)),
 
     if (_actionConfig
         .enableExtendSelectionToNextWordBoundaryOrCaretLocationIntent)

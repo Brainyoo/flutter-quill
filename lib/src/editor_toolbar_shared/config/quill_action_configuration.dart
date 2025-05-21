@@ -28,6 +28,7 @@ class QuillActionConfiguration {
     this.enableScrollToDocumentBoundaryIntent = true,
     this.enableExtendSelectionVerticallyToAdjacentPageIntent = true,
     this.enableScrollIntent = true,
+    this.enableExpandSelectionToDocumentBoundaryIntent = true,
   });
 
   const QuillActionConfiguration.disabled() : this.only();
@@ -61,6 +62,7 @@ class QuillActionConfiguration {
     bool enableScrollToDocumentBoundaryIntent = false,
     bool enableExtendSelectionVerticallyToAdjacentPageIntent = false,
     bool enableScrollIntent = false,
+    bool enableExpandSelectionToDocumentBoundaryIntent = false,
   }) : this(
           enableDoNothingAndStopPropagationTextIntent:
               enableDoNothingAndStopPropagationTextIntent,
@@ -100,6 +102,8 @@ class QuillActionConfiguration {
           enableExtendSelectionVerticallyToAdjacentPageIntent:
               enableExtendSelectionVerticallyToAdjacentPageIntent,
           enableScrollIntent: enableScrollIntent,
+          enableExpandSelectionToDocumentBoundaryIntent:
+              enableExpandSelectionToDocumentBoundaryIntent,
         );
 
   final bool enableDoNothingAndStopPropagationTextIntent;
@@ -130,4 +134,5 @@ class QuillActionConfiguration {
   final bool enableScrollToDocumentBoundaryIntent;
   final bool enableExtendSelectionVerticallyToAdjacentPageIntent;
   final bool enableScrollIntent;
+  final bool enableExpandSelectionToDocumentBoundaryIntent;
 }
