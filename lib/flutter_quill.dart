@@ -15,6 +15,7 @@ export 'src/document/nodes/line.dart';
 export 'src/document/nodes/node.dart';
 export 'src/document/structs/doc_change.dart';
 export 'src/document/style.dart';
+export 'src/editor/config/quill_shortcut_configuration.dart';
 export 'src/editor/editor.dart';
 export 'src/editor/embed/embed_editor_builder.dart';
 export 'src/editor/raw_editor/builders/leading_block_builder.dart';
@@ -33,6 +34,8 @@ export 'src/editor_toolbar_controller_shared/copy_cut_service/copy_cut_service.d
 export 'src/editor_toolbar_controller_shared/copy_cut_service/copy_cut_service_provider.dart';
 export 'src/editor_toolbar_controller_shared/copy_cut_service/default_copy_cut_service.dart';
 export 'src/editor_toolbar_controller_shared/quill_config.dart';
+export 'src/editor_toolbar_shared/color.dart';
+export 'src/editor_toolbar_shared/config/quill_action_configuration.dart';
 export 'src/l10n/generated/quill_localizations.dart';
 export 'src/rules/rule.dart' show Rule;
 export 'src/toolbar/embed/embed_button_builder.dart';

@@ -265,6 +265,8 @@ class QuillEditorState extends State<QuillEditor>
       controller: controller,
       dragOffsetNotifier: dragOffsetNotifier,
       config: QuillRawEditorConfig(
+        actionConfiguration: widget.config.actionConfiguration,
+        shortcutConfiguration: widget.config.shortcutConfiguration,
         characterShortcutEvents: widget.config.characterShortcutEvents,
         spaceShortcutEvents: widget.config.spaceShortcutEvents,
         onKeyPressed: widget.config.onKeyPressed,

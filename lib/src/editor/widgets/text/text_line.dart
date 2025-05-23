@@ -592,6 +592,9 @@ class _TextLineState extends State<TextLine> {
         case 'small':
           res = res.merge(defaultStyles.sizeSmall);
           break;
+        case 'normal':
+          res = res.merge(defaultStyles.paragraph!.style);
+          break;
         case 'large':
           res = res.merge(defaultStyles.sizeLarge);
           break;
