@@ -24,6 +24,7 @@ class QuillShortcutConfiguration {
     this.enableHeaderReset = true,
     this.enableImage = true,
     this.enableSearch = true,
+    this.enableArrowScrolling = true,
   });
 
   const QuillShortcutConfiguration.disabled() : this.only();
@@ -53,6 +54,7 @@ class QuillShortcutConfiguration {
     bool enableHeaderReset = false,
     bool enableImage = false,
     bool enableSearch = false,
+    bool enableArrowScrolling = false,
   }) : this(
           enableHideSelectionToolbar: enableHideSelectionToolbar,
           enableUndo: enableUndo,
@@ -78,6 +80,7 @@ class QuillShortcutConfiguration {
           enableHeaderReset: enableHeaderReset,
           enableImage: enableImage,
           enableSearch: enableSearch,
+          enableArrowScrolling: enableArrowScrolling,
         );
 
   final bool enableHideSelectionToolbar;
@@ -104,4 +107,5 @@ class QuillShortcutConfiguration {
   final bool enableHeaderReset;
   final bool enableImage;
   final bool enableSearch;
+  final bool enableArrowScrolling;
 }
