@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:meta/meta.dart';
 
+import '../../../../flutter_quill.dart';
 import '../../../common/utils/cast.dart';
 import '../../../controller/quill_controller.dart';
 import '../../../document/attribute.dart';
@@ -28,6 +29,7 @@ class EditorKeyboardShortcuts extends StatelessWidget {
     required this.enableAlwaysIndentOnTab,
     required this.characterEvents,
     required this.spaceEvents,
+    required this.shortcutConfiguration,
     this.onKeyPressed,
     this.customShortcuts,
     this.customActions,
@@ -47,6 +49,7 @@ class EditorKeyboardShortcuts extends StatelessWidget {
   final BoxConstraints constraints;
   final FocusNode focusNode;
   final Widget child;
+  final QuillShortcutConfiguration shortcutConfiguration;
 
   @override
   Widget build(BuildContext context) {
@@ -56,7 +59,7 @@ class EditorKeyboardShortcuts extends StatelessWidget {
       /// priority when activation triggers are the same
       shortcuts: mergeMaps<ShortcutActivator, Intent>(
         {...?customShortcuts},
-        {...defaultSinlgeActivatorIntents()},
+        {...defaultSinlgeActivatorIntents(shortcutConfiguration)},
       ),
       child: Actions(
         actions: mergeMaps<Type, Action<Intent>>(

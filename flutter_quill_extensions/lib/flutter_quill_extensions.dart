@@ -1,11 +1,13 @@
 library;
 
 export 'src/common/extensions/controller_ext.dart';
+export 'src/common/utils/element_utils/element_utils.dart';
 export 'src/editor/image/config/image_config.dart';
 export 'src/editor/image/config/image_web_config.dart';
 export 'src/editor/image/image_embed.dart';
 export 'src/editor/image/image_embed_types.dart';
 export 'src/editor/image/image_web_embed.dart';
+export 'src/editor/image/widgets/image.dart';
 export 'src/editor/video/config/video_config.dart';
 export 'src/editor/video/config/video_web_config.dart';
 export 'src/editor/video/video_embed.dart';

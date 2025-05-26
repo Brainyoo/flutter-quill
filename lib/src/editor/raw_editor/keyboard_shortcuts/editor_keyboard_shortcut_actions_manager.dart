@@ -1,7 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:meta/meta.dart';
 
-import '../raw_editor_state.dart';
+import '../../../../flutter_quill.dart';
 import '../raw_editor_text_boundaries.dart';
 import 'editor_keyboard_shortcut_actions.dart';
 
@@ -124,80 +124,107 @@ class EditorKeyboardShortcutsActionsManager {
   late final QuillEditorApplyCheckListAction _applyCheckListAction =
       QuillEditorApplyCheckListAction(rawEditorState);
 
+  QuillActionConfiguration get _actionConfig =>
+      rawEditorState.widget.config.actionConfiguration;
+
   late final Map<Type, Action<Intent>> _actions = <Type, Action<Intent>>{
-    DoNothingAndStopPropagationTextIntent: DoNothingAction(consumesKey: false),
-    ReplaceTextIntent: _replaceTextAction,
-    UpdateSelectionIntent: _updateSelectionAction,
-    DirectionalFocusIntent: DirectionalFocusAction.forTextField(),
+    if (_actionConfig.enableDoNothingAndStopPropagationTextIntent)
+      DoNothingAndStopPropagationTextIntent:
+          DoNothingAction(consumesKey: false),
+    if (_actionConfig.enableReplaceTextIntent)
+      ReplaceTextIntent: _replaceTextAction,
+    if (_actionConfig.enableUpdateSelectionIntent)
+      UpdateSelectionIntent: _updateSelectionAction,
+    if (_actionConfig.enableDirectionalFocusIntent)
+      DirectionalFocusIntent: DirectionalFocusAction.forTextField(),
 
     // Delete
-    DeleteCharacterIntent: _makeOverridable(
-        QuillEditorDeleteTextAction<DeleteCharacterIntent>(
-            rawEditorState, _characterBoundary)),
-    DeleteToNextWordBoundaryIntent: _makeOverridable(
-        QuillEditorDeleteTextAction<DeleteToNextWordBoundaryIntent>(
-            rawEditorState, _nextWordBoundary)),
-    DeleteToLineBreakIntent: _makeOverridable(
-        QuillEditorDeleteTextAction<DeleteToLineBreakIntent>(
-            rawEditorState, _linebreak)),
+    if (_actionConfig.enableDeleteCharacterIntent)
+      DeleteCharacterIntent: _makeOverridable(
+          QuillEditorDeleteTextAction<DeleteCharacterIntent>(
+              rawEditorState, _characterBoundary)),
+    if (_actionConfig.enableDeleteToNextWordBoundaryIntent)
+      DeleteToNextWordBoundaryIntent: _makeOverridable(
+          QuillEditorDeleteTextAction<DeleteToNextWordBoundaryIntent>(
+              rawEditorState, _nextWordBoundary)),
+    if (_actionConfig.enableDeleteToLineBreakIntent)
+      DeleteToLineBreakIntent: _makeOverridable(
+          QuillEditorDeleteTextAction<DeleteToLineBreakIntent>(
+              rawEditorState, _linebreak)),
 
     // Extend/Move Selection
-    ExtendSelectionByCharacterIntent: _makeOverridable(
-        QuillEditorUpdateTextSelectionAction<ExtendSelectionByCharacterIntent>(
-      rawEditorState,
-      false,
-      _characterBoundary,
-    )),
-    ExtendSelectionToNextWordBoundaryIntent: _makeOverridable(
-        QuillEditorUpdateTextSelectionAction<
-                ExtendSelectionToNextWordBoundaryIntent>(
-            rawEditorState, true, _nextWordBoundary)),
-    ExtendSelectionToLineBreakIntent: _makeOverridable(
-        QuillEditorUpdateTextSelectionAction<ExtendSelectionToLineBreakIntent>(
-            rawEditorState, true, _linebreak)),
-    ExtendSelectionVerticallyToAdjacentLineIntent:
-        _makeOverridable(adjacentLineAction),
-    ExtendSelectionToDocumentBoundaryIntent: _makeOverridable(
-        QuillEditorUpdateTextSelectionAction<
-                ExtendSelectionToDocumentBoundaryIntent>(
-            rawEditorState, true, _documentBoundary)),
-    ExtendSelectionToNextWordBoundaryOrCaretLocationIntent: _makeOverridable(
-        QuillEditorExtendSelectionOrCaretPositionAction(
-            rawEditorState, _nextWordBoundary)),
-    ExpandSelectionToDocumentBoundaryIntent: _makeOverridable(
-        ExpandSelectionToDocumentBoundaryAction(rawEditorState)),
-    ExpandSelectionToLineBreakIntent:
-        _makeOverridable(ExpandSelectionToLineBreakAction(rawEditorState)),
+    if (_actionConfig.enableExtendSelectionByCharacterIntent)
+      ExtendSelectionByCharacterIntent: _makeOverridable(
+          QuillEditorUpdateTextSelectionAction<
+              ExtendSelectionByCharacterIntent>(
+        rawEditorState,
+        false,
+        _characterBoundary,
+      )),
+    if (_actionConfig.enableExtendSelectionToNextWordBoundaryIntent)
+      ExtendSelectionToNextWordBoundaryIntent: _makeOverridable(
+          QuillEditorUpdateTextSelectionAction<
+                  ExtendSelectionToNextWordBoundaryIntent>(
+              rawEditorState, true, _nextWordBoundary)),
+    if (_actionConfig.enableExtendSelectionToLineBreakIntent)
+      ExtendSelectionToLineBreakIntent: _makeOverridable(
+          QuillEditorUpdateTextSelectionAction<
+                  ExtendSelectionToLineBreakIntent>(
+              rawEditorState, true, _linebreak)),
+    if (_actionConfig.enableExtendSelectionVerticallyToAdjacentLineIntent)
+      ExtendSelectionVerticallyToAdjacentLineIntent:
+          _makeOverridable(adjacentLineAction),
+    if (_actionConfig.enableExtendSelectionToDocumentBoundaryIntent)
+      ExtendSelectionToDocumentBoundaryIntent: _makeOverridable(
+          QuillEditorUpdateTextSelectionAction<
+                  ExtendSelectionToDocumentBoundaryIntent>(
+              rawEditorState, true, _documentBoundary)),
+    if (_actionConfig.enableExpandSelectionToDocumentBoundaryIntent)
+      ExpandSelectionToDocumentBoundaryIntent: _makeOverridable(
+          ExpandSelectionToDocumentBoundaryAction(rawEditorState)),
 
-    // Copy Paste
-    SelectAllTextIntent:
-        _makeOverridable(QuillEditorSelectAllAction(rawEditorState)),
-    CopySelectionTextIntent:
-        _makeOverridable(QuillEditorCopySelectionAction(rawEditorState)),
-    PasteTextIntent: _makeOverridable(CallbackAction<PasteTextIntent>(
-        onInvoke: (intent) => rawEditorState.pasteText(intent.cause))),
-
-    HideSelectionToolbarIntent:
-        _makeOverridable(QuillEditorHideSelectionToolbarAction(rawEditorState)),
-    UndoTextIntent:
-        _makeOverridable(QuillEditorUndoKeyboardAction(rawEditorState)),
-    RedoTextIntent:
-        _makeOverridable(QuillEditorRedoKeyboardAction(rawEditorState)),
-
-    OpenSearchIntent: _openSearchAction,
-
-    // Selection Formatting
-    ToggleTextStyleIntent: _formatSelectionAction,
-    IndentSelectionIntent: _indentSelectionAction,
-    QuillEditorApplyHeaderIntent: _applyHeaderAction,
-    QuillEditorApplyCheckListIntent: _applyCheckListAction,
-    QuillEditorApplyLinkIntent: QuillEditorApplyLinkAction(rawEditorState),
-    ScrollToDocumentBoundaryIntent:
-        NavigateToDocumentBoundaryAction(rawEditorState),
-
-    //  Paging and scrolling
-    ExtendSelectionVerticallyToAdjacentPageIntent: _adjacentPageAction,
-    ScrollIntent: QuillEditorScrollAction(rawEditorState),
+    if (_actionConfig
+        .enableExtendSelectionToNextWordBoundaryOrCaretLocationIntent)
+      ExtendSelectionToNextWordBoundaryOrCaretLocationIntent: _makeOverridable(
+          QuillEditorExtendSelectionOrCaretPositionAction(
+              rawEditorState, _nextWordBoundary)),
+    if (_actionConfig.enableSelectAllTextIntent)
+      SelectAllTextIntent:
+          _makeOverridable(QuillEditorSelectAllAction(rawEditorState)),
+    if (_actionConfig.enableCopySelectionTextIntent)
+      CopySelectionTextIntent:
+          _makeOverridable(QuillEditorCopySelectionAction(rawEditorState)),
+    if (_actionConfig.enablePasteTextIntent)
+      PasteTextIntent: _makeOverridable(CallbackAction<PasteTextIntent>(
+          onInvoke: (intent) => rawEditorState.pasteText(intent.cause))),
+    if (_actionConfig.enableHideSelectionToolbarIntent)
+      HideSelectionToolbarIntent: _makeOverridable(
+          QuillEditorHideSelectionToolbarAction(rawEditorState)),
+    if (_actionConfig.enableUndoTextIntent)
+      UndoTextIntent:
+          _makeOverridable(QuillEditorUndoKeyboardAction(rawEditorState)),
+    if (_actionConfig.enableRedoTextIntent)
+      RedoTextIntent:
+          _makeOverridable(QuillEditorRedoKeyboardAction(rawEditorState)),
+    if (_actionConfig.enableOpenSearchIntent)
+      OpenSearchIntent: _openSearchAction,
+    if (_actionConfig.enableToggleTextStyleIntent)
+      ToggleTextStyleIntent: _formatSelectionAction,
+    if (_actionConfig.enableIndentSelectionIntent)
+      IndentSelectionIntent: _indentSelectionAction,
+    if (_actionConfig.enableApplyHeaderIntent)
+      QuillEditorApplyHeaderIntent: _applyHeaderAction,
+    if (_actionConfig.enableApplyCheckListIntent)
+      QuillEditorApplyCheckListIntent: _applyCheckListAction,
+    if (_actionConfig.enableApplyLinkIntent)
+      QuillEditorApplyLinkIntent: QuillEditorApplyLinkAction(rawEditorState),
+    if (_actionConfig.enableScrollToDocumentBoundaryIntent)
+      ScrollToDocumentBoundaryIntent:
+          NavigateToDocumentBoundaryAction(rawEditorState),
+    if (_actionConfig.enableExtendSelectionVerticallyToAdjacentPageIntent)
+      ExtendSelectionVerticallyToAdjacentPageIntent: _adjacentPageAction,
+    if (_actionConfig.enableScrollIntent)
+      ScrollIntent: QuillEditorScrollAction(rawEditorState),
   };
 
   Map<Type, Action<Intent>> get actions => _actions;
