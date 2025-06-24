@@ -1,11 +1,15 @@
 import '../../../flutter_quill.dart';
 
 dynamic getFontSize(dynamic sizeValue) {
-  if (sizeValue is String &&
-      ['small', 'normal', 'large', 'huge'].contains(sizeValue)) {
-    return sizeValue;
+  if (sizeValue is String) {
+    if (['small', 'normal', 'large', 'huge'].contains(sizeValue)) {
+      return sizeValue;
+    }
+    if (sizeValue.endsWith('px')) {
+      return double.tryParse(sizeValue.replaceAll('px', ''));
+    }
   }
-
+  
   if (sizeValue is double) {
     return sizeValue;
   }
