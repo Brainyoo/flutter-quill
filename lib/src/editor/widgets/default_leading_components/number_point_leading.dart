@@ -10,4 +10,5 @@ Widget numberPointLeading(LeadingConfig config) => QuillNumberPoint(
       attrs: config.attrs,
       width: config.width!,
       padding: config.padding!,
+      alignment: config.listPointAlignment,
     );

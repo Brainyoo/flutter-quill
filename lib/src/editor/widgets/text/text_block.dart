@@ -275,6 +275,8 @@ class EditableTextBlock extends StatelessWidget {
       index: isOrdered || isCodeBlock ? index : null,
       count: count,
       enabled: !isCheck ? null : !(checkBoxReadOnly ?? readOnly),
+      listPointAlignment:
+          isOrdered || isCodeBlock ? defaultStyles.lists?.pointAlignment : null,
       style: () {
         if (isOrdered) {
           return defaultStyles.leading!.style.copyWith(

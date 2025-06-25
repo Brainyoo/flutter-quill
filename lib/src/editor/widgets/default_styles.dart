@@ -181,11 +181,13 @@ class DefaultListBlockStyle extends DefaultTextBlockStyle {
     this.indentWidthBuilder = TextBlockUtils.defaultIndentWidthBuilder,
     this.numberPointWidthBuilder =
         TextBlockUtils.defaultNumberPointWidthBuilder,
+    this.pointAlignment,
   });
 
   final QuillCheckboxBuilder? checkboxUIBuilder;
   final LeadingBlockIndentWidth indentWidthBuilder;
   final LeadingBlockNumberPointWidth numberPointWidthBuilder;
+  final AlignmentDirectional? pointAlignment;
 
   @override
   DefaultListBlockStyle copyWith({
@@ -197,6 +199,7 @@ class DefaultListBlockStyle extends DefaultTextBlockStyle {
     QuillCheckboxBuilder? checkboxUIBuilder,
     LeadingBlockIndentWidth? indentWidthBuilder,
     LeadingBlockNumberPointWidth? numberPointWidthBuilder,
+    AlignmentDirectional? pointAlignment,
   }) {
     return DefaultListBlockStyle(
       style ?? this.style,
@@ -208,6 +211,7 @@ class DefaultListBlockStyle extends DefaultTextBlockStyle {
       indentWidthBuilder: indentWidthBuilder ?? this.indentWidthBuilder,
       numberPointWidthBuilder:
           numberPointWidthBuilder ?? this.numberPointWidthBuilder,
+      pointAlignment: pointAlignment ?? this.pointAlignment,
     );
   }
 }

@@ -12,9 +12,10 @@ class QuillNumberPoint extends StatelessWidget {
     this.textAlign,
     this.withDot = true,
     this.padding = 0.0,
-    super.key,
     this.backgroundColor,
-  });
+    AlignmentDirectional? alignment,
+    super.key,
+  }) : alignment = alignment ?? AlignmentDirectional.topEnd;
 
   final String index;
   final Map<int?, int> indentLevelCounts;
@@ -26,12 +27,13 @@ class QuillNumberPoint extends StatelessWidget {
   final double padding;
   final Color? backgroundColor;
   final TextAlign? textAlign;
+  final AlignmentDirectional alignment;
 
   @override
   Widget build(BuildContext context) {
     if (!attrs.containsKey(Attribute.indent.key) && indentLevelCounts.isEmpty) {
       return Container(
-        alignment: AlignmentDirectional.topEnd,
+        alignment: alignment,
         width: width,
         padding: EdgeInsetsDirectional.only(end: padding),
         color: backgroundColor,
@@ -43,7 +45,7 @@ class QuillNumberPoint extends StatelessWidget {
       );
     }
     return Container(
-      alignment: AlignmentDirectional.topEnd,
+      alignment: alignment,
       width: width,
       padding: EdgeInsetsDirectional.only(end: padding),
       color: backgroundColor,

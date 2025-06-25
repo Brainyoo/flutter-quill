@@ -23,6 +23,7 @@ class LeadingConfig {
     required this.value,
     required this.onCheckboxTap,
     required this.attrs,
+    this.listPointAlignment,
     this.withDot = true,
     this.index,
     this.lineSize,
@@ -40,6 +41,7 @@ class LeadingConfig {
   final TextStyle? style;
   final double? width;
   final double? padding;
+  final AlignmentDirectional? listPointAlignment;
 
   // these values are used if the leading is from a check list
   final QuillCheckboxBuilder? uiBuilder;
