@@ -892,14 +892,16 @@ class QuillRawEditorState extends EditorState
   void didChangeDependencies() {
     super.didChangeDependencies();
     final parentStyles = QuillStyles.getStyles(context, true);
-    final customStyles = widget.config.customStyles;
-    final mergedStyles = parentStyles != null && customStyles != null
-        ? _styles!.merge(customStyles)
-        : customStyles ?? parentStyles;
+    final stylesOverride = widget.config.customStyles;
+    final defaultStyles = DefaultStyles.getInstance(context,
+        baseStyleOverride: stylesOverride?.defaultTextStyle);
+    _styles = (parentStyles != null)
+        ? defaultStyles.merge(parentStyles)
+        : defaultStyles;
 
-    final defaultStyles =
-        DefaultStyles.getInstance(context, customDefaultStyles: mergedStyles);
-    _styles = defaultStyles;
+    if (widget.config.customStyles != null) {
+      _styles = _styles!.applyOverrides(widget.config.customStyles!);
+    }
 
     _requestAutoFocusIfShould();
   }
@@ -951,13 +953,10 @@ class QuillRawEditorState extends EditorState
       }
     }
 
-    final customStyles = widget.config.customStyles;
+    final stylesOverride = widget.config.customStyles;
     // in case customStyles changed in new widget
-    if (customStyles != null) {
-      final mergedStyles = _styles!.merge(customStyles);
-      final defaultStyles =
-          DefaultStyles.getInstance(context, customDefaultStyles: mergedStyles);
-      _styles = defaultStyles;
+    if (stylesOverride != null) {
+      _styles = _styles!.applyOverrides(stylesOverride);
     }
 
     if (widget.config.actionConfiguration !=

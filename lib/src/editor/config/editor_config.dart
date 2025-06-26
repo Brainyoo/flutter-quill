@@ -293,7 +293,7 @@ class QuillEditorConfig {
   final double? maxContentWidth;
 
   /// Allows to override [DefaultStyles].
-  final DefaultStyles? customStyles;
+  final DefaultStylesOverride? customStyles;
 
   /// Whether this editor's height will be sized to fill its parent.
   ///
@@ -502,7 +502,7 @@ class QuillEditorConfig {
     double? minHeight,
     double? maxHeight,
     double? maxContentWidth,
-    DefaultStyles? customStyles,
+    DefaultStylesOverride? customStyles,
     bool? expands,
     TextCapitalization? textCapitalization,
     Brightness? keyboardAppearance,
