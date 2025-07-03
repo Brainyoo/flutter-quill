@@ -7,19 +7,21 @@ class QuillBulletPoint extends StatelessWidget {
     this.padding = 0,
     this.backgroundColor,
     this.textAlign,
+    AlignmentDirectional? alignment,
     super.key,
-  });
+  }) : alignment = alignment ?? AlignmentDirectional.topEnd;
 
   final TextStyle style;
   final double width;
   final double padding;
   final Color? backgroundColor;
   final TextAlign? textAlign;
+  final AlignmentDirectional alignment;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      alignment: AlignmentDirectional.topEnd,
+      alignment: alignment,
       width: width,
       padding: EdgeInsetsDirectional.only(end: padding),
       color: backgroundColor,

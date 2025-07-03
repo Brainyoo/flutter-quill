@@ -285,8 +285,8 @@ class QuillRawEditorConfig {
   /// horizontally centered. This is mostly useful on devices with wide screens.
   final double? maxContentWidth;
 
-  /// Allows to override [DefaultStyles].
-  final DefaultStyles? customStyles;
+  /// Allows to override [DefaultStylesOverride].
+  final DefaultStylesOverride? customStyles;
 
   /// Whether this widget's height will be sized to fill its parent.
   ///

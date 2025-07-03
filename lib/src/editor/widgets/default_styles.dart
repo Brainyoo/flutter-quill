@@ -181,11 +181,13 @@ class DefaultListBlockStyle extends DefaultTextBlockStyle {
     this.indentWidthBuilder = TextBlockUtils.defaultIndentWidthBuilder,
     this.numberPointWidthBuilder =
         TextBlockUtils.defaultNumberPointWidthBuilder,
+    this.pointAlignment,
   });
 
   final QuillCheckboxBuilder? checkboxUIBuilder;
   final LeadingBlockIndentWidth indentWidthBuilder;
   final LeadingBlockNumberPointWidth numberPointWidthBuilder;
+  final AlignmentDirectional? pointAlignment;
 
   @override
   DefaultListBlockStyle copyWith({
@@ -197,6 +199,7 @@ class DefaultListBlockStyle extends DefaultTextBlockStyle {
     QuillCheckboxBuilder? checkboxUIBuilder,
     LeadingBlockIndentWidth? indentWidthBuilder,
     LeadingBlockNumberPointWidth? numberPointWidthBuilder,
+    AlignmentDirectional? pointAlignment,
   }) {
     return DefaultListBlockStyle(
       style ?? this.style,
@@ -207,7 +210,8 @@ class DefaultListBlockStyle extends DefaultTextBlockStyle {
       checkboxUIBuilder ?? this.checkboxUIBuilder,
       indentWidthBuilder: indentWidthBuilder ?? this.indentWidthBuilder,
       numberPointWidthBuilder:
-      numberPointWidthBuilder ?? this.numberPointWidthBuilder,
+          numberPointWidthBuilder ?? this.numberPointWidthBuilder,
+      pointAlignment: pointAlignment ?? this.pointAlignment,
     );
   }
 }
@@ -226,6 +230,7 @@ class DefaultStyles {
     this.lineHeightTight,
     this.lineHeightOneAndHalf,
     this.lineHeightDouble,
+    this.defaultTextStyle,
     this.bold,
     this.subscript,
     this.superscript,
@@ -260,6 +265,7 @@ class DefaultStyles {
   final DefaultTextBlockStyle? lineHeightTight;
   final DefaultTextBlockStyle? lineHeightOneAndHalf;
   final DefaultTextBlockStyle? lineHeightDouble;
+  final TextStyle? defaultTextStyle;
   final TextStyle? bold;
   final TextStyle? subscript;
   final TextStyle? superscript;
@@ -286,14 +292,17 @@ class DefaultStyles {
   /// Custom palette of colors
   final Map<String, Color>? palette;
 
-  static DefaultStyles getInstance(BuildContext context) {
+  static DefaultStyles getInstance(BuildContext context,
+      {ValueOverride<TextStyle>? baseStyleOverride}) {
     final themeData = Theme.of(context);
     final defaultTextStyle = DefaultTextStyle.of(context);
-    final baseStyle = defaultTextStyle.style.copyWith(
-      fontSize: 16,
-      height: 1.15,
-      decoration: TextDecoration.none,
-    );
+    final baseStyle = defaultTextStyle.style
+        .copyWith(
+          fontSize: 16,
+          height: 1.15,
+          decoration: TextDecoration.none,
+        )
+        .override(baseStyleOverride);
     const baseHorizontalSpacing = HorizontalSpacing(0, 0);
     const baseVerticalSpacing = VerticalSpacing(6, 0);
     final fontFamily = themeData.isCupertino ? 'Menlo' : 'Roboto Mono';
@@ -306,9 +315,9 @@ class DefaultStyles {
 
     return DefaultStyles(
       h1: DefaultTextBlockStyle(
-          defaultTextStyle.style.copyWith(
+          baseStyle.copyWith(
             fontSize: 34,
-            color: defaultTextStyle.style.color,
+            color: baseStyle.color,
             letterSpacing: -0.5,
             height: 1.083,
             fontWeight: FontWeight.bold,
@@ -319,9 +328,9 @@ class DefaultStyles {
           VerticalSpacing.zero,
           null),
       h2: DefaultTextBlockStyle(
-          defaultTextStyle.style.copyWith(
+          baseStyle.copyWith(
             fontSize: 30,
-            color: defaultTextStyle.style.color,
+            color: baseStyle.color,
             letterSpacing: -0.8,
             height: 1.067,
             fontWeight: FontWeight.bold,
@@ -332,9 +341,9 @@ class DefaultStyles {
           VerticalSpacing.zero,
           null),
       h3: DefaultTextBlockStyle(
-        defaultTextStyle.style.copyWith(
+        baseStyle.copyWith(
           fontSize: 24,
-          color: defaultTextStyle.style.color,
+          color: baseStyle.color,
           letterSpacing: -0.5,
           height: 1.083,
           fontWeight: FontWeight.bold,
@@ -346,9 +355,9 @@ class DefaultStyles {
         null,
       ),
       h4: DefaultTextBlockStyle(
-        defaultTextStyle.style.copyWith(
+        baseStyle.copyWith(
           fontSize: 20,
-          color: defaultTextStyle.style.color,
+          color: baseStyle.color,
           letterSpacing: -0.4,
           height: 1.1,
           fontWeight: FontWeight.bold,
@@ -360,9 +369,9 @@ class DefaultStyles {
         null,
       ),
       h5: DefaultTextBlockStyle(
-        defaultTextStyle.style.copyWith(
+        baseStyle.copyWith(
           fontSize: 18,
-          color: defaultTextStyle.style.color,
+          color: baseStyle.color,
           letterSpacing: -0.2,
           height: 1.11,
           fontWeight: FontWeight.bold,
@@ -374,9 +383,9 @@ class DefaultStyles {
         null,
       ),
       h6: DefaultTextBlockStyle(
-        defaultTextStyle.style.copyWith(
+        baseStyle.copyWith(
           fontSize: 16,
-          color: defaultTextStyle.style.color,
+          color: baseStyle.color,
           letterSpacing: -0.1,
           height: 1.125,
           fontWeight: FontWeight.bold,
@@ -461,7 +470,7 @@ class DefaultStyles {
         decoration: TextDecoration.underline,
       ),
       placeHolder: DefaultTextBlockStyle(
-          defaultTextStyle.style.copyWith(
+          baseStyle.copyWith(
             fontSize: 20,
             height: 1.5,
             color: Colors.grey.withValues(alpha: 0.6),
@@ -565,5 +574,132 @@ class DefaultStyles {
       sizeHuge: other.sizeHuge ?? sizeHuge,
       palette: other.palette ?? palette,
     );
+  }
+
+  /// Applies overrides to this DefaultStyles instance and returns a new instance.
+  DefaultStyles applyOverrides(DefaultStylesOverride overrides) {
+    return DefaultStyles(
+      h1: h1?.override(overrides.h1),
+      h2: h2?.override(overrides.h2),
+      h3: h3?.override(overrides.h3),
+      h4: h4?.override(overrides.h4),
+      h5: h5?.override(overrides.h5),
+      h6: h6?.override(overrides.h6),
+      paragraph: paragraph?.override(overrides.paragraph),
+      lineHeightNormal: lineHeightNormal?.override(overrides.lineHeightNormal),
+      lineHeightTight: lineHeightTight?.override(overrides.lineHeightTight),
+      lineHeightOneAndHalf:
+          lineHeightOneAndHalf?.override(overrides.lineHeightOneAndHalf),
+      lineHeightDouble: lineHeightDouble?.override(overrides.lineHeightDouble),
+      defaultTextStyle: defaultTextStyle?.override(overrides.defaultTextStyle),
+      bold: bold?.override(overrides.bold),
+      subscript: subscript?.override(overrides.subscript),
+      superscript: superscript?.override(overrides.superscript),
+      italic: italic?.override(overrides.italic),
+      small: small?.override(overrides.small),
+      underline: underline?.override(overrides.underline),
+      strikeThrough: strikeThrough?.override(overrides.strikeThrough),
+      inlineCode: inlineCode?.override(overrides.inlineCode),
+      link: link?.override(overrides.link),
+      color: color?.override(overrides.color),
+      placeHolder: placeHolder?.override(overrides.placeHolder),
+      lists: lists?.override(overrides.lists),
+      quote: quote?.override(overrides.quote),
+      code: code?.override(overrides.code),
+      indent: indent?.override(overrides.indent),
+      align: align?.override(overrides.align),
+      leading: leading?.override(overrides.leading),
+      sizeSmall: sizeSmall?.override(overrides.sizeSmall),
+      sizeLarge: sizeLarge?.override(overrides.sizeLarge),
+      sizeHuge: sizeHuge?.override(overrides.sizeHuge),
+      palette: palette?.override(overrides.palette),
+    );
+  }
+}
+
+typedef ValueOverride<T> = T Function(T value);
+
+class DefaultStylesOverride {
+  const DefaultStylesOverride({
+    this.h1,
+    this.h2,
+    this.h3,
+    this.h4,
+    this.h5,
+    this.h6,
+    this.paragraph,
+    this.lineHeightNormal,
+    this.lineHeightTight,
+    this.lineHeightOneAndHalf,
+    this.lineHeightDouble,
+    this.defaultTextStyle,
+    this.bold,
+    this.subscript,
+    this.superscript,
+    this.italic,
+    this.small,
+    this.underline,
+    this.strikeThrough,
+    this.inlineCode,
+    this.link,
+    this.color,
+    this.placeHolder,
+    this.lists,
+    this.quote,
+    this.code,
+    this.indent,
+    this.align,
+    this.leading,
+    this.sizeSmall,
+    this.sizeLarge,
+    this.sizeHuge,
+    this.palette,
+  });
+
+  final ValueOverride<DefaultTextBlockStyle>? h1;
+  final ValueOverride<DefaultTextBlockStyle>? h2;
+  final ValueOverride<DefaultTextBlockStyle>? h3;
+  final ValueOverride<DefaultTextBlockStyle>? h4;
+  final ValueOverride<DefaultTextBlockStyle>? h5;
+  final ValueOverride<DefaultTextBlockStyle>? h6;
+  final ValueOverride<DefaultTextBlockStyle>? paragraph;
+  final ValueOverride<DefaultTextBlockStyle>? lineHeightNormal;
+  final ValueOverride<DefaultTextBlockStyle>? lineHeightTight;
+  final ValueOverride<DefaultTextBlockStyle>? lineHeightOneAndHalf;
+  final ValueOverride<DefaultTextBlockStyle>? lineHeightDouble;
+  final ValueOverride<TextStyle>? defaultTextStyle;
+  final ValueOverride<TextStyle>? bold;
+  final ValueOverride<TextStyle>? subscript;
+  final ValueOverride<TextStyle>? superscript;
+  final ValueOverride<TextStyle>? italic;
+  final ValueOverride<TextStyle>? small;
+  final ValueOverride<TextStyle>? underline;
+  final ValueOverride<TextStyle>? strikeThrough;
+
+  /// Theme of inline code.
+  final ValueOverride<InlineCodeStyle>? inlineCode;
+  final ValueOverride<TextStyle>? sizeSmall; // 'small'
+  final ValueOverride<TextStyle>? sizeLarge; // 'large'
+  final ValueOverride<TextStyle>? sizeHuge; // 'huge'
+  final ValueOverride<TextStyle>? link;
+  final ValueOverride<Color>? color;
+  final ValueOverride<DefaultTextBlockStyle>? placeHolder;
+  final ValueOverride<DefaultListBlockStyle>? lists;
+  final ValueOverride<DefaultTextBlockStyle>? quote;
+  final ValueOverride<DefaultTextBlockStyle>? code;
+  final ValueOverride<DefaultTextBlockStyle>? indent;
+  final ValueOverride<DefaultTextBlockStyle>? align;
+  final ValueOverride<DefaultTextBlockStyle>? leading;
+
+  /// Custom palette of colors
+  final ValueOverride<Map<String, Color>>? palette;
+}
+
+extension _DefaultStylesOverrideExtension<T extends Object> on T {
+  T override(ValueOverride<T>? override) {
+    if (override != null) {
+      return override(this);
+    }
+    return this;
   }
 }
