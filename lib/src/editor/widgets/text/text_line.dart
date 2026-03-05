@@ -80,24 +80,6 @@ class _TextLineState extends State<TextLine> {
     }
   }
 
-  bool get canLaunchLinks {
-    // In readOnly mode users can launch links
-    // by simply tapping (clicking) on them
-    if (widget.readOnly) return true;
-
-    // In editing mode it depends on the platform:
-
-    // Desktop platforms (macOS, Linux, Windows):
-    // only allow Meta (Control) + Click combinations
-    if (isDesktopApp) {
-      return _metaOrControlPressed;
-    }
-    // Mobile platforms (ios, android): always allow but we install a
-    // long-press handler instead of a tap one. LongPress is followed by a
-    // context menu with actions.
-    return true;
-  }
-
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
@@ -653,10 +635,19 @@ class _TextLineState extends State<TextLine> {
       return _linkRecognizers[segment]!;
     }
 
-    if (isLink && canLaunchLinks) {
-      if (isDesktop || widget.readOnly) {
+    if (isLink) {
+      // In readOnly mode users can launch links
+      // by simply tapping (clicking) on them
+      if (widget.readOnly) {
         _linkRecognizers[segment] = TapGestureRecognizer()
           ..onTap = () => _tapNodeLink(segment);
+      }
+      // In editing mode it depends on the platform:
+      else if (isDesktop) {
+        _linkRecognizers[segment] = TapGestureRecognizer()
+          ..onTap = () =>
+              // only allow if Meta (Control) + Click combinations is used
+              _metaOrControlPressed ? _tapNodeLink(segment) : null;
       } else {
         _linkRecognizers[segment] = LongPressGestureRecognizer()
           ..onLongPress = () => _longPressLink(segment);
