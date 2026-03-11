@@ -224,6 +224,12 @@ class QuillEditorState extends State<QuillEditor>
   }
 
   @override
+  void dispose() {
+    dragOffsetNotifier?.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final selectionTheme =
