@@ -719,6 +719,13 @@ class RenderEditor extends RenderEditableContainerBox
   ValueListenable<bool> get selectionEndInViewport => _selectionEndInViewport;
   final ValueNotifier<bool> _selectionEndInViewport = ValueNotifier<bool>(true);
 
+  @override
+  void dispose() {
+    _selectionStartInViewport.dispose();
+    _selectionEndInViewport.dispose();
+    super.dispose();
+  }
+
   void _updateSelectionExtentsVisibility(Offset effectiveOffset) {
     final visibleRegion = Offset.zero & size;
     final startPosition =

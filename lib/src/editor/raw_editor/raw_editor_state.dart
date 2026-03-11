@@ -989,6 +989,8 @@ class QuillRawEditorState extends EditorState
         ..removeListener(_onChangedClipboardStatus)
         ..dispose();
     }
+    _scrollController.removeListener(_updateSelectionOverlayForScroll);
+    _floatingCursorResetController.dispose();
     super.dispose();
   }
 
