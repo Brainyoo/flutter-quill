@@ -140,8 +140,8 @@ class QuillEditor extends StatefulWidget {
   ///
   QuillEditor({
     required this.focusNode,
-    required this.scrollController,
     required this.controller,
+    this.scrollController,
     this.config = const QuillEditorConfig(),
     super.key,
   }) {
@@ -160,7 +160,7 @@ class QuillEditor extends StatefulWidget {
   }) {
     return QuillEditor(
       key: key,
-      scrollController: scrollController ?? ScrollController(),
+      scrollController: scrollController,
       focusNode: focusNode ?? FocusNode(),
       controller: controller,
       config: config,
@@ -178,7 +178,7 @@ class QuillEditor extends StatefulWidget {
   final FocusNode focusNode;
 
   /// The [ScrollController] to use when vertically scrolling the contents.
-  final ScrollController scrollController;
+  final ScrollController? scrollController;
 
   @override
   QuillEditorState createState() => QuillEditorState();
@@ -191,6 +191,8 @@ class QuillEditorState extends State<QuillEditor>
       _selectionGestureDetectorBuilder;
 
   QuillController get controller => widget.controller;
+
+  late ScrollController _scrollController;
 
   @Deprecated('Use config instead')
   QuillEditorConfig get configurations => widget.config;
@@ -209,6 +211,7 @@ class QuillEditorState extends State<QuillEditor>
       config.detectWordBoundary,
     );
 
+    _scrollController = widget.scrollController ?? ScrollController();
     final focusNode = widget.focusNode;
 
     if (config.autoFocus) {
@@ -221,6 +224,16 @@ class QuillEditorState extends State<QuillEditor>
         _editorKey.currentState?.hideToolbar();
       }
     });
+  }
+
+  @override
+  void dispose() {
+    dragOffsetNotifier?.dispose();
+    // only dispose the scroll controller if it was not provided by the user
+    if (widget.scrollController == null) {
+      _scrollController.dispose();
+    }
+    super.dispose();
   }
 
   @override
@@ -272,7 +285,7 @@ class QuillEditorState extends State<QuillEditor>
         onKeyPressed: widget.config.onKeyPressed,
         customLeadingBuilder: widget.config.customLeadingBlockBuilder,
         focusNode: widget.focusNode,
-        scrollController: widget.scrollController,
+        scrollController: _scrollController,
         scrollable: config.scrollable,
         enableAlwaysIndentOnTab: config.enableAlwaysIndentOnTab,
         scrollBottomInset: config.scrollBottomInset,
@@ -718,6 +731,13 @@ class RenderEditor extends RenderEditableContainerBox
 
   ValueListenable<bool> get selectionEndInViewport => _selectionEndInViewport;
   final ValueNotifier<bool> _selectionEndInViewport = ValueNotifier<bool>(true);
+
+  @override
+  void dispose() {
+    _selectionStartInViewport.dispose();
+    _selectionEndInViewport.dispose();
+    super.dispose();
+  }
 
   void _updateSelectionExtentsVisibility(Offset effectiveOffset) {
     final visibleRegion = Offset.zero & size;

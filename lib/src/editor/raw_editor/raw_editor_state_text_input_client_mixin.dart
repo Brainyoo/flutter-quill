@@ -51,6 +51,12 @@ mixin RawEditorStateTextInputClientMixin on EditorState
   bool get hasConnection =>
       _textInputConnection != null && _textInputConnection!.attached;
 
+  @override
+  void dispose() {
+    composingRange.dispose();
+    super.dispose();
+  }
+
   /// Opens or closes input connection based on the current state of
   /// [focusNode] and [value].
   void openOrCloseConnection() {
