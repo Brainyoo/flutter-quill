@@ -36,6 +36,7 @@ class TextLine extends StatefulWidget {
     this.customStyleBuilder,
     this.customRecognizerBuilder,
     this.customLinkPrefixes = const <String>[],
+    this.onStyleError,
     super.key,
   });
 
@@ -52,6 +53,7 @@ class TextLine extends StatefulWidget {
   final LinkActionPicker linkActionPicker;
   final List<String> customLinkPrefixes;
   final TextRange composingRange;
+  final QuillStyleErrorHandler? onStyleError;
 
   @override
   State<TextLine> createState() => _TextLineState();
@@ -523,8 +525,32 @@ class _TextLineState extends State<TextLine> {
 
   TextStyle _getInlineTextStyle(Style nodeStyle, DefaultStyles defaultStyles,
       Style lineStyle, bool isLink) {
+    try {
+      return _getInlineTextStyleImpl(
+          nodeStyle, defaultStyles, lineStyle, isLink);
+    } catch (e, stack) {
+      debugPrint('flutter_quill: failed to compute inline text style – '
+          'falling back to defaults. ($e)');
+      _notifyStyleError(e, stack, 'inline text style');
+      return const TextStyle();
+    }
+  }
+
+  void _notifyStyleError(Object error, StackTrace stack, String contextLabel) {
+    final handler = widget.onStyleError;
+    if (handler == null) return;
+    try {
+      handler(error, stack, context: contextLabel);
+    } catch (_) {
+      // Never let the app's handler crash rendering.
+    }
+  }
+
+  TextStyle _getInlineTextStyleImpl(Style nodeStyle, DefaultStyles defaultStyles,
+      Style lineStyle, bool isLink) {
     var res = const TextStyle(); // This is inline text style
     final color = nodeStyle.attributes[Attribute.color.key];
+    final onError = widget.onStyleError;
 
     <String, TextStyle?>{
       Attribute.bold.key: defaultStyles.bold,
@@ -538,7 +564,8 @@ class _TextLineState extends State<TextLine> {
         if (k == Attribute.underline.key || k == Attribute.strikeThrough.key) {
           var textColor = defaultStyles.color;
           if (color?.value is String) {
-            textColor = stringToColor(color?.value, textColor, defaultStyles);
+            textColor = stringToColor(
+                color?.value, textColor, defaultStyles, onError);
           }
           res = _merge(res.copyWith(decorationColor: textColor),
               s!.copyWith(decorationColor: textColor));
@@ -587,6 +614,7 @@ class _TextLineState extends State<TextLine> {
           res = res.merge(TextStyle(
             fontSize: getFontSize(
               size.value,
+              onError: onError,
             ),
           ));
       }
@@ -595,7 +623,7 @@ class _TextLineState extends State<TextLine> {
     if (color != null && color.value != null) {
       var textColor = defaultStyles.color;
       if (color.value is String) {
-        textColor = stringToColor(color.value, null, defaultStyles);
+        textColor = stringToColor(color.value, null, defaultStyles, onError);
       }
       if (textColor != null) {
         res = res.merge(TextStyle(color: textColor));
@@ -605,7 +633,7 @@ class _TextLineState extends State<TextLine> {
     final background = nodeStyle.attributes[Attribute.background.key];
     if (background != null && background.value != null) {
       final backgroundColor =
-          stringToColor(background.value, null, defaultStyles);
+          stringToColor(background.value, null, defaultStyles, onError);
       res = res.merge(TextStyle(backgroundColor: backgroundColor));
     }
 

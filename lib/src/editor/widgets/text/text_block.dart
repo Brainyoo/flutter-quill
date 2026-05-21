@@ -10,6 +10,7 @@ import '../../../document/attribute.dart';
 import '../../../document/nodes/block.dart';
 import '../../../document/nodes/line.dart';
 import '../../../editor_toolbar_shared/color.dart';
+import '../../config/editor_config.dart' show QuillStyleErrorHandler;
 import '../../editor.dart';
 import '../../embed/embed_editor_builder.dart';
 import '../../raw_editor/builders/leading_block_builder.dart';
@@ -84,6 +85,7 @@ class EditableTextBlock extends StatelessWidget {
     this.customStyleBuilder,
     this.customLinkPrefixes = const <String>[],
     this.customLeadingBlockBuilder,
+    this.onStyleError,
     super.key,
   });
 
@@ -114,6 +116,21 @@ class EditableTextBlock extends StatelessWidget {
   final bool? checkBoxReadOnly;
   final List<String> customLinkPrefixes;
   final TextRange composingRange;
+  final QuillStyleErrorHandler? onStyleError;
+
+  void _notifyStyleError(
+    Object error,
+    StackTrace stackTrace,
+    String contextLabel,
+  ) {
+    final handler = onStyleError;
+    if (handler == null) return;
+    try {
+      handler(error, stackTrace, context: contextLabel);
+    } catch (_) {
+      // Never let the app's handler crash rendering.
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -198,6 +215,7 @@ class EditableTextBlock extends StatelessWidget {
             customLinkPrefixes: customLinkPrefixes,
             customRecognizerBuilder: customRecognizerBuilder,
             composingRange: composingRange,
+            onStyleError: onStyleError,
           ),
           indentWidthBuilder(block, context, count, numberPointWidthBuilder),
           _getSpacingForLine(line, index, count, defaultStyles),
@@ -253,6 +271,7 @@ class EditableTextBlock extends StatelessWidget {
             ? getFontSizeAsDouble(
                 line.toDelta().operations.first.attributes?[Attribute.size.key],
                 defaultStyles: defaultStyles,
+                onError: onStyleError,
               )
             : null;
 
@@ -388,7 +407,15 @@ class EditableTextBlock extends StatelessWidget {
           bottom = defaultStyles.h6!.verticalSpacing.bottom;
           break;
         default:
-          throw ArgumentError('Invalid level $level');
+          debugPrint('flutter_quill: invalid header level $level – '
+              'falling back to paragraph vertical spacing.');
+          _notifyStyleError(
+            ArgumentError.value(level, 'header level'),
+            StackTrace.current,
+            'line vertical spacing',
+          );
+          top = defaultStyles!.paragraph!.verticalSpacing.top;
+          bottom = defaultStyles.paragraph!.verticalSpacing.bottom;
       }
     } else {
       final VerticalSpacing lineSpacing;

@@ -1,8 +1,31 @@
 import 'package:flutter/material.dart';
 
+import '../../editor/config/editor_config.dart' show QuillStyleErrorHandler;
 import '../../editor/widgets/default_styles.dart';
 
-Color stringToColor(String? s,
+Color stringToColor(
+  String? s, [
+  Color? originalColor,
+  DefaultStyles? defaultStyles,
+  QuillStyleErrorHandler? onError,
+]) {
+  try {
+    return _stringToColorImpl(s, originalColor, defaultStyles);
+  } catch (e, stack) {
+    debugPrint(
+        'flutter_quill: unsupported color value "$s" – falling back. ($e)');
+    if (onError != null) {
+      try {
+        onError(e, stack, context: 'stringToColor("$s")');
+      } catch (_) {
+        // Never let the handler itself crash rendering.
+      }
+    }
+    return originalColor ?? Colors.transparent;
+  }
+}
+
+Color _stringToColorImpl(String? s,
     [Color? originalColor, DefaultStyles? defaultStyles]) {
   final palette = defaultStyles?.palette;
   if (s != null && palette != null) {
