@@ -21,7 +21,16 @@ Color stringToColor(
         // Never let the handler itself crash rendering.
       }
     }
-    return originalColor ?? Colors.transparent;
+    // Fallback chain: caller's [originalColor], the (often unset) root
+    // [DefaultStyles.color], then the paragraph base style color (which is
+    // populated from the surrounding [DefaultTextStyle]/theme in
+    // [DefaultStyles.getInstance]). [Colors.transparent] is only used as a
+    // last resort and would still render the text invisible – callers that
+    // need a guaranteed visible color should supply [originalColor].
+    return originalColor ??
+        defaultStyles?.color ??
+        defaultStyles?.paragraph?.style.color ??
+        Colors.transparent;
   }
 }
 
