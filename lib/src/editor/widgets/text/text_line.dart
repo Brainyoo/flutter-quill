@@ -623,7 +623,12 @@ class _TextLineState extends State<TextLine> {
     if (color != null && color.value != null) {
       var textColor = defaultStyles.color;
       if (color.value is String) {
-        textColor = stringToColor(color.value, null, defaultStyles, onError);
+        // Pass [defaultStyles.color] as the fallback so unsupported color
+        // values (e.g. "windowtext") render as the default text color
+        // instead of [Colors.transparent], which would make the text
+        // invisible.
+        textColor = stringToColor(
+            color.value, defaultStyles.color, defaultStyles, onError);
       }
       if (textColor != null) {
         res = res.merge(TextStyle(color: textColor));
