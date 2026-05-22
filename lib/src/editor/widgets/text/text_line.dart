@@ -546,8 +546,8 @@ class _TextLineState extends State<TextLine> {
     }
   }
 
-  TextStyle _getInlineTextStyleImpl(Style nodeStyle, DefaultStyles defaultStyles,
-      Style lineStyle, bool isLink) {
+  TextStyle _getInlineTextStyleImpl(Style nodeStyle,
+      DefaultStyles defaultStyles, Style lineStyle, bool isLink) {
     var res = const TextStyle(); // This is inline text style
     final color = nodeStyle.attributes[Attribute.color.key];
     final onError = widget.onStyleError;
@@ -564,8 +564,8 @@ class _TextLineState extends State<TextLine> {
         if (k == Attribute.underline.key || k == Attribute.strikeThrough.key) {
           var textColor = defaultStyles.color;
           if (color?.value is String) {
-            textColor = stringToColor(
-                color?.value, textColor, defaultStyles, onError);
+            textColor =
+                stringToColor(color?.value, textColor, defaultStyles, onError);
           }
           res = _merge(res.copyWith(decorationColor: textColor),
               s!.copyWith(decorationColor: textColor));
@@ -637,8 +637,12 @@ class _TextLineState extends State<TextLine> {
 
     final background = nodeStyle.attributes[Attribute.background.key];
     if (background != null && background.value != null) {
-      final backgroundColor =
-          stringToColor(background.value, null, defaultStyles, onError);
+      // Pass [Colors.transparent] as the fallback so unsupported background
+      // values don't accidentally pick up the text color from
+      // [stringToColor]'s fallback chain and render as a solid block behind
+      // the text.
+      final backgroundColor = stringToColor(
+          background.value, Colors.transparent, defaultStyles, onError);
       res = res.merge(TextStyle(backgroundColor: backgroundColor));
     }
 
