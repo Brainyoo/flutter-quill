@@ -1,18 +1,22 @@
-import 'package:flutter/foundation.dart';
-
 import '../../../flutter_quill.dart';
 
-void _reportFontSizeError(
-  QuillStyleErrorHandler? onError,
-  Object error,
-  String contextLabel,
-) {
-  if (onError == null) return;
-  try {
-    onError(error, StackTrace.current, context: contextLabel);
-  } catch (_) {
-    // Never let the handler itself crash rendering.
-  }
+void _reportFontSizeFailure({
+  required QuillStyleErrorHandler? onError,
+  required dynamic sizeValue,
+  required String functionName,
+  required String reason,
+}) {
+  final error =
+      ArgumentError.value(sizeValue, 'sizeValue', '$reason for $functionName');
+  notifyQuillStyleError(
+    handler: onError,
+    error: error,
+    stackTrace: StackTrace.current,
+    context: functionName,
+    dedupKey: '$functionName:$reason:$sizeValue',
+    message: 'flutter_quill: $reason font size value "$sizeValue" – '
+        'falling back to default.',
+  );
 }
 
 dynamic getFontSize(dynamic sizeValue, {QuillStyleErrorHandler? onError}) {
@@ -34,24 +38,22 @@ dynamic getFontSize(dynamic sizeValue, {QuillStyleErrorHandler? onError}) {
   }
 
   if (sizeValue is! String) {
-    debugPrint('flutter_quill: unsupported font size value "$sizeValue" – '
-        'falling back to default.');
-    _reportFontSizeError(
-      onError,
-      ArgumentError.value(sizeValue, 'sizeValue', 'unsupported type'),
-      'getFontSize',
+    _reportFontSizeFailure(
+      onError: onError,
+      sizeValue: sizeValue,
+      functionName: 'getFontSize',
+      reason: 'unsupported-type',
     );
     return null;
   }
 
   final fontSize = double.tryParse(sizeValue);
   if (fontSize == null) {
-    debugPrint('flutter_quill: invalid font size "$sizeValue" – '
-        'falling back to default.');
-    _reportFontSizeError(
-      onError,
-      ArgumentError.value(sizeValue, 'sizeValue', 'unparseable'),
-      'getFontSize',
+    _reportFontSizeFailure(
+      onError: onError,
+      sizeValue: sizeValue,
+      functionName: 'getFontSize',
+      reason: 'unparseable',
     );
     return null;
   }
@@ -87,24 +89,22 @@ double? getFontSizeAsDouble(
   }
 
   if (sizeValue is! String) {
-    debugPrint('flutter_quill: unsupported font size value "$sizeValue" – '
-        'falling back to default.');
-    _reportFontSizeError(
-      onError,
-      ArgumentError.value(sizeValue, 'sizeValue', 'unsupported type'),
-      'getFontSizeAsDouble',
+    _reportFontSizeFailure(
+      onError: onError,
+      sizeValue: sizeValue,
+      functionName: 'getFontSizeAsDouble',
+      reason: 'unsupported-type',
     );
     return null;
   }
 
   final fontSize = double.tryParse(sizeValue);
   if (fontSize == null) {
-    debugPrint('flutter_quill: invalid font size "$sizeValue" – '
-        'falling back to default.');
-    _reportFontSizeError(
-      onError,
-      ArgumentError.value(sizeValue, 'sizeValue', 'unparseable'),
-      'getFontSizeAsDouble',
+    _reportFontSizeFailure(
+      onError: onError,
+      sizeValue: sizeValue,
+      functionName: 'getFontSizeAsDouble',
+      reason: 'unparseable',
     );
     return null;
   }

@@ -529,20 +529,22 @@ class _TextLineState extends State<TextLine> {
       return _getInlineTextStyleImpl(
           nodeStyle, defaultStyles, lineStyle, isLink);
     } catch (e, stack) {
-      debugPrint('flutter_quill: failed to compute inline text style – '
-          'falling back to defaults. ($e)');
-      _notifyStyleError(e, stack, 'inline text style');
+      // Safety-net: any unexpected throw from the inline-style computation
+      // (beyond the granular fallbacks in [stringToColor] / [getFontSize])
+      // drops the segment back to the inherited line style. That loses the
+      // segment's inline formatting (bold/italic/color/size/link) but
+      // keeps the text visible and the editor responsive. The handler
+      // fires so the embedding app can diagnose the regression.
+      notifyQuillStyleError(
+        handler: widget.onStyleError,
+        error: e,
+        stackTrace: stack,
+        context: 'inline text style',
+        dedupKey: 'inline text style:${e.runtimeType}',
+        message: 'flutter_quill: failed to compute inline text style – '
+            'falling back to defaults. ($e)',
+      );
       return const TextStyle();
-    }
-  }
-
-  void _notifyStyleError(Object error, StackTrace stack, String contextLabel) {
-    final handler = widget.onStyleError;
-    if (handler == null) return;
-    try {
-      handler(error, stack, context: contextLabel);
-    } catch (_) {
-      // Never let the app's handler crash rendering.
     }
   }
 

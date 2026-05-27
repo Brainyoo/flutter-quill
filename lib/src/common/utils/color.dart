@@ -1,8 +1,29 @@
 import 'package:flutter/material.dart';
 
-import '../../editor/config/editor_config.dart' show QuillStyleErrorHandler;
+import '../../editor/config/editor_config.dart'
+    show QuillStyleErrorHandler, notifyQuillStyleError;
 import '../../editor/widgets/default_styles.dart';
 
+/// Parses a Quill color attribute value into a [Color].
+///
+/// Recognised inputs: hex (`#rrggbb` / `#aarrggbb`), `rgba(r, g, b, a)`,
+/// Material color name aliases (`black`, `red`, …), `transparent`,
+/// `inherit`, and any entry in [defaultStyles].`palette`.
+///
+/// On parse failure the function never throws. It emits a one-time
+/// [debugPrint], invokes [onError] (with `context: "stringToColor(\"$s\")"`)
+/// and returns the first non-null of:
+///   1. [originalColor] (caller-supplied fallback)
+///   2. [defaultStyles].`color` (often unset in practice)
+///   3. [defaultStyles].`paragraph.style.color` (the document's effective
+///      text color)
+///   4. [Colors.transparent]
+///
+/// **Contract**: this fallback chain is designed for *text color*
+/// rendering. Callers that render non-text colors (background highlights,
+/// decoration sample swatches, toolbar icons) MUST pass [Colors.transparent]
+/// as [originalColor], otherwise an unsupported input may bleed the
+/// document's text color into the wrong UI element.
 Color stringToColor(
   String? s, [
   Color? originalColor,
@@ -12,21 +33,15 @@ Color stringToColor(
   try {
     return _stringToColorImpl(s, originalColor, defaultStyles);
   } catch (e, stack) {
-    debugPrint(
-        'flutter_quill: unsupported color value "$s" – falling back. ($e)');
-    if (onError != null) {
-      try {
-        onError(e, stack, context: 'stringToColor("$s")');
-      } catch (_) {
-        // Never let the handler itself crash rendering.
-      }
-    }
-    // Fallback chain: caller's [originalColor], the (often unset) root
-    // [DefaultStyles.color], then the paragraph base style color (which is
-    // populated from the surrounding [DefaultTextStyle]/theme in
-    // [DefaultStyles.getInstance]). [Colors.transparent] is only used as a
-    // last resort and would still render the text invisible – callers that
-    // need a guaranteed visible color should supply [originalColor].
+    notifyQuillStyleError(
+      handler: onError,
+      error: e,
+      stackTrace: stack,
+      context: 'stringToColor("$s")',
+      dedupKey: 'stringToColor:$s',
+      message:
+          'flutter_quill: unsupported color value "$s" – falling back. ($e)',
+    );
     return originalColor ??
         defaultStyles?.color ??
         defaultStyles?.paragraph?.style.color ??

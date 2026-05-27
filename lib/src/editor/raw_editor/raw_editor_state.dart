@@ -23,6 +23,7 @@ import '../../document/document.dart';
 import '../../document/nodes/block.dart';
 import '../../document/nodes/line.dart';
 import '../../document/nodes/node.dart';
+import '../config/editor_config.dart' show notifyQuillStyleError;
 import '../editor.dart';
 import '../widgets/cursor.dart';
 import '../widgets/default_styles.dart';
@@ -70,20 +71,19 @@ class QuillRawEditorState extends EditorState
 
   QuillController get controller => widget.controller;
 
-  /// Reports a style/attribute interpretation failure to the embedding app
-  /// via [QuillRawEditorConfig.onStyleError], swallowing handler exceptions.
-  void _notifyStyleError(
-    Object error,
-    StackTrace stackTrace,
+  void _notifyHeaderLevelFallback(
+    Object level,
     String contextLabel,
   ) {
-    final handler = widget.config.onStyleError;
-    if (handler == null) return;
-    try {
-      handler(error, stackTrace, context: contextLabel);
-    } catch (_) {
-      // Never let the app's handler crash rendering.
-    }
+    notifyQuillStyleError(
+      handler: widget.config.onStyleError,
+      error: ArgumentError.value(level, 'header level'),
+      stackTrace: StackTrace.current,
+      context: contextLabel,
+      dedupKey: '$contextLabel:$level',
+      message: 'flutter_quill: invalid header level $level – '
+          'falling back ($contextLabel).',
+    );
   }
 
   // Focus
@@ -720,13 +720,7 @@ class QuillRawEditorState extends EditorState
         case 6:
           return defaultStyles!.h6!.horizontalSpacing;
         default:
-          debugPrint('flutter_quill: invalid header level $level – '
-              'falling back to paragraph horizontal spacing.');
-          _notifyStyleError(
-            ArgumentError.value(level, 'header level'),
-            StackTrace.current,
-            'header horizontal spacing',
-          );
+          _notifyHeaderLevelFallback(level, 'header horizontal spacing');
           return defaultStyles!.paragraph!.horizontalSpacing;
       }
     }
@@ -760,13 +754,7 @@ class QuillRawEditorState extends EditorState
         case 6:
           return defaultStyles!.h6!.verticalSpacing;
         default:
-          debugPrint('flutter_quill: invalid header level $level – '
-              'falling back to paragraph vertical spacing.');
-          _notifyStyleError(
-            ArgumentError.value(level, 'header level'),
-            StackTrace.current,
-            'header vertical spacing',
-          );
+          _notifyHeaderLevelFallback(level, 'header vertical spacing');
           return defaultStyles!.paragraph!.verticalSpacing;
       }
     }
@@ -826,13 +814,7 @@ class QuillRawEditorState extends EditorState
         case 6:
           return defaultStyles!.h6!.decoration;
         default:
-          debugPrint('flutter_quill: invalid header level $level – '
-              'no decoration applied.');
-          _notifyStyleError(
-            ArgumentError.value(level, 'header level'),
-            StackTrace.current,
-            'header decoration',
-          );
+          _notifyHeaderLevelFallback(level, 'header decoration');
           return null;
       }
     }

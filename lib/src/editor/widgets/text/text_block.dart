@@ -10,7 +10,8 @@ import '../../../document/attribute.dart';
 import '../../../document/nodes/block.dart';
 import '../../../document/nodes/line.dart';
 import '../../../editor_toolbar_shared/color.dart';
-import '../../config/editor_config.dart' show QuillStyleErrorHandler;
+import '../../config/editor_config.dart'
+    show QuillStyleErrorHandler, notifyQuillStyleError;
 import '../../editor.dart';
 import '../../embed/embed_editor_builder.dart';
 import '../../raw_editor/builders/leading_block_builder.dart';
@@ -117,20 +118,6 @@ class EditableTextBlock extends StatelessWidget {
   final List<String> customLinkPrefixes;
   final TextRange composingRange;
   final QuillStyleErrorHandler? onStyleError;
-
-  void _notifyStyleError(
-    Object error,
-    StackTrace stackTrace,
-    String contextLabel,
-  ) {
-    final handler = onStyleError;
-    if (handler == null) return;
-    try {
-      handler(error, stackTrace, context: contextLabel);
-    } catch (_) {
-      // Never let the app's handler crash rendering.
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -407,12 +394,14 @@ class EditableTextBlock extends StatelessWidget {
           bottom = defaultStyles.h6!.verticalSpacing.bottom;
           break;
         default:
-          debugPrint('flutter_quill: invalid header level $level – '
-              'falling back to paragraph vertical spacing.');
-          _notifyStyleError(
-            ArgumentError.value(level, 'header level'),
-            StackTrace.current,
-            'line vertical spacing',
+          notifyQuillStyleError(
+            handler: onStyleError,
+            error: ArgumentError.value(level, 'header level'),
+            stackTrace: StackTrace.current,
+            context: 'line vertical spacing',
+            dedupKey: 'line vertical spacing:$level',
+            message: 'flutter_quill: invalid header level $level – '
+                'falling back (line vertical spacing).',
           );
           top = defaultStyles!.paragraph!.verticalSpacing.top;
           bottom = defaultStyles.paragraph!.verticalSpacing.bottom;
