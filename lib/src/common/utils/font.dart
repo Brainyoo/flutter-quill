@@ -13,7 +13,6 @@ void _reportFontSizeFailure({
     error: error,
     stackTrace: StackTrace.current,
     context: functionName,
-    dedupKey: '$functionName:$reason:$sizeValue',
     message: 'flutter_quill: $reason font size value "$sizeValue" – '
         'falling back to default.',
   );

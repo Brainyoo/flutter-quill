@@ -399,7 +399,6 @@ class EditableTextBlock extends StatelessWidget {
             error: ArgumentError.value(level, 'header level'),
             stackTrace: StackTrace.current,
             context: 'line vertical spacing',
-            dedupKey: 'line vertical spacing:$level',
             message: 'flutter_quill: invalid header level $level – '
                 'falling back (line vertical spacing).',
           );

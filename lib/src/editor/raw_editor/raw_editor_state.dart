@@ -80,7 +80,6 @@ class QuillRawEditorState extends EditorState
       error: ArgumentError.value(level, 'header level'),
       stackTrace: StackTrace.current,
       context: contextLabel,
-      dedupKey: '$contextLabel:$level',
       message: 'flutter_quill: invalid header level $level – '
           'falling back ($contextLabel).',
     );

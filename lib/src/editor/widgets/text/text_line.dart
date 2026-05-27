@@ -540,7 +540,6 @@ class _TextLineState extends State<TextLine> {
         error: e,
         stackTrace: stack,
         context: 'inline text style',
-        dedupKey: 'inline text style:${e.runtimeType}',
         message: 'flutter_quill: failed to compute inline text style – '
             'falling back to defaults. ($e)',
       );

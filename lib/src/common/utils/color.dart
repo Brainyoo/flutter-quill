@@ -38,7 +38,6 @@ Color stringToColor(
       error: e,
       stackTrace: stack,
       context: 'stringToColor("$s")',
-      dedupKey: 'stringToColor:$s',
       message:
           'flutter_quill: unsupported color value "$s" – falling back. ($e)',
     );

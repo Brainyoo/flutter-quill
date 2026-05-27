@@ -5,7 +5,7 @@ import 'dart:ui' as ui;
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:meta/meta.dart' show experimental, internal, visibleForTesting;
+import 'package:meta/meta.dart' show experimental, internal;
 
 import '../../document/nodes/node.dart';
 import '../../editor_toolbar_shared/config/quill_action_configuration.dart';
@@ -43,21 +43,12 @@ typedef QuillStyleErrorHandler = void Function(
   String? context,
 });
 
-/// Fingerprints of style errors that already produced a [debugPrint] in
-/// this process. Used by [notifyQuillStyleError] to keep the dev console
-/// readable even when the same recovery scenario fires on every frame.
-///
-/// Grows over the app lifetime; bounded by the number of *distinct*
-/// recovery scenarios, which is typically small.
-final Set<String> _loggedQuillStyleErrorKeys = <String>{};
-
 /// Reports a style/attribute interpretation failure via [handler] and
-/// emits a one-time [debugPrint] [message] keyed by [dedupKey].
+/// emits a [debugPrint] [message] for the dev console.
 ///
-/// [handler] is invoked on every call (the embedding app is responsible
-/// for its own deduplication if it forwards to a logger); the [debugPrint]
-/// is gated by [dedupKey] so the dev console gets one line per unique
-/// recovery scenario, no matter how many times rendering revisits it.
+/// [handler] is invoked on every call. The embedding app is responsible
+/// for any deduplication or rate-limiting it needs in its own logging
+/// pipeline.
 ///
 /// Any exception thrown by [handler] is swallowed so rendering can never
 /// be brought down by faulty diagnostics code.
@@ -67,12 +58,9 @@ void notifyQuillStyleError({
   required Object error,
   required StackTrace stackTrace,
   required String context,
-  required String dedupKey,
   required String message,
 }) {
-  if (_loggedQuillStyleErrorKeys.add(dedupKey)) {
-    debugPrint(message);
-  }
+  debugPrint(message);
   if (handler != null) {
     try {
       handler(error, stackTrace, context: context);
@@ -81,11 +69,6 @@ void notifyQuillStyleError({
     }
   }
 }
-
-/// Clears the [debugPrint] dedup state for [notifyQuillStyleError]. Tests
-/// only — production code should never need to reset this.
-@visibleForTesting
-void resetQuillStyleErrorDedup() => _loggedQuillStyleErrorKeys.clear();
 
 /// The configuration of the editor widget.
 @immutable
