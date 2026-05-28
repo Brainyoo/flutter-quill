@@ -526,129 +526,123 @@ class _TextLineState extends State<TextLine> {
 
   TextStyle _getInlineTextStyle(Style nodeStyle, DefaultStyles defaultStyles,
       Style lineStyle, bool isLink) {
+    // `res` is updated step-by-step. If any step throws, the catch below
+    // keeps whatever attributes were already merged successfully instead
+    // of dropping the segment back to a bare `TextStyle()`. That way a
+    // crash in e.g. `_applyCustomAttributes` (user code) doesn't also
+    // strip bold/italic/font-family from the rendered text.
+    var res = const TextStyle();
+    final color = nodeStyle.attributes[Attribute.color.key];
+    final onError = widget.onStyleError;
+
     try {
-      return _getInlineTextStyleImpl(
-          nodeStyle, defaultStyles, lineStyle, isLink);
+      <String, TextStyle?>{
+        Attribute.bold.key: defaultStyles.bold,
+        Attribute.italic.key: defaultStyles.italic,
+        Attribute.small.key: defaultStyles.small,
+        Attribute.link.key: defaultStyles.link,
+        Attribute.underline.key: defaultStyles.underline,
+        Attribute.strikeThrough.key: defaultStyles.strikeThrough,
+      }.forEach((k, s) {
+        if (nodeStyle.values.any((v) => v.key == k)) {
+          if (k == Attribute.underline.key ||
+              k == Attribute.strikeThrough.key) {
+            var textColor = defaultStyles.color;
+            if (color?.value is String) {
+              textColor = stringToColor(
+                  color?.value, textColor, defaultStyles, onError);
+            }
+            res = _merge(res.copyWith(decorationColor: textColor),
+                s!.copyWith(decorationColor: textColor));
+          } else if (k == Attribute.link.key && !isLink) {
+            // null value for link should be ignored
+            // i.e. nodeStyle.attributes[Attribute.link.key]!.value == null
+          } else {
+            res = _merge(res, s!);
+          }
+        }
+      });
+
+      if (nodeStyle.containsKey(Attribute.script.key)) {
+        if (nodeStyle.attributes.values.contains(Attribute.subscript)) {
+          res = _merge(res, defaultStyles.subscript!);
+        } else if (nodeStyle.attributes.values
+            .contains(Attribute.superscript)) {
+          res = _merge(res, defaultStyles.superscript!);
+        }
+      }
+
+      if (nodeStyle.containsKey(Attribute.inlineCode.key)) {
+        res = _merge(res, defaultStyles.inlineCode!.styleFor(lineStyle));
+      }
+
+      final font = nodeStyle.attributes[Attribute.font.key];
+      if (font != null && font.value != null) {
+        res = res.merge(TextStyle(fontFamily: font.value));
+      }
+
+      final size = nodeStyle.attributes[Attribute.size.key];
+      if (size != null && size.value != null) {
+        switch (size.value) {
+          case 'small':
+            res = res.merge(defaultStyles.sizeSmall);
+            break;
+          case 'normal':
+            res = res.merge(defaultStyles.paragraph!.style);
+            break;
+          case 'large':
+            res = res.merge(defaultStyles.sizeLarge);
+            break;
+          case 'huge':
+            res = res.merge(defaultStyles.sizeHuge);
+            break;
+          default:
+            res = res.merge(TextStyle(
+              fontSize: getFontSize(
+                size.value,
+                onError: onError,
+              ),
+            ));
+        }
+      }
+
+      if (color != null && color.value != null) {
+        var textColor = defaultStyles.color;
+        if (color.value is String) {
+          // Pass [defaultStyles.color] as the fallback so unsupported color
+          // values (e.g. "windowtext") render as the default text color
+          // instead of [Colors.transparent], which would make the text
+          // invisible.
+          textColor = stringToColor(
+              color.value, defaultStyles.color, defaultStyles, onError);
+        }
+        if (textColor != null) {
+          res = res.merge(TextStyle(color: textColor));
+        }
+      }
+
+      final background = nodeStyle.attributes[Attribute.background.key];
+      if (background != null && background.value != null) {
+        // Pass [Colors.transparent] as the fallback so unsupported
+        // background values don't accidentally pick up the text color from
+        // [stringToColor]'s fallback chain and render as a solid block
+        // behind the text.
+        final backgroundColor = stringToColor(
+            background.value, Colors.transparent, defaultStyles, onError);
+        res = res.merge(TextStyle(backgroundColor: backgroundColor));
+      }
+
+      res = _applyCustomAttributes(res, nodeStyle.attributes);
     } catch (e, stack) {
-      // Safety-net: any unexpected throw from the inline-style computation
-      // (beyond the granular fallbacks in [stringToColor] / [getFontSize])
-      // drops the segment back to the inherited line style. That loses the
-      // segment's inline formatting (bold/italic/color/size/link) but
-      // keeps the text visible and the editor responsive. The handler
-      // fires so the embedding app can diagnose the regression.
       notifyQuillStyleError(
-        handler: widget.onStyleError,
+        handler: onError,
         error: e,
         stackTrace: stack,
         context: 'inline text style',
         message: 'flutter_quill: failed to compute inline text style – '
-            'falling back to defaults. ($e)',
+            'returning partial style. ($e)',
       );
-      return const TextStyle();
     }
-  }
-
-  TextStyle _getInlineTextStyleImpl(Style nodeStyle,
-      DefaultStyles defaultStyles, Style lineStyle, bool isLink) {
-    var res = const TextStyle(); // This is inline text style
-    final color = nodeStyle.attributes[Attribute.color.key];
-    final onError = widget.onStyleError;
-
-    <String, TextStyle?>{
-      Attribute.bold.key: defaultStyles.bold,
-      Attribute.italic.key: defaultStyles.italic,
-      Attribute.small.key: defaultStyles.small,
-      Attribute.link.key: defaultStyles.link,
-      Attribute.underline.key: defaultStyles.underline,
-      Attribute.strikeThrough.key: defaultStyles.strikeThrough,
-    }.forEach((k, s) {
-      if (nodeStyle.values.any((v) => v.key == k)) {
-        if (k == Attribute.underline.key || k == Attribute.strikeThrough.key) {
-          var textColor = defaultStyles.color;
-          if (color?.value is String) {
-            textColor =
-                stringToColor(color?.value, textColor, defaultStyles, onError);
-          }
-          res = _merge(res.copyWith(decorationColor: textColor),
-              s!.copyWith(decorationColor: textColor));
-        } else if (k == Attribute.link.key && !isLink) {
-          // null value for link should be ignored
-          // i.e. nodeStyle.attributes[Attribute.link.key]!.value == null
-        } else {
-          res = _merge(res, s!);
-        }
-      }
-    });
-
-    if (nodeStyle.containsKey(Attribute.script.key)) {
-      if (nodeStyle.attributes.values.contains(Attribute.subscript)) {
-        res = _merge(res, defaultStyles.subscript!);
-      } else if (nodeStyle.attributes.values.contains(Attribute.superscript)) {
-        res = _merge(res, defaultStyles.superscript!);
-      }
-    }
-
-    if (nodeStyle.containsKey(Attribute.inlineCode.key)) {
-      res = _merge(res, defaultStyles.inlineCode!.styleFor(lineStyle));
-    }
-
-    final font = nodeStyle.attributes[Attribute.font.key];
-    if (font != null && font.value != null) {
-      res = res.merge(TextStyle(fontFamily: font.value));
-    }
-
-    final size = nodeStyle.attributes[Attribute.size.key];
-    if (size != null && size.value != null) {
-      switch (size.value) {
-        case 'small':
-          res = res.merge(defaultStyles.sizeSmall);
-          break;
-        case 'normal':
-          res = res.merge(defaultStyles.paragraph!.style);
-          break;
-        case 'large':
-          res = res.merge(defaultStyles.sizeLarge);
-          break;
-        case 'huge':
-          res = res.merge(defaultStyles.sizeHuge);
-          break;
-        default:
-          res = res.merge(TextStyle(
-            fontSize: getFontSize(
-              size.value,
-              onError: onError,
-            ),
-          ));
-      }
-    }
-
-    if (color != null && color.value != null) {
-      var textColor = defaultStyles.color;
-      if (color.value is String) {
-        // Pass [defaultStyles.color] as the fallback so unsupported color
-        // values (e.g. "windowtext") render as the default text color
-        // instead of [Colors.transparent], which would make the text
-        // invisible.
-        textColor = stringToColor(
-            color.value, defaultStyles.color, defaultStyles, onError);
-      }
-      if (textColor != null) {
-        res = res.merge(TextStyle(color: textColor));
-      }
-    }
-
-    final background = nodeStyle.attributes[Attribute.background.key];
-    if (background != null && background.value != null) {
-      // Pass [Colors.transparent] as the fallback so unsupported background
-      // values don't accidentally pick up the text color from
-      // [stringToColor]'s fallback chain and render as a solid block behind
-      // the text.
-      final backgroundColor = stringToColor(
-          background.value, Colors.transparent, defaultStyles, onError);
-      res = res.merge(TextStyle(backgroundColor: backgroundColor));
-    }
-
-    res = _applyCustomAttributes(res, nodeStyle.attributes);
     return res;
   }
 
