@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../../editor/config/editor_config.dart'
-    show QuillStyleErrorHandler, notifyQuillStyleError;
+import '../../editor/config/editor_config.dart' show QuillStyleErrorHandler;
+import '../../editor/config/style_error_reporter.dart';
 import '../../editor/widgets/default_styles.dart';
 
 /// Parses a Quill color attribute value into a [Color].
@@ -31,7 +31,15 @@ Color stringToColor(
   QuillStyleErrorHandler? onError,
 ]) {
   try {
-    return _stringToColorImpl(s, originalColor, defaultStyles);
+    final palette = defaultStyles?.palette;
+    if (s != null && palette != null) {
+      final maybeColor = palette[s];
+      if (maybeColor != null) {
+        return maybeColor;
+      }
+    }
+
+    return _parseColorLiteral(s, originalColor);
   } catch (e, stack) {
     notifyQuillStyleError(
       handler: onError,
@@ -48,16 +56,11 @@ Color stringToColor(
   }
 }
 
-Color _stringToColorImpl(String? s,
-    [Color? originalColor, DefaultStyles? defaultStyles]) {
-  final palette = defaultStyles?.palette;
-  if (s != null && palette != null) {
-    final maybeColor = palette[s];
-    if (maybeColor != null) {
-      return maybeColor;
-    }
-  }
-
+/// Parses [s] as one of: named Material colors, `transparent`, `rgba(...)`,
+/// `inherit`, or `#rrggbb` / `#aarrggbb`. Throws on any other input – the
+/// caller wraps this in try/catch to translate the throw into the
+/// documented fallback chain.
+Color _parseColorLiteral(String? s, Color? originalColor) {
   switch (s) {
     case 'transparent':
       return Colors.transparent;

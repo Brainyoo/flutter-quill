@@ -23,7 +23,7 @@ import '../../document/document.dart';
 import '../../document/nodes/block.dart';
 import '../../document/nodes/line.dart';
 import '../../document/nodes/node.dart';
-import '../config/editor_config.dart' show notifyQuillStyleError;
+import '../config/style_error_reporter.dart';
 import '../editor.dart';
 import '../widgets/cursor.dart';
 import '../widgets/default_styles.dart';
@@ -72,7 +72,7 @@ class QuillRawEditorState extends EditorState
   QuillController get controller => widget.controller;
 
   void _notifyHeaderLevelFallback(
-    Object level,
+    Object? level,
     String contextLabel,
   ) {
     notifyQuillStyleError(
@@ -83,6 +83,19 @@ class QuillRawEditorState extends EditorState
       message: 'flutter_quill: invalid header level $level – '
           'falling back ($contextLabel).',
     );
+  }
+
+  /// Coerce a header-level attribute value (which may arrive as int, double,
+  /// numeric String, or something else entirely from deserialised Deltas)
+  /// into an int. Returns `null` if the value cannot be interpreted as a
+  /// header level – callers should treat this as the unrecoverable
+  /// "invalid level" case and use their default fallback.
+  int? _coerceHeaderLevel(Object? value) {
+    if (value is int) return value;
+    if (value is double) return value.toInt();
+    if (value is num) return value.toInt();
+    if (value is String) return int.tryParse(value);
+    return null;
   }
 
   // Focus
@@ -699,12 +712,8 @@ class QuillRawEditorState extends EditorState
   ) {
     final attrs = line.style.attributes;
     if (attrs.containsKey(Attribute.header.key)) {
-      int level;
-      if (attrs[Attribute.header.key]!.value is double) {
-        level = attrs[Attribute.header.key]!.value.toInt();
-      } else {
-        level = attrs[Attribute.header.key]!.value;
-      }
+      final rawLevel = attrs[Attribute.header.key]!.value;
+      final level = _coerceHeaderLevel(rawLevel);
       switch (level) {
         case 1:
           return defaultStyles!.h1!.horizontalSpacing;
@@ -719,8 +728,12 @@ class QuillRawEditorState extends EditorState
         case 6:
           return defaultStyles!.h6!.horizontalSpacing;
         default:
-          _notifyHeaderLevelFallback(level, 'header horizontal spacing');
-          return defaultStyles!.paragraph!.horizontalSpacing;
+          _notifyHeaderLevelFallback(rawLevel, 'header horizontal spacing');
+          // Extra safety net: if paragraph itself is null we'd re-throw
+          // inside our own "graceful" fallback. Defer to zero spacing
+          // instead.
+          return defaultStyles?.paragraph?.horizontalSpacing ??
+              HorizontalSpacing.zero;
       }
     }
 
@@ -733,12 +746,8 @@ class QuillRawEditorState extends EditorState
   ) {
     final attrs = line.style.attributes;
     if (attrs.containsKey(Attribute.header.key)) {
-      int level;
-      if (attrs[Attribute.header.key]!.value is double) {
-        level = attrs[Attribute.header.key]!.value.toInt();
-      } else {
-        level = attrs[Attribute.header.key]!.value;
-      }
+      final rawLevel = attrs[Attribute.header.key]!.value;
+      final level = _coerceHeaderLevel(rawLevel);
       switch (level) {
         case 1:
           return defaultStyles!.h1!.verticalSpacing;
@@ -753,8 +762,10 @@ class QuillRawEditorState extends EditorState
         case 6:
           return defaultStyles!.h6!.verticalSpacing;
         default:
-          _notifyHeaderLevelFallback(level, 'header vertical spacing');
-          return defaultStyles!.paragraph!.verticalSpacing;
+          _notifyHeaderLevelFallback(rawLevel, 'header vertical spacing');
+          // Extra safety net: see _getHorizontalSpacingForLine.
+          return defaultStyles?.paragraph?.verticalSpacing ??
+              VerticalSpacing.zero;
       }
     }
 
@@ -798,7 +809,8 @@ class QuillRawEditorState extends EditorState
   BoxDecoration? _getDecoration(Node node, DefaultStyles? defaultStyles,
       Map<String, Attribute<dynamic>> attrs) {
     if (attrs.containsKey(Attribute.header.key)) {
-      final level = attrs[Attribute.header.key]!.value;
+      final rawLevel = attrs[Attribute.header.key]!.value;
+      final level = _coerceHeaderLevel(rawLevel);
       switch (level) {
         case 1:
           return defaultStyles!.h1!.decoration;
@@ -813,7 +825,7 @@ class QuillRawEditorState extends EditorState
         case 6:
           return defaultStyles!.h6!.decoration;
         default:
-          _notifyHeaderLevelFallback(level, 'header decoration');
+          _notifyHeaderLevelFallback(rawLevel, 'header decoration');
           return null;
       }
     }

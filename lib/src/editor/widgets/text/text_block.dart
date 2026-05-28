@@ -10,8 +10,8 @@ import '../../../document/attribute.dart';
 import '../../../document/nodes/block.dart';
 import '../../../document/nodes/line.dart';
 import '../../../editor_toolbar_shared/color.dart';
-import '../../config/editor_config.dart'
-    show QuillStyleErrorHandler, notifyQuillStyleError;
+import '../../config/editor_config.dart' show QuillStyleErrorHandler;
+import '../../config/style_error_reporter.dart';
 import '../../editor.dart';
 import '../../embed/embed_editor_builder.dart';
 import '../../raw_editor/builders/leading_block_builder.dart';
@@ -402,8 +402,12 @@ class EditableTextBlock extends StatelessWidget {
             message: 'flutter_quill: invalid header level $level – '
                 'falling back (line vertical spacing).',
           );
-          top = defaultStyles!.paragraph!.verticalSpacing.top;
-          bottom = defaultStyles.paragraph!.verticalSpacing.bottom;
+          // Extra safety net: if paragraph itself is null we'd re-throw
+          // inside our own "graceful" fallback. Default to zero spacing.
+          final fallback =
+              defaultStyles?.paragraph?.verticalSpacing ?? VerticalSpacing.zero;
+          top = fallback.top;
+          bottom = fallback.bottom;
       }
     } else {
       final VerticalSpacing lineSpacing;

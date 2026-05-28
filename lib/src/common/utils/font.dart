@@ -1,4 +1,5 @@
 import '../../../flutter_quill.dart';
+import '../../editor/config/style_error_reporter.dart';
 
 void _reportFontSizeFailure({
   required QuillStyleErrorHandler? onError,
