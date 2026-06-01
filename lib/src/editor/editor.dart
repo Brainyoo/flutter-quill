@@ -342,6 +342,7 @@ class QuillEditorState extends State<QuillEditor>
         readOnlyMouseCursor: config.readOnlyMouseCursor,
         textInputAction: config.textInputAction,
         onPerformAction: config.onPerformAction,
+        onStyleError: config.onStyleError,
       ),
     );
 

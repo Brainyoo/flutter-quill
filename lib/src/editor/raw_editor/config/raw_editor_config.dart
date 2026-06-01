@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:meta/meta.dart';
 
 import '../../../document/nodes/node.dart';
+import '../../../editor/config/editor_config.dart' show QuillStyleErrorHandler;
 import '../../../editor/embed/embed_editor_builder.dart';
 import '../../../editor/raw_editor/raw_editor.dart';
 import '../../../editor/raw_editor/raw_editor_state.dart';
@@ -76,7 +77,12 @@ class QuillRawEditorConfig {
     this.quillMagnifierBuilder,
     this.actionConfiguration = const QuillActionConfiguration(),
     this.shortcutConfiguration = const QuillShortcutConfiguration(),
+    this.onStyleError,
   });
+
+  /// Invoked when the editor recovers from an unsupported style or
+  /// attribute value. See [QuillStyleErrorHandler] for details.
+  final QuillStyleErrorHandler? onStyleError;
 
   /// Controls whether this editor has keyboard focus.
   final FocusNode focusNode;

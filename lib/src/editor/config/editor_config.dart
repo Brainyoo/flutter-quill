@@ -26,6 +26,23 @@ import 'search_config.dart';
 // IMPORTANT For project authors: The QuillEditorConfig.copyWith()
 // should be manually updated each time we add or remove a property
 
+/// Callback that the editor invokes when style / attribute interpretation
+/// fails – e.g. an unsupported color value such as `windowtext`, an
+/// unparseable font size, or an out-of-range header level.
+///
+/// The editor will always recover with a sensible default; this callback
+/// only exists so the embedding app can log the issue or notify the user.
+/// It must not throw.
+///
+/// [context] is a short human-readable hint about what was being computed
+/// when the error occurred (e.g. `"inline text style"`,
+/// `"line vertical spacing"`).
+typedef QuillStyleErrorHandler = void Function(
+  Object error,
+  StackTrace stackTrace, {
+  String? context,
+});
+
 /// The configuration of the editor widget.
 @immutable
 class QuillEditorConfig {
@@ -90,7 +107,14 @@ class QuillEditorConfig {
     @experimental this.customLeadingBlockBuilder,
     this.actionConfiguration = const QuillActionConfiguration(),
     this.shortcutConfiguration = const QuillShortcutConfiguration(),
+    this.onStyleError,
   });
+
+  /// Invoked when the editor recovers from an unsupported style or
+  /// attribute value (e.g. unknown color names, malformed font sizes,
+  /// invalid header levels). The editor renders a fallback regardless;
+  /// use this callback for logging or user-facing diagnostics.
+  final QuillStyleErrorHandler? onStyleError;
 
   @experimental
   final LeadingBlockNodeBuilder? customLeadingBlockBuilder;
@@ -538,6 +562,7 @@ class QuillEditorConfig {
     void Function(TextInputAction action)? onPerformAction,
     QuillActionConfiguration? actionConfiguration,
     QuillShortcutConfiguration? shortcutConfiguration,
+    QuillStyleErrorHandler? onStyleError,
   }) {
     return QuillEditorConfig(
       customLeadingBlockBuilder:
@@ -610,6 +635,7 @@ class QuillEditorConfig {
       actionConfiguration: actionConfiguration ?? this.actionConfiguration,
       shortcutConfiguration:
           shortcutConfiguration ?? this.shortcutConfiguration,
+      onStyleError: onStyleError ?? this.onStyleError,
     );
   }
 }

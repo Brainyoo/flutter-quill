@@ -10,6 +10,8 @@ import '../../../document/attribute.dart';
 import '../../../document/nodes/block.dart';
 import '../../../document/nodes/line.dart';
 import '../../../editor_toolbar_shared/color.dart';
+import '../../config/editor_config.dart' show QuillStyleErrorHandler;
+import '../../config/style_error_reporter.dart';
 import '../../editor.dart';
 import '../../embed/embed_editor_builder.dart';
 import '../../raw_editor/builders/leading_block_builder.dart';
@@ -84,6 +86,7 @@ class EditableTextBlock extends StatelessWidget {
     this.customStyleBuilder,
     this.customLinkPrefixes = const <String>[],
     this.customLeadingBlockBuilder,
+    this.onStyleError,
     super.key,
   });
 
@@ -114,6 +117,7 @@ class EditableTextBlock extends StatelessWidget {
   final bool? checkBoxReadOnly;
   final List<String> customLinkPrefixes;
   final TextRange composingRange;
+  final QuillStyleErrorHandler? onStyleError;
 
   @override
   Widget build(BuildContext context) {
@@ -198,6 +202,7 @@ class EditableTextBlock extends StatelessWidget {
             customLinkPrefixes: customLinkPrefixes,
             customRecognizerBuilder: customRecognizerBuilder,
             composingRange: composingRange,
+            onStyleError: onStyleError,
           ),
           indentWidthBuilder(block, context, count, numberPointWidthBuilder),
           _getSpacingForLine(line, index, count, defaultStyles),
@@ -253,6 +258,7 @@ class EditableTextBlock extends StatelessWidget {
             ? getFontSizeAsDouble(
                 line.toDelta().operations.first.attributes?[Attribute.size.key],
                 defaultStyles: defaultStyles,
+                onError: onStyleError,
               )
             : null;
 
@@ -388,7 +394,20 @@ class EditableTextBlock extends StatelessWidget {
           bottom = defaultStyles.h6!.verticalSpacing.bottom;
           break;
         default:
-          throw ArgumentError('Invalid level $level');
+          notifyQuillStyleError(
+            handler: onStyleError,
+            error: ArgumentError.value(level, 'header level'),
+            stackTrace: StackTrace.current,
+            context: 'line vertical spacing',
+            message: 'flutter_quill: invalid header level $level – '
+                'falling back (line vertical spacing).',
+          );
+          // Extra safety net: if paragraph itself is null we'd re-throw
+          // inside our own "graceful" fallback. Default to zero spacing.
+          final fallback =
+              defaultStyles?.paragraph?.verticalSpacing ?? VerticalSpacing.zero;
+          top = fallback.top;
+          bottom = fallback.bottom;
       }
     } else {
       final VerticalSpacing lineSpacing;

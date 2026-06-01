@@ -1,17 +1,66 @@
 import 'package:flutter/material.dart';
 
+import '../../editor/config/editor_config.dart' show QuillStyleErrorHandler;
+import '../../editor/config/style_error_reporter.dart';
 import '../../editor/widgets/default_styles.dart';
 
-Color stringToColor(String? s,
-    [Color? originalColor, DefaultStyles? defaultStyles]) {
-  final palette = defaultStyles?.palette;
-  if (s != null && palette != null) {
-    final maybeColor = palette[s];
-    if (maybeColor != null) {
-      return maybeColor;
+/// Parses a Quill color attribute value into a [Color].
+///
+/// Recognised inputs: hex (`#rrggbb` / `#aarrggbb`), `rgba(r, g, b, a)`,
+/// Material color name aliases (`black`, `red`, …), `transparent`,
+/// `inherit`, and any entry in [defaultStyles].`palette`.
+///
+/// On parse failure the function never throws. It emits a one-time
+/// [debugPrint], invokes [onError] (with `context: "stringToColor(\"$s\")"`)
+/// and returns the first non-null of:
+///   1. [originalColor] (caller-supplied fallback)
+///   2. [defaultStyles].`color` (often unset in practice)
+///   3. [defaultStyles].`paragraph.style.color` (the document's effective
+///      text color)
+///   4. [Colors.transparent]
+///
+/// **Contract**: this fallback chain is designed for *text color*
+/// rendering. Callers that render non-text colors (background highlights,
+/// decoration sample swatches, toolbar icons) MUST pass [Colors.transparent]
+/// as [originalColor], otherwise an unsupported input may bleed the
+/// document's text color into the wrong UI element.
+Color stringToColor(
+  String? s, [
+  Color? originalColor,
+  DefaultStyles? defaultStyles,
+  QuillStyleErrorHandler? onError,
+]) {
+  try {
+    final palette = defaultStyles?.palette;
+    if (s != null && palette != null) {
+      final maybeColor = palette[s];
+      if (maybeColor != null) {
+        return maybeColor;
+      }
     }
-  }
 
+    return _parseColorLiteral(s, originalColor);
+  } catch (e, stack) {
+    notifyQuillStyleError(
+      handler: onError,
+      error: e,
+      stackTrace: stack,
+      context: 'stringToColor("$s")',
+      message:
+          'flutter_quill: unsupported color value "$s" – falling back. ($e)',
+    );
+    return originalColor ??
+        defaultStyles?.color ??
+        defaultStyles?.paragraph?.style.color ??
+        Colors.transparent;
+  }
+}
+
+/// Parses [s] as one of: named Material colors, `transparent`, `rgba(...)`,
+/// `inherit`, or `#rrggbb` / `#aarrggbb`. Throws on any other input – the
+/// caller wraps this in try/catch to translate the throw into the
+/// documented fallback chain.
+Color _parseColorLiteral(String? s, Color? originalColor) {
   switch (s) {
     case 'transparent':
       return Colors.transparent;

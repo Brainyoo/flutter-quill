@@ -1,6 +1,25 @@
 import '../../../flutter_quill.dart';
+import '../../editor/config/style_error_reporter.dart';
 
-dynamic getFontSize(dynamic sizeValue) {
+void _reportFontSizeFailure({
+  required QuillStyleErrorHandler? onError,
+  required dynamic sizeValue,
+  required String functionName,
+  required String reason,
+}) {
+  final error =
+      ArgumentError.value(sizeValue, 'sizeValue', '$reason for $functionName');
+  notifyQuillStyleError(
+    handler: onError,
+    error: error,
+    stackTrace: StackTrace.current,
+    context: functionName,
+    message: 'flutter_quill: $reason font size value "$sizeValue" – '
+        'falling back to default.',
+  );
+}
+
+dynamic getFontSize(dynamic sizeValue, {QuillStyleErrorHandler? onError}) {
   if (sizeValue is String) {
     if (['small', 'normal', 'large', 'huge'].contains(sizeValue)) {
       return sizeValue;
@@ -18,16 +37,34 @@ dynamic getFontSize(dynamic sizeValue) {
     return sizeValue.toDouble();
   }
 
-  assert(sizeValue is String);
+  if (sizeValue is! String) {
+    _reportFontSizeFailure(
+      onError: onError,
+      sizeValue: sizeValue,
+      functionName: 'getFontSize',
+      reason: 'unsupported-type',
+    );
+    return null;
+  }
+
   final fontSize = double.tryParse(sizeValue);
   if (fontSize == null) {
-    throw ArgumentError('Invalid size $sizeValue');
+    _reportFontSizeFailure(
+      onError: onError,
+      sizeValue: sizeValue,
+      functionName: 'getFontSize',
+      reason: 'unparseable',
+    );
+    return null;
   }
   return fontSize;
 }
 
-double? getFontSizeAsDouble(dynamic sizeValue,
-    {required DefaultStyles defaultStyles}) {
+double? getFontSizeAsDouble(
+  dynamic sizeValue, {
+  required DefaultStyles defaultStyles,
+  QuillStyleErrorHandler? onError,
+}) {
   if (sizeValue is String) {
     if (['small', 'normal', 'large', 'huge'].contains(sizeValue)) {
       return switch (sizeValue) {
@@ -35,7 +72,7 @@ double? getFontSizeAsDouble(dynamic sizeValue,
         'normal' => null,
         'large' => defaultStyles.sizeLarge?.fontSize,
         'huge' => defaultStyles.sizeHuge?.fontSize,
-        String() => throw ArgumentError(),
+        String() => null,
       };
     }
     if (sizeValue.endsWith('px')) {
@@ -51,10 +88,25 @@ double? getFontSizeAsDouble(dynamic sizeValue,
     return sizeValue.toDouble();
   }
 
-  assert(sizeValue is String);
+  if (sizeValue is! String) {
+    _reportFontSizeFailure(
+      onError: onError,
+      sizeValue: sizeValue,
+      functionName: 'getFontSizeAsDouble',
+      reason: 'unsupported-type',
+    );
+    return null;
+  }
+
   final fontSize = double.tryParse(sizeValue);
   if (fontSize == null) {
-    throw ArgumentError('Invalid size $sizeValue');
+    _reportFontSizeFailure(
+      onError: onError,
+      sizeValue: sizeValue,
+      functionName: 'getFontSizeAsDouble',
+      reason: 'unparseable',
+    );
+    return null;
   }
   return fontSize;
 }
