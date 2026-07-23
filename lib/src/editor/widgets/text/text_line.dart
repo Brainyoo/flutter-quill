@@ -242,8 +242,12 @@ class _TextLineState extends State<TextLine> {
               : MediaQuery.textScalerOf(context).scale(spanFontSize) /
                   spanFontSize;
           if (autoScale != 1.0) {
-            embedWidget =
-                InverseTextScale(scale: autoScale, child: embedWidget);
+            embedWidget = InverseTextScale(
+              scale: autoScale,
+              // Text inside the embed (e.g. error placeholders) must not
+              // scale either — the embed renders exactly as at factor 1.
+              child: MediaQuery.withNoTextScaling(child: embedWidget),
+            );
           }
         }
         final embed = embedBuilder.buildWidgetSpan(embedWidget);

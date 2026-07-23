@@ -139,5 +139,14 @@ void main() {
       expect(rect.width, moreOrLessEquals(80));
       expect(rect.height, moreOrLessEquals(40));
     });
+
+    testWidgets('false also neutralises text inside the embed '
+        '(e.g. error placeholders)', (tester) async {
+      insertInlineEmbed();
+      await tester.pumpWidget(embedApp(scale: false, factor: 2.0));
+      await tester.pump();
+      final context = tester.element(find.byKey(const Key('fixed-box')));
+      expect(MediaQuery.textScalerOf(context).scale(16), 16);
+    });
   });
 }
