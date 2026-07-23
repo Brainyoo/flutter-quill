@@ -18,6 +18,7 @@ import '../../../document/nodes/leaf.dart' as leaf;
 import '../../config/style_error_reporter.dart';
 import '../box.dart';
 import '../delegate.dart';
+import '../inverse_text_scale.dart';
 import '../keyboard_listener.dart';
 import '../proxy.dart';
 import 'text_selection.dart';
@@ -218,7 +219,7 @@ class _TextLineState extends State<TextLine> {
         }
 
         final embedBuilder = widget.embedBuilder(child);
-        final embedWidget = EmbedProxy(
+        Widget embedWidget = EmbedProxy(
           embedBuilder.build(
             context,
             EmbedContext(
@@ -230,6 +231,21 @@ class _TextLineState extends State<TextLine> {
             ),
           ),
         );
+        if (!embedBuilder.scaleWithText) {
+          // Mirror the formula from Flutter's
+          // WidgetSpan.extractFromInlineSpan: the auto-transform factor
+          // derives from the enclosing span's fontSize (our root TextSpan
+          // carries lineStyle).
+          final spanFontSize = lineStyle.fontSize ?? kDefaultFontSize;
+          final autoScale = spanFontSize == 0
+              ? 1.0
+              : MediaQuery.textScalerOf(context).scale(spanFontSize) /
+                  spanFontSize;
+          if (autoScale != 1.0) {
+            embedWidget =
+                InverseTextScale(scale: autoScale, child: embedWidget);
+          }
+        }
         final embed = embedBuilder.buildWidgetSpan(embedWidget);
         textSpanChildren.add(embed);
         continue;
