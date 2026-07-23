@@ -148,5 +148,20 @@ void main() {
       final context = tester.element(find.byKey(const Key('fixed-box')));
       expect(MediaQuery.textScalerOf(context).scale(16), 16);
     });
+
+    testWidgets(
+        'true neutralises the inner MediaQuery too — the auto-transform is '
+        'the single source of scaling (no quadratic growth for text inside)',
+        (tester) async {
+      insertInlineEmbed();
+      await tester.pumpWidget(embedApp(scale: true, factor: 2.0));
+      await tester.pump();
+      // Innen 1× — die äußere WidgetSpan-Transform liefert die Skalierung.
+      final context = tester.element(find.byKey(const Key('fixed-box')));
+      expect(MediaQuery.textScalerOf(context).scale(16), 16);
+      // Außen: gerendert exakt ×2 (nicht ×4).
+      final rect = tester.getRect(find.byKey(const Key('fixed-box')));
+      expect(rect.width, moreOrLessEquals(80));
+    });
   });
 }
