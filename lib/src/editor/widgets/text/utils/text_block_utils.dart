@@ -2,10 +2,29 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../common/structs/horizontal_spacing.dart';
+import '../../../../common/structs/vertical_spacing.dart';
 import '../../../../document/attribute.dart';
 import '../../../../document/nodes/block.dart';
 import '../../../../document/nodes/node.dart';
 import '../../default_styles.dart';
+
+/// The effective text scale multiplier from the ambient [MediaQuery]
+/// (system accessibility scaling composed with
+/// [QuillEditorConfig.textScaleFactor]).
+double ambientTextScale(BuildContext context) {
+  const probe = 16.0;
+  return MediaQuery.textScalerOf(context).scale(probe) / probe;
+}
+
+/// Scales vertical paragraph/block spacing with the effective text scale so
+/// that the layout grows proportionally with the rendered text.
+VerticalSpacing scaledVerticalSpacing(
+    VerticalSpacing spacing, BuildContext context) {
+  final scale = ambientTextScale(context);
+  return scale == 1.0
+      ? spacing
+      : VerticalSpacing(spacing.top * scale, spacing.bottom * scale);
+}
 
 typedef LeadingBlockIndentWidth = HorizontalSpacing Function(
     Block block,
@@ -49,7 +68,10 @@ abstract final class TextBlockUtils {
       int count,
       LeadingBlockNumberPointWidth numberPointWidthBuilder) {
     final defaultStyles = QuillStyles.getStyles(context, false)!;
-    final fontSize = defaultStyles.paragraph?.style.fontSize ?? 16;
+    final baseFontSize = defaultStyles.paragraph?.style.fontSize ?? 16;
+    // Structural indents must track the effective text scale, otherwise the
+    // scaled glyphs get clipped out of their fixed-width slots.
+    final fontSize = MediaQuery.textScalerOf(context).scale(baseFontSize);
     final attrs = block.style.attributes;
 
     final indent = attrs[Attribute.indent.key];

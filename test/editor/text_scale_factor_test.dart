@@ -78,10 +78,11 @@ void main() {
 
     testWidgets('vertical line spacing scales with the factor',
         (tester) async {
+      // h1 auf der ZWEITEN Zeile: dessen top-Spacing (16) liegt dann zwischen
+      // den beiden Zeilen und ist als Lücke messbar.
       controller.document
-        ..insert(0, 'Absatz2\n')
-        ..insert(0, 'Überschrift\n')
-        ..format(0, 11, Attribute.h1);
+        ..insert(0, 'Absatz\nÜberschrift')
+        ..format(7, 11, Attribute.h1);
 
       Future<double> gapBetweenLines(double factor) async {
         await tester.pumpWidget(app(factor));
@@ -93,6 +94,8 @@ void main() {
       }
 
       final normalGap = await gapBetweenLines(1.0);
+      expect(normalGap, greaterThan(4),
+          reason: 'Messaufbau kaputt: Abstand zwischen den Zeilen fehlt');
       final scaledGap = await gapBetweenLines(2.0);
       expect(scaledGap, moreOrLessEquals(normalGap * 2, epsilon: 0.5));
     });

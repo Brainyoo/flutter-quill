@@ -128,7 +128,7 @@ class EditableTextBlock extends StatelessWidget {
       block: block,
       textDirection: textDirection,
       horizontalSpacing: horizontalSpacing,
-      verticalSpacing: verticalSpacing,
+      verticalSpacing: scaledVerticalSpacing(verticalSpacing, context),
       scrollBottomInset: scrollBottomInset,
       decoration:
           _getDecorationForBlock(block, defaultStyles) ?? const BoxDecoration(),
@@ -205,7 +205,8 @@ class EditableTextBlock extends StatelessWidget {
             onStyleError: onStyleError,
           ),
           indentWidthBuilder(block, context, count, numberPointWidthBuilder),
-          _getSpacingForLine(line, index, count, defaultStyles),
+          scaledVerticalSpacing(
+              _getSpacingForLine(line, index, count, defaultStyles), context),
           textDirection,
           textSelection,
           color,
@@ -306,11 +307,18 @@ class EditableTextBlock extends StatelessWidget {
         );
       }(),
       width: () {
+        // Must match the scaled indent width from defaultIndentWidthBuilder —
+        // the leading is laid out with tight constraints to that width. The
+        // shared `fontSize` stays unscaled on purpose: padding and checkbox
+        // lineSize below must not grow with the text scale.
+        final scaledFontSize =
+            MediaQuery.textScalerOf(context).scale(fontSize);
         if (isOrdered || isCodeBlock) {
-          return numberPointWidthBuilder(fontSize, count);
+          return numberPointWidthBuilder(scaledFontSize, count);
         }
         if (isUnordered) {
-          return numberPointWidthBuilder(fontSize, 1); // same as fontSize * 2
+          // same as scaledFontSize * 2
+          return numberPointWidthBuilder(scaledFontSize, 1);
         }
         return null;
       }(),
