@@ -346,7 +346,7 @@ class QuillEditorState extends State<QuillEditor>
       ),
     );
 
-    final editor = selectionEnabled
+    var editor = selectionEnabled
         ? _selectionGestureDetectorBuilder.build(
             behavior: HitTestBehavior.translucent,
             detectWordBoundary: config.detectWordBoundary,
@@ -355,6 +355,18 @@ class QuillEditorState extends State<QuillEditor>
             quillMagnifierBuilder: config.quillMagnifierBuilder,
           )
         : child;
+
+    if (config.textScaleFactor != 1.0) {
+      editor = MediaQuery(
+        data: MediaQuery.of(context).copyWith(
+          textScaler: _ComposedTextScaler(
+            MediaQuery.textScalerOf(context),
+            config.textScaleFactor,
+          ),
+        ),
+        child: editor,
+      );
+    }
 
     if (kIsWeb) {
       // Intercept RawKeyEvent on Web to prevent it from propagating to parents
@@ -1839,4 +1851,30 @@ class RenderEditableContainerBox extends RenderBox
     return defaultComputeDistanceToFirstActualBaseline(baseline)! +
         _resolvedPadding!.top;
   }
+}
+
+/// Multiplies an inner [TextScaler] (usually the ambient/system one) with a
+/// constant factor. Used to apply [QuillEditorConfig.textScaleFactor] on top
+/// of OS accessibility scaling instead of replacing it.
+class _ComposedTextScaler extends TextScaler {
+  const _ComposedTextScaler(this._inner, this._factor);
+
+  final TextScaler _inner;
+  final double _factor;
+
+  @override
+  double scale(double fontSize) => _inner.scale(fontSize) * _factor;
+
+  @override
+  // ignore: deprecated_member_use
+  double get textScaleFactor => _inner.textScaleFactor * _factor;
+
+  @override
+  bool operator ==(Object other) =>
+      other is _ComposedTextScaler &&
+      other._inner == _inner &&
+      other._factor == _factor;
+
+  @override
+  int get hashCode => Object.hash(_inner, _factor);
 }

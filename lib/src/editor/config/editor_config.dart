@@ -108,13 +108,20 @@ class QuillEditorConfig {
     this.actionConfiguration = const QuillActionConfiguration(),
     this.shortcutConfiguration = const QuillShortcutConfiguration(),
     this.onStyleError,
-  });
+    this.textScaleFactor = 1.0,
+  }) : assert(textScaleFactor > 0, 'textScaleFactor must be > 0');
 
   /// Invoked when the editor recovers from an unsupported style or
   /// attribute value (e.g. unknown color names, malformed font sizes,
   /// invalid header levels). The editor renders a fallback regardless;
   /// use this callback for logging or user-facing diagnostics.
   final QuillStyleErrorHandler? onStyleError;
+
+  /// Scales the *rendered* size of the editor content (text, list leadings,
+  /// spacings) without touching the document. Composed with the ambient
+  /// [MediaQuery] text scaler, so OS accessibility scaling stays effective.
+  /// Display-only: the document delta is never modified.
+  final double textScaleFactor;
 
   @experimental
   final LeadingBlockNodeBuilder? customLeadingBlockBuilder;
@@ -563,6 +570,7 @@ class QuillEditorConfig {
     QuillActionConfiguration? actionConfiguration,
     QuillShortcutConfiguration? shortcutConfiguration,
     QuillStyleErrorHandler? onStyleError,
+    double? textScaleFactor,
   }) {
     return QuillEditorConfig(
       customLeadingBlockBuilder:
@@ -636,6 +644,7 @@ class QuillEditorConfig {
       shortcutConfiguration:
           shortcutConfiguration ?? this.shortcutConfiguration,
       onStyleError: onStyleError ?? this.onStyleError,
+      textScaleFactor: textScaleFactor ?? this.textScaleFactor,
     );
   }
 }
