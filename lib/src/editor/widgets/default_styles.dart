@@ -185,7 +185,17 @@ class DefaultListBlockStyle extends DefaultTextBlockStyle {
   });
 
   final QuillCheckboxBuilder? checkboxUIBuilder;
+
+  /// Overrides how much horizontal space is reserved for list leadings.
+  ///
+  /// A custom builder must scale with the ambient [TextScaler] itself, see
+  /// [LeadingBlockIndentWidth] — the default implementation does.
   final LeadingBlockIndentWidth indentWidthBuilder;
+
+  /// Overrides the width of number point leadings.
+  ///
+  /// The `fontSize` passed in is already text-scaled, see
+  /// [LeadingBlockNumberPointWidth].
   final LeadingBlockNumberPointWidth numberPointWidthBuilder;
   final AlignmentDirectional? pointAlignment;
 

@@ -26,12 +26,33 @@ VerticalSpacing scaledVerticalSpacing(
       : VerticalSpacing(spacing.top * scale, spacing.bottom * scale);
 }
 
+/// Computes the horizontal space reserved for a block's leading (bullet,
+/// number, code-block line number).
+///
+/// The returned width is used as a *tight* constraint for the leading widget
+/// (see `RenderEditableTextLine.performLayout`), so it defines the slot the
+/// marker has to fit into.
+///
+/// A custom implementation is responsible for tracking the effective text
+/// scale itself — multiply the base font size with
+/// `MediaQuery.textScalerOf(context)` the way
+/// [TextBlockUtils.defaultIndentWidthBuilder] does. Otherwise the indent stays
+/// fixed while the marker glyphs grow with
+/// [QuillEditorConfig.textScaleFactor] / the OS accessibility setting, and the
+/// markers get clipped.
 typedef LeadingBlockIndentWidth = HorizontalSpacing Function(
     Block block,
     BuildContext context,
     int count,
     LeadingBlockNumberPointWidth numberPointWidthDelegate);
 
+/// Computes the width of a number point leading for `count` list items.
+///
+/// Note: `fontSize` is the *already text-scaled* font size, not the raw
+/// [DefaultStyles.paragraph] size — both
+/// [TextBlockUtils.defaultIndentWidthBuilder] and the leading builder in
+/// `EditableTextBlock` apply the ambient [TextScaler] before calling this.
+/// Do not scale it a second time.
 typedef LeadingBlockNumberPointWidth = double Function(
     double fontSize, int count);
 
