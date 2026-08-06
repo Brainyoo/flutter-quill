@@ -108,9 +108,19 @@ class QuillEditorConfig {
     this.actionConfiguration = const QuillActionConfiguration(),
     this.shortcutConfiguration = const QuillShortcutConfiguration(),
     this.onStyleError,
-    this.textScaleFactor = 1.0,
-  }) : assert(textScaleFactor > 0 && textScaleFactor < double.infinity,
-            'textScaleFactor must be a finite value > 0');
+    double textScaleFactor = 1.0,
+  })  : assert(textScaleFactor > 0 && textScaleFactor < double.infinity,
+            'textScaleFactor must be a finite value > 0'),
+        // `assert` is stripped in release builds, so an invalid value
+        // (<= 0, NaN, or infinite) would otherwise reach the render tree
+        // unchecked and collapse or blow up every scaled dimension. Fall
+        // back to the neutral 1.0 instead of trusting the raw input.
+        // Comparisons only — property access such as `.isFinite` is not
+        // allowed in a const expression.
+        textScaleFactor =
+            textScaleFactor > 0 && textScaleFactor < double.infinity
+                ? textScaleFactor
+                : 1.0;
 
   /// Invoked when the editor recovers from an unsupported style or
   /// attribute value (e.g. unknown color names, malformed font sizes,
@@ -122,6 +132,11 @@ class QuillEditorConfig {
   /// spacings) without touching the document. Composed with the ambient
   /// [MediaQuery] text scaler, so OS accessibility scaling stays effective.
   /// Display-only: the document delta is never modified.
+  ///
+  /// Must be finite and greater than `0`. Debug builds assert this
+  /// immediately; release builds (where `assert` is stripped) instead fall
+  /// back to `1.0` for an invalid value rather than propagating it into the
+  /// render tree.
   final double textScaleFactor;
 
   @experimental
