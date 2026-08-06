@@ -109,7 +109,8 @@ class QuillEditorConfig {
     this.shortcutConfiguration = const QuillShortcutConfiguration(),
     this.onStyleError,
     this.textScaleFactor = 1.0,
-  }) : assert(textScaleFactor > 0, 'textScaleFactor must be > 0');
+  }) : assert(textScaleFactor > 0 && textScaleFactor < double.infinity,
+            'textScaleFactor must be a finite value > 0');
 
   /// Invoked when the editor recovers from an unsupported style or
   /// attribute value (e.g. unknown color names, malformed font sizes,
