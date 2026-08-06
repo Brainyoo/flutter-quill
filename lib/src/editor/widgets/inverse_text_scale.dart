@@ -88,6 +88,14 @@ class RenderInverseTextScale extends RenderBox
   }
 
   @override
+  double? computeDryBaseline(
+      covariant BoxConstraints constraints, TextBaseline baseline) {
+    final distance =
+        child?.getDryBaseline(_childConstraints(constraints), baseline);
+    return distance == null ? null : distance / scale;
+  }
+
+  @override
   void paint(PaintingContext context, Offset offset) {
     final child = this.child;
     if (child == null) return;
