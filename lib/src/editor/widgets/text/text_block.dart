@@ -309,8 +309,8 @@ class EditableTextBlock extends StatelessWidget {
       width: () {
         // Must match the scaled indent width from defaultIndentWidthBuilder —
         // the leading is laid out with tight constraints to that width. The
-        // shared `fontSize` stays unscaled on purpose: padding and checkbox
-        // lineSize below must not grow with the text scale.
+        // shared `fontSize` stays unscaled on purpose: the padding below must
+        // not grow with the text scale.
         final scaledFontSize =
             MediaQuery.textScalerOf(context).scale(fontSize);
         if (isOrdered || isCodeBlock) {
@@ -331,7 +331,8 @@ class EditableTextBlock extends StatelessWidget {
         }
         return null;
       }(),
-      lineSize: isCheck ? fontSize : null,
+      lineSize:
+          isCheck ? MediaQuery.textScalerOf(context).scale(fontSize) : null,
       uiBuilder: isCheck ? defaultStyles.lists?.checkboxUIBuilder : null,
       value: attribute == Attribute.checked,
       onCheckboxTap: !isCheck

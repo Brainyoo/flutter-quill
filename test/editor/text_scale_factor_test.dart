@@ -75,6 +75,22 @@ void main() {
       expect(scaledWidth, moreOrLessEquals(normalWidth * 2));
     });
 
+    testWidgets('checkbox leading scales with the factor', (tester) async {
+      controller.document
+        ..insert(0, 'Aufgabe')
+        ..format(7, 1, Attribute.unchecked);
+
+      Future<double> checkboxWidth(double factor) async {
+        await tester.pumpWidget(app(factor));
+        await tester.pump();
+        return tester.getSize(find.byType(QuillCheckboxPoint)).width;
+      }
+
+      final normalWidth = await checkboxWidth(1);
+      expect(normalWidth, greaterThan(0));
+      expect(await checkboxWidth(2), moreOrLessEquals(normalWidth * 2));
+    });
+
     testWidgets('vertical line spacing scales with the factor',
         (tester) async {
       // h1 auf der ZWEITEN Zeile: dessen top-Spacing (16) liegt dann zwischen
