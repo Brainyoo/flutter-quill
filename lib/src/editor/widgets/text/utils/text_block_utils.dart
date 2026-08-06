@@ -26,6 +26,17 @@ VerticalSpacing scaledVerticalSpacing(
       : VerticalSpacing(spacing.top * scale, spacing.bottom * scale);
 }
 
+/// Scales a block's horizontal padding with the effective text scale, so the
+/// block indent stays in proportion with the rendered text and the vertical
+/// spacing (see [scaledVerticalSpacing]).
+HorizontalSpacing scaledHorizontalSpacing(
+    HorizontalSpacing spacing, BuildContext context) {
+  final scale = ambientTextScale(context);
+  return scale == 1.0
+      ? spacing
+      : HorizontalSpacing(spacing.left * scale, spacing.right * scale);
+}
+
 /// Computes the horizontal space reserved for a block's leading (bullet,
 /// number, code-block line number).
 ///

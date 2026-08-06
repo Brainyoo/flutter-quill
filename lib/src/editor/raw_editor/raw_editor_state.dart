@@ -693,7 +693,8 @@ class QuillRawEditorState extends EditorState
         node,
         null,
         textLine,
-        _getHorizontalSpacingForLine(node, _styles),
+        scaledHorizontalSpacing(
+            _getHorizontalSpacingForLine(node, _styles), context),
         scaledVerticalSpacing(
             _getVerticalSpacingForLine(node, _styles), context),
         _textDirection,

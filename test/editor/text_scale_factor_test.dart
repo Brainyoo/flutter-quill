@@ -91,6 +91,47 @@ void main() {
       expect(await checkboxWidth(2), moreOrLessEquals(normalWidth * 2));
     });
 
+    testWidgets('block horizontal spacing scales with the factor',
+        (tester) async {
+      const indent = 40.0;
+      controller.document
+        ..insert(0, 'Zitat')
+        ..format(5, 1, Attribute.blockQuote);
+
+      // Der Default ist HorizontalSpacing(0, 0) — ohne Override waere die
+      // Skalierung nicht messbar.
+      DefaultStylesOverride quoteIndent(double left) => DefaultStylesOverride(
+            quote: (value) => DefaultTextBlockStyle(
+              value.style,
+              HorizontalSpacing(left, 0),
+              value.verticalSpacing,
+              value.lineSpacing,
+              value.decoration,
+            ),
+          );
+
+      Future<double> quoteLeft(double factor, double left) async {
+        await tester.pumpWidget(MaterialApp(
+          home: QuillEditor.basic(
+            controller: controller,
+            config: QuillEditorConfig(
+              textScaleFactor: factor,
+              customStyles: quoteIndent(left),
+            ),
+          ),
+        ));
+        await tester.pump();
+        return tester.getTopLeft(find.byType(RichText).first).dx;
+      }
+
+      // Der Zeilen-Einzug innerhalb des Blocks skaliert bereits; die Differenz
+      // der beiden Deltas isoliert den Beitrag des Block-Paddings.
+      final baseline = await quoteLeft(2, 0) - await quoteLeft(1, 0);
+      final withIndent = await quoteLeft(2, indent) - await quoteLeft(1, indent);
+      expect(withIndent - baseline, moreOrLessEquals(indent, epsilon: 0.5),
+          reason: 'Block-Einzug muss von 40 auf 80 wachsen');
+    });
+
     testWidgets('vertical line spacing scales with the factor',
         (tester) async {
       // h1 auf der ZWEITEN Zeile: dessen top-Spacing (16) liegt dann zwischen

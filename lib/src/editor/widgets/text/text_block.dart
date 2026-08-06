@@ -127,7 +127,7 @@ class EditableTextBlock extends StatelessWidget {
     return _EditableBlock(
       block: block,
       textDirection: textDirection,
-      horizontalSpacing: horizontalSpacing,
+      horizontalSpacing: scaledHorizontalSpacing(horizontalSpacing, context),
       verticalSpacing: scaledVerticalSpacing(verticalSpacing, context),
       scrollBottomInset: scrollBottomInset,
       decoration:
