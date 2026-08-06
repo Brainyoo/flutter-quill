@@ -32,6 +32,7 @@ import '../widgets/proxy.dart';
 import '../widgets/text/text_block.dart';
 import '../widgets/text/text_line.dart';
 import '../widgets/text/text_selection.dart';
+import '../widgets/text/utils/text_block_utils.dart';
 import 'keyboard_shortcuts/editor_keyboard_shortcut_actions_manager.dart';
 import 'keyboard_shortcuts/editor_keyboard_shortcuts.dart';
 import 'raw_editor.dart';
@@ -692,8 +693,10 @@ class QuillRawEditorState extends EditorState
         node,
         null,
         textLine,
-        _getHorizontalSpacingForLine(node, _styles),
-        _getVerticalSpacingForLine(node, _styles),
+        scaledHorizontalSpacing(
+            _getHorizontalSpacingForLine(node, _styles), context),
+        scaledVerticalSpacing(
+            _getVerticalSpacingForLine(node, _styles), context),
         _textDirection,
         controller.selection,
         widget.config.selectionColor,

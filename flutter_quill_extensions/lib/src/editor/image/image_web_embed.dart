@@ -20,6 +20,11 @@ class QuillEditorWebImageEmbedBuilder extends EmbedBuilder {
   @override
   bool get expanded => false;
 
+  // Images and videos have a fixed natural size taken from the document
+  // attributes; growing them with the text scale would overflow the layout.
+  @override
+  bool get scaleWithText => false;
+
   @override
   Widget build(
     BuildContext context,

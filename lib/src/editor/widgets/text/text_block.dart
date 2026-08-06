@@ -127,8 +127,8 @@ class EditableTextBlock extends StatelessWidget {
     return _EditableBlock(
       block: block,
       textDirection: textDirection,
-      horizontalSpacing: horizontalSpacing,
-      verticalSpacing: verticalSpacing,
+      horizontalSpacing: scaledHorizontalSpacing(horizontalSpacing, context),
+      verticalSpacing: scaledVerticalSpacing(verticalSpacing, context),
       scrollBottomInset: scrollBottomInset,
       decoration:
           _getDecorationForBlock(block, defaultStyles) ?? const BoxDecoration(),
@@ -205,7 +205,8 @@ class EditableTextBlock extends StatelessWidget {
             onStyleError: onStyleError,
           ),
           indentWidthBuilder(block, context, count, numberPointWidthBuilder),
-          _getSpacingForLine(line, index, count, defaultStyles),
+          scaledVerticalSpacing(
+              _getSpacingForLine(line, index, count, defaultStyles), context),
           textDirection,
           textSelection,
           color,
@@ -306,11 +307,18 @@ class EditableTextBlock extends StatelessWidget {
         );
       }(),
       width: () {
+        // Must match the scaled indent width from defaultIndentWidthBuilder —
+        // the leading is laid out with tight constraints to that width. The
+        // shared `fontSize` stays unscaled on purpose: the padding below must
+        // not grow with the text scale.
+        final scaledFontSize =
+            MediaQuery.textScalerOf(context).scale(fontSize);
         if (isOrdered || isCodeBlock) {
-          return numberPointWidthBuilder(fontSize, count);
+          return numberPointWidthBuilder(scaledFontSize, count);
         }
         if (isUnordered) {
-          return numberPointWidthBuilder(fontSize, 1); // same as fontSize * 2
+          // same as scaledFontSize * 2
+          return numberPointWidthBuilder(scaledFontSize, 1);
         }
         return null;
       }(),
@@ -323,7 +331,8 @@ class EditableTextBlock extends StatelessWidget {
         }
         return null;
       }(),
-      lineSize: isCheck ? fontSize : null,
+      lineSize:
+          isCheck ? MediaQuery.textScalerOf(context).scale(fontSize) : null,
       uiBuilder: isCheck ? defaultStyles.lists?.checkboxUIBuilder : null,
       value: attribute == Attribute.checked,
       onCheckboxTap: !isCheck

@@ -18,6 +18,7 @@ import '../../../document/nodes/leaf.dart' as leaf;
 import '../../config/style_error_reporter.dart';
 import '../box.dart';
 import '../delegate.dart';
+import '../inverse_text_scale.dart';
 import '../keyboard_listener.dart';
 import '../proxy.dart';
 import 'text_selection.dart';
@@ -218,18 +219,40 @@ class _TextLineState extends State<TextLine> {
         }
 
         final embedBuilder = widget.embedBuilder(child);
-        final embedWidget = EmbedProxy(
-          embedBuilder.build(
-            context,
-            EmbedContext(
-              controller: widget.controller,
-              node: child,
-              readOnly: widget.readOnly,
-              inline: true,
-              textStyle: lineStyle,
+        // Flutter's paragraph layer scales every inline WidgetSpan as a
+        // whole via an automatic transform. Text inside the embed must
+        // therefore not scale a second time through the ambient MediaQuery
+        // — without this, embeds containing text (input fields, error
+        // placeholders) grow quadratically with the text scale.
+        var embedWidget = MediaQuery.withNoTextScaling(
+          child: EmbedProxy(
+            embedBuilder.build(
+              context,
+              EmbedContext(
+                controller: widget.controller,
+                node: child,
+                readOnly: widget.readOnly,
+                inline: true,
+                textStyle: lineStyle,
+              ),
             ),
           ),
         );
+        if (!embedBuilder.scaleWithText) {
+          // Mirror the formula from Flutter's
+          // WidgetSpan.extractFromInlineSpan: the auto-transform factor
+          // derives from the enclosing span's fontSize (our root TextSpan
+          // carries lineStyle).
+          final spanFontSize = lineStyle.fontSize ?? kDefaultFontSize;
+          final autoScale = spanFontSize == 0
+              ? 1.0
+              : MediaQuery.textScalerOf(context).scale(spanFontSize) /
+                  spanFontSize;
+          if (autoScale != 1.0) {
+            embedWidget =
+                InverseTextScale(scale: autoScale, child: embedWidget);
+          }
+        }
         final embed = embedBuilder.buildWidgetSpan(embedWidget);
         textSpanChildren.add(embed);
         continue;
