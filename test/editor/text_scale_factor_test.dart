@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
-import 'package:flutter_quill/src/editor/raw_editor/raw_editor.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 class _FixedSizeEmbedBuilder extends EmbedBuilder {
@@ -40,14 +39,14 @@ void main() {
   group('QuillEditorConfig.textScaleFactor', () {
     testWidgets('composes ambient text scaler inside the editor subtree',
         (tester) async {
-      await tester.pumpWidget(app(2.0));
+      await tester.pumpWidget(app(2));
       final context = tester.element(find.byType(QuillRawEditor));
       expect(MediaQuery.textScalerOf(context).scale(16), 32);
     });
 
     testWidgets('factor 1.0 keeps the ambient scaler untouched',
         (tester) async {
-      await tester.pumpWidget(app(1.0));
+      await tester.pumpWidget(app(1));
       final context = tester.element(find.byType(QuillRawEditor));
       expect(MediaQuery.textScalerOf(context).scale(16), 16);
     });
@@ -67,10 +66,10 @@ void main() {
       controller.document
         ..insert(0, 'Eins')
         ..format(4, 1, Attribute.ol);
-      await tester.pumpWidget(app(1.0));
+      await tester.pumpWidget(app(1));
       final normalWidth = tester.getSize(find.byType(QuillNumberPoint)).width;
 
-      await tester.pumpWidget(app(2.0));
+      await tester.pumpWidget(app(2));
       await tester.pump();
       final scaledWidth = tester.getSize(find.byType(QuillNumberPoint)).width;
       expect(scaledWidth, moreOrLessEquals(normalWidth * 2));
@@ -93,10 +92,10 @@ void main() {
         return second - first;
       }
 
-      final normalGap = await gapBetweenLines(1.0);
+      final normalGap = await gapBetweenLines(1);
       expect(normalGap, greaterThan(4),
           reason: 'Messaufbau kaputt: Abstand zwischen den Zeilen fehlt');
-      final scaledGap = await gapBetweenLines(2.0);
+      final scaledGap = await gapBetweenLines(2);
       expect(scaledGap, moreOrLessEquals(normalGap * 2, epsilon: 0.5));
     });
   });
@@ -123,7 +122,7 @@ void main() {
 
     testWidgets('false keeps the embed at natural size', (tester) async {
       insertInlineEmbed();
-      await tester.pumpWidget(embedApp(scale: false, factor: 2.0));
+      await tester.pumpWidget(embedApp(scale: false, factor: 2));
       await tester.pump();
       final rect = tester.getRect(find.byKey(const Key('fixed-box')));
       expect(rect.width, moreOrLessEquals(40));
@@ -133,7 +132,7 @@ void main() {
     testWidgets('default true lets the embed scale with the text',
         (tester) async {
       insertInlineEmbed();
-      await tester.pumpWidget(embedApp(scale: true, factor: 2.0));
+      await tester.pumpWidget(embedApp(scale: true, factor: 2));
       await tester.pump();
       final rect = tester.getRect(find.byKey(const Key('fixed-box')));
       expect(rect.width, moreOrLessEquals(80));
@@ -143,7 +142,7 @@ void main() {
     testWidgets('false also neutralises text inside the embed '
         '(e.g. error placeholders)', (tester) async {
       insertInlineEmbed();
-      await tester.pumpWidget(embedApp(scale: false, factor: 2.0));
+      await tester.pumpWidget(embedApp(scale: false, factor: 2));
       await tester.pump();
       final context = tester.element(find.byKey(const Key('fixed-box')));
       expect(MediaQuery.textScalerOf(context).scale(16), 16);
@@ -154,7 +153,7 @@ void main() {
         'the single source of scaling (no quadratic growth for text inside)',
         (tester) async {
       insertInlineEmbed();
-      await tester.pumpWidget(embedApp(scale: true, factor: 2.0));
+      await tester.pumpWidget(embedApp(scale: true, factor: 2));
       await tester.pump();
       // Innen 1× — die äußere WidgetSpan-Transform liefert die Skalierung.
       final context = tester.element(find.byKey(const Key('fixed-box')));
