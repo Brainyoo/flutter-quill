@@ -7,3 +7,6 @@
 
 # style: apply Dart 3.12 format (tall style) — repo-wide dart_format, no logic changes
 10e0814088ae3b12f0cca4673f885e2828eaaa7a
+
+# chore: format fork-only code with the Dart 3.12 formatter — no logic changes
+8097df0c4b45ad4541c0ae5aece42d4ee81fecee
