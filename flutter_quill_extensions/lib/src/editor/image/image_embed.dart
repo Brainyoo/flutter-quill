@@ -7,9 +7,7 @@ import 'image_menu.dart';
 import 'widgets/image.dart';
 
 class QuillEditorImageEmbedBuilder extends EmbedBuilder {
-  QuillEditorImageEmbedBuilder({
-    required this.config,
-  });
+  QuillEditorImageEmbedBuilder({required this.config});
   final QuillEditorImageEmbedConfig config;
 
   @override
@@ -18,11 +16,13 @@ class QuillEditorImageEmbedBuilder extends EmbedBuilder {
   @override
   bool get expanded => false;
 
+  // Images and videos have a fixed natural size taken from the document
+  // attributes; growing them with the text scale would overflow the layout.
   @override
-  Widget build(
-    BuildContext context,
-    EmbedContext embedContext,
-  ) {
+  bool get scaleWithText => false;
+
+  @override
+  Widget build(BuildContext context, EmbedContext embedContext) {
     final imageSource = standardizeImageUrl(embedContext.node.value.data);
     final ((imageSize), margin, alignment) = getElementAttributes(
       embedContext.node,
@@ -64,10 +64,7 @@ class QuillEditorImageEmbedBuilder extends EmbedBuilder {
       child: Builder(
         builder: (context) {
           if (margin != null) {
-            return Padding(
-              padding: EdgeInsets.all(margin),
-              child: imageWidget,
-            );
+            return Padding(padding: EdgeInsets.all(margin), child: imageWidget);
           }
           return imageWidget;
         },

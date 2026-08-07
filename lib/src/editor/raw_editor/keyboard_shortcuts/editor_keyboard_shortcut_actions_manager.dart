@@ -23,27 +23,36 @@ class EditorKeyboardShortcutsActionsManager {
   }
 
   QuillEditorTextBoundary _characterBoundary(
-      DirectionalTextEditingIntent intent) {
-    final atomicTextBoundary =
-        QuillEditorCharacterBoundary(rawEditorState.textEditingValue);
+    DirectionalTextEditingIntent intent,
+  ) {
+    final atomicTextBoundary = QuillEditorCharacterBoundary(
+      rawEditorState.textEditingValue,
+    );
     return QuillEditorCollapsedSelectionBoundary(
-        atomicTextBoundary, intent.forward);
+      atomicTextBoundary,
+      intent.forward,
+    );
   }
 
   QuillEditorTextBoundary _nextWordBoundary(
-      DirectionalTextEditingIntent intent) {
+    DirectionalTextEditingIntent intent,
+  ) {
     final QuillEditorTextBoundary atomicTextBoundary;
     final QuillEditorTextBoundary boundary;
 
     // final TextEditingValue textEditingValue =
     //     _textEditingValueForTextLayoutMetrics;
-    atomicTextBoundary =
-        QuillEditorCharacterBoundary(rawEditorState.textEditingValue);
+    atomicTextBoundary = QuillEditorCharacterBoundary(
+      rawEditorState.textEditingValue,
+    );
     // This isn't enough. Newline characters.
     boundary = QuillEditorExpandedTextBoundary(
-        QuillEditorWhitespaceBoundary(rawEditorState.textEditingValue),
-        QuillEditorWordBoundary(
-            rawEditorState.renderEditor, rawEditorState.textEditingValue));
+      QuillEditorWhitespaceBoundary(rawEditorState.textEditingValue),
+      QuillEditorWordBoundary(
+        rawEditorState.renderEditor,
+        rawEditorState.textEditingValue,
+      ),
+    );
 
     final mixedBoundary = intent.forward
         ? QuillEditorMixedBoundary(atomicTextBoundary, boundary)
@@ -59,10 +68,13 @@ class EditorKeyboardShortcutsActionsManager {
 
     // final TextEditingValue textEditingValue =
     //     _textEditingValueforTextLayoutMetrics;
-    atomicTextBoundary =
-        QuillEditorCharacterBoundary(rawEditorState.textEditingValue);
+    atomicTextBoundary = QuillEditorCharacterBoundary(
+      rawEditorState.textEditingValue,
+    );
     boundary = QuillEditorLineBreak(
-        rawEditorState.renderEditor, rawEditorState.textEditingValue);
+      rawEditorState.renderEditor,
+      rawEditorState.textEditingValue,
+    );
 
     // The _MixedBoundary is to make sure we don't leave invalid code units in
     // the field after deletion.
@@ -72,7 +84,8 @@ class EditorKeyboardShortcutsActionsManager {
     return intent.forward
         ? QuillEditorMixedBoundary(
             QuillEditorCollapsedSelectionBoundary(atomicTextBoundary, true),
-            boundary)
+            boundary,
+          )
         : QuillEditorMixedBoundary(
             boundary,
             QuillEditorCollapsedSelectionBoundary(atomicTextBoundary, false),
@@ -81,8 +94,10 @@ class EditorKeyboardShortcutsActionsManager {
 
   void _replaceText(ReplaceTextIntent intent) {
     rawEditorState.userUpdateTextEditingValue(
-      intent.currentTextEditingValue
-          .replaced(intent.replacementRange, intent.replacementText),
+      intent.currentTextEditingValue.replaced(
+        intent.replacementRange,
+        intent.replacementText,
+      ),
       intent.cause,
     );
   }
@@ -91,25 +106,31 @@ class EditorKeyboardShortcutsActionsManager {
       CallbackAction<ReplaceTextIntent>(onInvoke: _replaceText);
 
   QuillEditorTextBoundary _documentBoundary(
-          DirectionalTextEditingIntent intent) =>
-      QuillEditorDocumentBoundary(rawEditorState.textEditingValue);
+    DirectionalTextEditingIntent intent,
+  ) => QuillEditorDocumentBoundary(rawEditorState.textEditingValue);
 
   Action<T> _makeOverridable<T extends Intent>(Action<T> defaultAction) {
     return Action<T>.overridable(
-        context: context, defaultAction: defaultAction);
+      context: context,
+      defaultAction: defaultAction,
+    );
   }
 
   late final Action<UpdateSelectionIntent> _updateSelectionAction =
       CallbackAction<UpdateSelectionIntent>(onInvoke: _updateSelection);
 
   late final QuillEditorUpdateTextSelectionToAdjacentLineAction<
-          ExtendSelectionVerticallyToAdjacentLineIntent> adjacentLineAction =
+    ExtendSelectionVerticallyToAdjacentLineIntent
+  >
+  adjacentLineAction =
       QuillEditorUpdateTextSelectionToAdjacentLineAction<
-          ExtendSelectionVerticallyToAdjacentLineIntent>(rawEditorState);
+        ExtendSelectionVerticallyToAdjacentLineIntent
+      >(rawEditorState);
 
   late final _adjacentPageAction =
       QuillEditorUpdateTextSelectionToAdjacentPageAction<
-          ExtendSelectionVerticallyToAdjacentPageIntent>(rawEditorState);
+        ExtendSelectionVerticallyToAdjacentPageIntent
+      >(rawEditorState);
 
   late final QuillEditorToggleTextStyleAction _formatSelectionAction =
       QuillEditorToggleTextStyleAction(rawEditorState);
@@ -129,8 +150,9 @@ class EditorKeyboardShortcutsActionsManager {
 
   late final Map<Type, Action<Intent>> _actions = <Type, Action<Intent>>{
     if (_actionConfig.enableDoNothingAndStopPropagationTextIntent)
-      DoNothingAndStopPropagationTextIntent:
-          DoNothingAction(consumesKey: false),
+      DoNothingAndStopPropagationTextIntent: DoNothingAction(
+        consumesKey: false,
+      ),
     if (_actionConfig.enableReplaceTextIntent)
       ReplaceTextIntent: _replaceTextAction,
     if (_actionConfig.enableUpdateSelectionIntent)
@@ -141,71 +163,98 @@ class EditorKeyboardShortcutsActionsManager {
     // Delete
     if (_actionConfig.enableDeleteCharacterIntent)
       DeleteCharacterIntent: _makeOverridable(
-          QuillEditorDeleteTextAction<DeleteCharacterIntent>(
-              rawEditorState, _characterBoundary)),
+        QuillEditorDeleteTextAction<DeleteCharacterIntent>(
+          rawEditorState,
+          _characterBoundary,
+        ),
+      ),
     if (_actionConfig.enableDeleteToNextWordBoundaryIntent)
       DeleteToNextWordBoundaryIntent: _makeOverridable(
-          QuillEditorDeleteTextAction<DeleteToNextWordBoundaryIntent>(
-              rawEditorState, _nextWordBoundary)),
+        QuillEditorDeleteTextAction<DeleteToNextWordBoundaryIntent>(
+          rawEditorState,
+          _nextWordBoundary,
+        ),
+      ),
     if (_actionConfig.enableDeleteToLineBreakIntent)
       DeleteToLineBreakIntent: _makeOverridable(
-          QuillEditorDeleteTextAction<DeleteToLineBreakIntent>(
-              rawEditorState, _linebreak)),
+        QuillEditorDeleteTextAction<DeleteToLineBreakIntent>(
+          rawEditorState,
+          _linebreak,
+        ),
+      ),
 
     // Extend/Move Selection
     if (_actionConfig.enableExtendSelectionByCharacterIntent)
       ExtendSelectionByCharacterIntent: _makeOverridable(
-          QuillEditorUpdateTextSelectionAction<
-              ExtendSelectionByCharacterIntent>(
-        rawEditorState,
-        false,
-        _characterBoundary,
-      )),
+        QuillEditorUpdateTextSelectionAction<ExtendSelectionByCharacterIntent>(
+          rawEditorState,
+          false,
+          _characterBoundary,
+        ),
+      ),
     if (_actionConfig.enableExtendSelectionToNextWordBoundaryIntent)
       ExtendSelectionToNextWordBoundaryIntent: _makeOverridable(
-          QuillEditorUpdateTextSelectionAction<
-                  ExtendSelectionToNextWordBoundaryIntent>(
-              rawEditorState, true, _nextWordBoundary)),
+        QuillEditorUpdateTextSelectionAction<
+          ExtendSelectionToNextWordBoundaryIntent
+        >(rawEditorState, true, _nextWordBoundary),
+      ),
     if (_actionConfig.enableExtendSelectionToLineBreakIntent)
       ExtendSelectionToLineBreakIntent: _makeOverridable(
-          QuillEditorUpdateTextSelectionAction<
-                  ExtendSelectionToLineBreakIntent>(
-              rawEditorState, true, _linebreak)),
+        QuillEditorUpdateTextSelectionAction<ExtendSelectionToLineBreakIntent>(
+          rawEditorState,
+          true,
+          _linebreak,
+        ),
+      ),
     if (_actionConfig.enableExtendSelectionVerticallyToAdjacentLineIntent)
-      ExtendSelectionVerticallyToAdjacentLineIntent:
-          _makeOverridable(adjacentLineAction),
+      ExtendSelectionVerticallyToAdjacentLineIntent: _makeOverridable(
+        adjacentLineAction,
+      ),
     if (_actionConfig.enableExtendSelectionToDocumentBoundaryIntent)
       ExtendSelectionToDocumentBoundaryIntent: _makeOverridable(
-          QuillEditorUpdateTextSelectionAction<
-                  ExtendSelectionToDocumentBoundaryIntent>(
-              rawEditorState, true, _documentBoundary)),
+        QuillEditorUpdateTextSelectionAction<
+          ExtendSelectionToDocumentBoundaryIntent
+        >(rawEditorState, true, _documentBoundary),
+      ),
     if (_actionConfig.enableExpandSelectionToDocumentBoundaryIntent)
       ExpandSelectionToDocumentBoundaryIntent: _makeOverridable(
-          ExpandSelectionToDocumentBoundaryAction(rawEditorState)),
+        ExpandSelectionToDocumentBoundaryAction(rawEditorState),
+      ),
 
     if (_actionConfig
         .enableExtendSelectionToNextWordBoundaryOrCaretLocationIntent)
       ExtendSelectionToNextWordBoundaryOrCaretLocationIntent: _makeOverridable(
-          QuillEditorExtendSelectionOrCaretPositionAction(
-              rawEditorState, _nextWordBoundary)),
+        QuillEditorExtendSelectionOrCaretPositionAction(
+          rawEditorState,
+          _nextWordBoundary,
+        ),
+      ),
     if (_actionConfig.enableSelectAllTextIntent)
-      SelectAllTextIntent:
-          _makeOverridable(QuillEditorSelectAllAction(rawEditorState)),
+      SelectAllTextIntent: _makeOverridable(
+        QuillEditorSelectAllAction(rawEditorState),
+      ),
     if (_actionConfig.enableCopySelectionTextIntent)
-      CopySelectionTextIntent:
-          _makeOverridable(QuillEditorCopySelectionAction(rawEditorState)),
+      CopySelectionTextIntent: _makeOverridable(
+        QuillEditorCopySelectionAction(rawEditorState),
+      ),
     if (_actionConfig.enablePasteTextIntent)
-      PasteTextIntent: _makeOverridable(CallbackAction<PasteTextIntent>(
-          onInvoke: (intent) => rawEditorState.pasteText(intent.cause))),
+      PasteTextIntent: _makeOverridable(
+        CallbackAction<PasteTextIntent>(
+          onInvoke: (intent) => rawEditorState.pasteText(intent.cause),
+        ),
+      ),
     if (_actionConfig.enableHideSelectionToolbarIntent)
       HideSelectionToolbarIntent: _makeOverridable(
-          QuillEditorHideSelectionToolbarAction(rawEditorState)),
+        QuillEditorHideSelectionToolbarAction(rawEditorState),
+      ),
     if (_actionConfig.enableUndoTextIntent)
-      UndoTextIntent:
-          _makeOverridable(QuillEditorUndoKeyboardAction(rawEditorState)),
+      UndoTextIntent: _makeOverridable(
+        QuillEditorUndoKeyboardAction(rawEditorState),
+      ),
     if (_actionConfig.enableRedoTextIntent)
-      RedoTextIntent:
-          _makeOverridable(QuillEditorRedoKeyboardAction(rawEditorState)),
+      RedoTextIntent: _makeOverridable(
+        QuillEditorRedoKeyboardAction(rawEditorState),
+      ),
     if (_actionConfig.enableOpenSearchIntent)
       OpenSearchIntent: _openSearchAction,
     if (_actionConfig.enableToggleTextStyleIntent)
@@ -219,8 +268,9 @@ class EditorKeyboardShortcutsActionsManager {
     if (_actionConfig.enableApplyLinkIntent)
       QuillEditorApplyLinkIntent: QuillEditorApplyLinkAction(rawEditorState),
     if (_actionConfig.enableScrollToDocumentBoundaryIntent)
-      ScrollToDocumentBoundaryIntent:
-          NavigateToDocumentBoundaryAction(rawEditorState),
+      ScrollToDocumentBoundaryIntent: NavigateToDocumentBoundaryAction(
+        rawEditorState,
+      ),
     if (_actionConfig.enableExtendSelectionVerticallyToAdjacentPageIntent)
       ExtendSelectionVerticallyToAdjacentPageIntent: _adjacentPageAction,
     if (_actionConfig.enableScrollIntent)

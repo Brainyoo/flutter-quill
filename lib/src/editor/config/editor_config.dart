@@ -37,11 +37,8 @@ import 'search_config.dart';
 /// [context] is a short human-readable hint about what was being computed
 /// when the error occurred (e.g. `"inline text style"`,
 /// `"line vertical spacing"`).
-typedef QuillStyleErrorHandler = void Function(
-  Object error,
-  StackTrace stackTrace, {
-  String? context,
-});
+typedef QuillStyleErrorHandler =
+    void Function(Object error, StackTrace stackTrace, {String? context});
 
 /// The configuration of the editor widget.
 @immutable
@@ -108,13 +105,38 @@ class QuillEditorConfig {
     this.actionConfiguration = const QuillActionConfiguration(),
     this.shortcutConfiguration = const QuillShortcutConfiguration(),
     this.onStyleError,
-  });
+    double textScaleFactor = 1.0,
+  }) : assert(
+         textScaleFactor > 0 && textScaleFactor < double.infinity,
+         'textScaleFactor must be a finite value > 0',
+       ),
+       // `assert` is stripped in release builds, so an invalid value
+       // (<= 0, NaN, or infinite) would otherwise reach the render tree
+       // unchecked and collapse or blow up every scaled dimension. Fall
+       // back to the neutral 1.0 instead of trusting the raw input.
+       // Comparisons only — property access such as `.isFinite` is not
+       // allowed in a const expression.
+       textScaleFactor =
+           textScaleFactor > 0 && textScaleFactor < double.infinity
+           ? textScaleFactor
+           : 1.0;
 
   /// Invoked when the editor recovers from an unsupported style or
   /// attribute value (e.g. unknown color names, malformed font sizes,
   /// invalid header levels). The editor renders a fallback regardless;
   /// use this callback for logging or user-facing diagnostics.
   final QuillStyleErrorHandler? onStyleError;
+
+  /// Scales the *rendered* size of the editor content (text, list leadings,
+  /// spacings) without touching the document. Composed with the ambient
+  /// [MediaQuery] text scaler, so OS accessibility scaling stays effective.
+  /// Display-only: the document delta is never modified.
+  ///
+  /// Must be finite and greater than `0`. Debug builds assert this
+  /// immediately; release builds (where `assert` is stripped) instead fall
+  /// back to `1.0` for an invalid value rather than propagating it into the
+  /// render tree.
+  final double textScaleFactor;
 
   @experimental
   final LeadingBlockNodeBuilder? customLeadingBlockBuilder;
@@ -373,25 +395,38 @@ class QuillEditorConfig {
 
   // Returns whether gesture is handled
   final bool Function(
-      TapDownDetails details, TextPosition Function(Offset offset))? onTapDown;
+    TapDownDetails details,
+    TextPosition Function(Offset offset),
+  )?
+  onTapDown;
 
   // Returns whether gesture is handled
   final bool Function(
-      TapUpDetails details, TextPosition Function(Offset offset))? onTapUp;
+    TapUpDetails details,
+    TextPosition Function(Offset offset),
+  )?
+  onTapUp;
 
   // Returns whether gesture is handled
   final bool Function(
-          LongPressStartDetails details, TextPosition Function(Offset offset))?
-      onSingleLongTapStart;
-
-  // Returns whether gesture is handled
-  final bool Function(LongPressMoveUpdateDetails details,
-      TextPosition Function(Offset offset))? onSingleLongTapMoveUpdate;
+    LongPressStartDetails details,
+    TextPosition Function(Offset offset),
+  )?
+  onSingleLongTapStart;
 
   // Returns whether gesture is handled
   final bool Function(
-          LongPressEndDetails details, TextPosition Function(Offset offset))?
-      onSingleLongTapEnd;
+    LongPressMoveUpdateDetails details,
+    TextPosition Function(Offset offset),
+  )?
+  onSingleLongTapMoveUpdate;
+
+  // Returns whether gesture is handled
+  final bool Function(
+    LongPressEndDetails details,
+    TextPosition Function(Offset offset),
+  )?
+  onSingleLongTapEnd;
 
   final Iterable<EmbedBuilder>? embedBuilders;
   final EmbedBuilder? unknownEmbedBuilder;
@@ -533,9 +568,9 @@ class QuillEditorConfig {
     ScrollPhysics? scrollPhysics,
     ValueChanged<String>? onLaunchUrl,
     bool Function(TapDownDetails details, TextPosition Function(Offset offset))?
-        onTapDown,
+    onTapDown,
     bool Function(TapUpDetails details, TextPosition Function(Offset offset))?
-        onTapUp,
+    onTapUp,
     Iterable<EmbedBuilder>? embedBuilders,
     TextSpanBuilder? textSpanBuilder,
     EmbedBuilder? unknownEmbedBuilder,
@@ -563,6 +598,7 @@ class QuillEditorConfig {
     QuillActionConfiguration? actionConfiguration,
     QuillShortcutConfiguration? shortcutConfiguration,
     QuillStyleErrorHandler? onStyleError,
+    double? textScaleFactor,
   }) {
     return QuillEditorConfig(
       customLeadingBlockBuilder:
@@ -626,7 +662,7 @@ class QuillEditorConfig {
           textSelectionThemeData ?? this.textSelectionThemeData,
       requestKeyboardFocusOnCheckListChanged:
           requestKeyboardFocusOnCheckListChanged ??
-              this.requestKeyboardFocusOnCheckListChanged,
+          this.requestKeyboardFocusOnCheckListChanged,
       textInputAction: textInputAction ?? this.textInputAction,
       enableScribble: enableScribble ?? this.enableScribble,
       onScribbleActivated: onScribbleActivated ?? this.onScribbleActivated,
@@ -636,6 +672,7 @@ class QuillEditorConfig {
       shortcutConfiguration:
           shortcutConfiguration ?? this.shortcutConfiguration,
       onStyleError: onStyleError ?? this.onStyleError,
+      textScaleFactor: textScaleFactor ?? this.textScaleFactor,
     );
   }
 }

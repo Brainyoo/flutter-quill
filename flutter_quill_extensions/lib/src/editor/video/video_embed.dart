@@ -6,9 +6,7 @@ import 'config/video_config.dart';
 import 'widgets/video_app.dart';
 
 class QuillEditorVideoEmbedBuilder extends EmbedBuilder {
-  const QuillEditorVideoEmbedBuilder({
-    required this.config,
-  });
+  const QuillEditorVideoEmbedBuilder({required this.config});
 
   final QuillEditorVideoEmbedConfig config;
 
@@ -18,11 +16,13 @@ class QuillEditorVideoEmbedBuilder extends EmbedBuilder {
   @override
   bool get expanded => false;
 
+  // Images and videos have a fixed natural size taken from the document
+  // attributes; growing them with the text scale would overflow the layout.
   @override
-  Widget build(
-    BuildContext context,
-    EmbedContext embedContext,
-  ) {
+  bool get scaleWithText => false;
+
+  @override
+  Widget build(BuildContext context, EmbedContext embedContext) {
     final videoUrl = embedContext.node.value.data;
 
     final customVideoBuilder = config.customVideoBuilder;

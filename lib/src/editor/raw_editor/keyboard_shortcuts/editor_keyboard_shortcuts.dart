@@ -62,18 +62,12 @@ class EditorKeyboardShortcuts extends StatelessWidget {
         {...defaultSinlgeActivatorIntents(shortcutConfiguration)},
       ),
       child: Actions(
-        actions: mergeMaps<Type, Action<Intent>>(
-          actions,
-          {...?customActions},
-        ),
+        actions: mergeMaps<Type, Action<Intent>>(actions, {...?customActions}),
         child: Focus(
           focusNode: focusNode,
           onKeyEvent: _onKeyEvent,
           child: QuillKeyboardListener(
-            child: Container(
-              constraints: constraints,
-              child: child,
-            ),
+            child: Container(constraints: constraints, child: child),
           ),
         ),
       ),
@@ -84,8 +78,9 @@ class EditorKeyboardShortcuts extends StatelessWidget {
     final onKey = onKeyPressed;
     if (onKey != null) {
       // Find the current node the user is on.
-      final node =
-          controller.document.queryChild(controller.selection.baseOffset).node;
+      final node = controller.document
+          .queryChild(controller.selection.baseOffset)
+          .node;
       final result = onKey.call(event, node);
       if (result != null) return result;
     }
@@ -135,8 +130,9 @@ class EditorKeyboardShortcuts extends StatelessWidget {
   }
 
   KeyEventResult _handleSpaceKey(KeyEvent event) {
-    final child =
-        controller.document.queryChild(controller.selection.baseOffset);
+    final child = controller.document.queryChild(
+      controller.selection.baseOffset,
+    );
     if (child.node == null) {
       return KeyEventResult.ignored;
     }
@@ -167,8 +163,9 @@ class EditorKeyboardShortcuts extends StatelessWidget {
   }
 
   KeyEventResult _handleTabKey(KeyEvent event) {
-    final child =
-        controller.document.queryChild(controller.selection.baseOffset);
+    final child = controller.document.queryChild(
+      controller.selection.baseOffset,
+    );
 
     KeyEventResult insertTabCharacter() {
       if (readOnly) {

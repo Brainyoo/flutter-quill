@@ -6,9 +6,7 @@ import '../../common/utils/web/web.dart';
 import 'config/video_web_config.dart';
 
 class QuillEditorWebVideoEmbedBuilder extends EmbedBuilder {
-  const QuillEditorWebVideoEmbedBuilder({
-    required this.config,
-  });
+  const QuillEditorWebVideoEmbedBuilder({required this.config});
 
   final QuillEditorWebVideoEmbedConfig config;
 
@@ -18,15 +16,18 @@ class QuillEditorWebVideoEmbedBuilder extends EmbedBuilder {
   @override
   bool get expanded => false;
 
+  // Images and videos have a fixed natural size taken from the document
+  // attributes; growing them with the text scale would overflow the layout.
   @override
-  Widget build(
-    BuildContext context,
-    EmbedContext embedContext,
-  ) {
+  bool get scaleWithText => false;
+
+  @override
+  Widget build(BuildContext context, EmbedContext embedContext) {
     final videoUrl = embedContext.node.value.data;
 
-    final (height, width, margin, alignment) =
-        getWebElementAttributes(embedContext.node);
+    final (height, width, margin, alignment) = getWebElementAttributes(
+      embedContext.node,
+    );
 
     createHtmlIFrameElement(
       src: videoUrl,
@@ -36,11 +37,6 @@ class QuillEditorWebVideoEmbedBuilder extends EmbedBuilder {
       alignSelf: alignment,
     );
 
-    return SizedBox(
-      height: 500,
-      child: HtmlElementView(
-        viewType: videoUrl,
-      ),
-    );
+    return SizedBox(height: 500, child: HtmlElementView(viewType: videoUrl));
   }
 }
