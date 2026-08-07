@@ -25,11 +25,7 @@ class QuillBulletPoint extends StatelessWidget {
       width: width,
       padding: EdgeInsetsDirectional.only(end: padding),
       color: backgroundColor,
-      child: Text(
-        '•',
-        style: style,
-        textAlign: textAlign,
-      ),
+      child: Text('•', style: style, textAlign: textAlign),
     );
   }
 }

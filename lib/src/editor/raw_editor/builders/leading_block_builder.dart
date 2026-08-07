@@ -111,9 +111,9 @@ class LeadingConfig {
       // executes n times where n is the number of times you have to add
       // the current roman number value to reach current num.
       builder.write(_romanNumbers[a] * times);
-      num -= times *
-          _arabianRomanNumbers[
-              a]; // subtract previous roman number value from num
+      num -=
+          times *
+          _arabianRomanNumbers[a]; // subtract previous roman number value from num
     }
 
     return builder.toString().toLowerCase();
@@ -133,7 +133,7 @@ const _arabianRomanNumbers = <int>[
   9,
   5,
   4,
-  1
+  1,
 ];
 
 const _romanNumbers = <String>[
@@ -149,5 +149,5 @@ const _romanNumbers = <String>[
   'IX',
   'V',
   'IV',
-  'I'
+  'I',
 ];

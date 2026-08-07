@@ -67,14 +67,15 @@ typedef LeadingBlockIndentWidth = HorizontalSpacing Function(
 typedef LeadingBlockNumberPointWidth = double Function(
     double fontSize, int count);
 
-typedef TextSpanBuilder = InlineSpan Function(
-  BuildContext context,
-  Node node,
-  int nodeOffset,
-  String text,
-  TextStyle? style,
-  GestureRecognizer? recognizer,
-);
+typedef TextSpanBuilder =
+    InlineSpan Function(
+      BuildContext context,
+      Node node,
+      int nodeOffset,
+      String text,
+      TextStyle? style,
+      GestureRecognizer? recognizer,
+    );
 
 TextSpan defaultSpanBuilder(
   BuildContext context,
@@ -83,22 +84,22 @@ TextSpan defaultSpanBuilder(
   String text,
   TextStyle? style,
   GestureRecognizer? recognizer,
-) =>
-    TextSpan(
-      text: text,
-      style: style,
-      recognizer: recognizer,
-      mouseCursor: (recognizer != null) ? SystemMouseCursors.click : null,
-    );
+) => TextSpan(
+  text: text,
+  style: style,
+  recognizer: recognizer,
+  mouseCursor: (recognizer != null) ? SystemMouseCursors.click : null,
+);
 
 abstract final class TextBlockUtils {
   /// Get the horizontalSpacing using the default
   /// implementation provided by [Flutter Quill]
   static HorizontalSpacing defaultIndentWidthBuilder(
-      Block block,
-      BuildContext context,
-      int count,
-      LeadingBlockNumberPointWidth numberPointWidthBuilder) {
+    Block block,
+    BuildContext context,
+    int count,
+    LeadingBlockNumberPointWidth numberPointWidthBuilder,
+  ) {
     final defaultStyles = QuillStyles.getStyles(context, false)!;
     final baseFontSize = defaultStyles.paragraph?.style.fontSize ?? 16;
     // Structural indents must track the effective text scale, otherwise the

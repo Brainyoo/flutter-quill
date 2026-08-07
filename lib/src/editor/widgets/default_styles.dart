@@ -9,11 +9,7 @@ import '../style_widgets/checkbox_point.dart';
 import 'text/utils/text_block_utils.dart';
 
 class QuillStyles extends InheritedWidget {
-  const QuillStyles({
-    required this.data,
-    required super.child,
-    super.key,
-  });
+  const QuillStyles({required this.data, required super.child, super.key});
 
   final DefaultStyles data;
 
@@ -165,8 +161,17 @@ class InlineCodeStyle {
   }
 
   @override
-  int get hashCode => Object.hash(style, header1, header2, header3, header4,
-      header5, header6, backgroundColor, radius);
+  int get hashCode => Object.hash(
+    style,
+    header1,
+    header2,
+    header3,
+    header4,
+    header5,
+    header6,
+    backgroundColor,
+    radius,
+  );
 }
 
 @immutable
@@ -302,16 +307,14 @@ class DefaultStyles {
   /// Custom palette of colors
   final Map<String, Color>? palette;
 
-  static DefaultStyles getInstance(BuildContext context,
-      {ValueOverride<TextStyle>? baseStyleOverride}) {
+  static DefaultStyles getInstance(
+    BuildContext context, {
+    ValueOverride<TextStyle>? baseStyleOverride,
+  }) {
     final themeData = Theme.of(context);
     final defaultTextStyle = DefaultTextStyle.of(context);
     final baseStyle = defaultTextStyle.style
-        .copyWith(
-          fontSize: 16,
-          height: 1.15,
-          decoration: TextDecoration.none,
-        )
+        .copyWith(fontSize: 16, height: 1.15, decoration: TextDecoration.none)
         .override(baseStyleOverride);
     const baseHorizontalSpacing = HorizontalSpacing(0, 0);
     const baseVerticalSpacing = VerticalSpacing(6, 0);
@@ -325,31 +328,33 @@ class DefaultStyles {
 
     return DefaultStyles(
       h1: DefaultTextBlockStyle(
-          baseStyle.copyWith(
-            fontSize: 34,
-            color: baseStyle.color,
-            letterSpacing: -0.5,
-            height: 1.083,
-            fontWeight: FontWeight.bold,
-            decoration: TextDecoration.none,
-          ),
-          baseHorizontalSpacing,
-          const VerticalSpacing(16, 0),
-          VerticalSpacing.zero,
-          null),
+        baseStyle.copyWith(
+          fontSize: 34,
+          color: baseStyle.color,
+          letterSpacing: -0.5,
+          height: 1.083,
+          fontWeight: FontWeight.bold,
+          decoration: TextDecoration.none,
+        ),
+        baseHorizontalSpacing,
+        const VerticalSpacing(16, 0),
+        VerticalSpacing.zero,
+        null,
+      ),
       h2: DefaultTextBlockStyle(
-          baseStyle.copyWith(
-            fontSize: 30,
-            color: baseStyle.color,
-            letterSpacing: -0.8,
-            height: 1.067,
-            fontWeight: FontWeight.bold,
-            decoration: TextDecoration.none,
-          ),
-          baseHorizontalSpacing,
-          const VerticalSpacing(8, 0),
-          VerticalSpacing.zero,
-          null),
+        baseStyle.copyWith(
+          fontSize: 30,
+          color: baseStyle.color,
+          letterSpacing: -0.8,
+          height: 1.067,
+          fontWeight: FontWeight.bold,
+          decoration: TextDecoration.none,
+        ),
+        baseHorizontalSpacing,
+        const VerticalSpacing(8, 0),
+        VerticalSpacing.zero,
+        null,
+      ),
       h3: DefaultTextBlockStyle(
         baseStyle.copyWith(
           fontSize: 24,
@@ -443,16 +448,10 @@ class DefaultStyles {
       ),
       bold: const TextStyle(fontWeight: FontWeight.bold),
       subscript: const TextStyle(
-        fontFeatures: [
-          FontFeature.liningFigures(),
-          FontFeature.subscripts(),
-        ],
+        fontFeatures: [FontFeature.liningFigures(), FontFeature.subscripts()],
       ),
       superscript: const TextStyle(
-        fontFeatures: [
-          FontFeature.liningFigures(),
-          FontFeature.superscripts(),
-        ],
+        fontFeatures: [FontFeature.liningFigures(), FontFeature.superscripts()],
       ),
       italic: const TextStyle(fontStyle: FontStyle.italic),
       small: const TextStyle(fontSize: 12),
@@ -480,15 +479,16 @@ class DefaultStyles {
         decoration: TextDecoration.underline,
       ),
       placeHolder: DefaultTextBlockStyle(
-          baseStyle.copyWith(
-            fontSize: 20,
-            height: 1.5,
-            color: Colors.grey.withValues(alpha: 0.6),
-          ),
-          baseHorizontalSpacing,
-          VerticalSpacing.zero,
-          VerticalSpacing.zero,
-          null),
+        baseStyle.copyWith(
+          fontSize: 20,
+          height: 1.5,
+          color: Colors.grey.withValues(alpha: 0.6),
+        ),
+        baseHorizontalSpacing,
+        VerticalSpacing.zero,
+        VerticalSpacing.zero,
+        null,
+      ),
       lists: DefaultListBlockStyle(
         baseStyle,
         baseHorizontalSpacing,
@@ -509,19 +509,20 @@ class DefaultStyles {
         ),
       ),
       code: DefaultTextBlockStyle(
-          TextStyle(
-            color: Colors.blue.shade900.withValues(alpha: 0.9),
-            fontFamily: fontFamily,
-            fontSize: 13,
-            height: 1.15,
-          ),
-          baseHorizontalSpacing,
-          baseVerticalSpacing,
-          VerticalSpacing.zero,
-          BoxDecoration(
-            color: Colors.grey.shade50,
-            borderRadius: BorderRadius.circular(2),
-          )),
+        TextStyle(
+          color: Colors.blue.shade900.withValues(alpha: 0.9),
+          fontFamily: fontFamily,
+          fontSize: 13,
+          height: 1.15,
+        ),
+        baseHorizontalSpacing,
+        baseVerticalSpacing,
+        VerticalSpacing.zero,
+        BoxDecoration(
+          color: Colors.grey.shade50,
+          borderRadius: BorderRadius.circular(2),
+        ),
+      ),
       indent: DefaultTextBlockStyle(
         baseStyle,
         baseHorizontalSpacing,
@@ -598,8 +599,9 @@ class DefaultStyles {
       paragraph: paragraph?.override(overrides.paragraph),
       lineHeightNormal: lineHeightNormal?.override(overrides.lineHeightNormal),
       lineHeightTight: lineHeightTight?.override(overrides.lineHeightTight),
-      lineHeightOneAndHalf:
-          lineHeightOneAndHalf?.override(overrides.lineHeightOneAndHalf),
+      lineHeightOneAndHalf: lineHeightOneAndHalf?.override(
+        overrides.lineHeightOneAndHalf,
+      ),
       lineHeightDouble: lineHeightDouble?.override(overrides.lineHeightDouble),
       defaultTextStyle: defaultTextStyle?.override(overrides.defaultTextStyle),
       bold: bold?.override(overrides.bold),

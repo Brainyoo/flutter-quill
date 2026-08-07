@@ -6,9 +6,7 @@ import 'config/video_config.dart';
 import 'widgets/video_app.dart';
 
 class QuillEditorVideoEmbedBuilder extends EmbedBuilder {
-  const QuillEditorVideoEmbedBuilder({
-    required this.config,
-  });
+  const QuillEditorVideoEmbedBuilder({required this.config});
 
   final QuillEditorVideoEmbedConfig config;
 
@@ -24,10 +22,7 @@ class QuillEditorVideoEmbedBuilder extends EmbedBuilder {
   bool get scaleWithText => false;
 
   @override
-  Widget build(
-    BuildContext context,
-    EmbedContext embedContext,
-  ) {
+  Widget build(BuildContext context, EmbedContext embedContext) {
     final videoUrl = embedContext.node.value.data;
 
     final customVideoBuilder = config.customVideoBuilder;

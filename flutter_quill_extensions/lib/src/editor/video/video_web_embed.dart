@@ -6,9 +6,7 @@ import '../../common/utils/web/web.dart';
 import 'config/video_web_config.dart';
 
 class QuillEditorWebVideoEmbedBuilder extends EmbedBuilder {
-  const QuillEditorWebVideoEmbedBuilder({
-    required this.config,
-  });
+  const QuillEditorWebVideoEmbedBuilder({required this.config});
 
   final QuillEditorWebVideoEmbedConfig config;
 
@@ -30,8 +28,9 @@ class QuillEditorWebVideoEmbedBuilder extends EmbedBuilder {
   ) {
     final videoUrl = embedContext.node.value.data;
 
-    final (height, width, margin, alignment) =
-        getWebElementAttributes(embedContext.node);
+    final (height, width, margin, alignment) = getWebElementAttributes(
+      embedContext.node,
+    );
 
     createHtmlIFrameElement(
       src: videoUrl,
@@ -41,11 +40,6 @@ class QuillEditorWebVideoEmbedBuilder extends EmbedBuilder {
       alignSelf: alignment,
     );
 
-    return SizedBox(
-      height: 500,
-      child: HtmlElementView(
-        viewType: videoUrl,
-      ),
-    );
+    return SizedBox(height: 500, child: HtmlElementView(viewType: videoUrl));
   }
 }
