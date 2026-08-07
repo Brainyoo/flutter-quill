@@ -64,47 +64,47 @@ class QuillActionConfiguration {
     bool enableScrollIntent = false,
     bool enableExpandSelectionToDocumentBoundaryIntent = false,
   }) : this(
-          enableDoNothingAndStopPropagationTextIntent:
-              enableDoNothingAndStopPropagationTextIntent,
-          enableReplaceTextIntent: enableReplaceTextIntent,
-          enableUpdateSelectionIntent: enableUpdateSelectionIntent,
-          enableDirectionalFocusIntent: enableDirectionalFocusIntent,
-          enableDeleteCharacterIntent: enableDeleteCharacterIntent,
-          enableDeleteToNextWordBoundaryIntent:
-              enableDeleteToNextWordBoundaryIntent,
-          enableDeleteToLineBreakIntent: enableDeleteToLineBreakIntent,
-          enableExtendSelectionByCharacterIntent:
-              enableExtendSelectionByCharacterIntent,
-          enableExtendSelectionToNextWordBoundaryIntent:
-              enableExtendSelectionToNextWordBoundaryIntent,
-          enableExtendSelectionToLineBreakIntent:
-              enableExtendSelectionToLineBreakIntent,
-          enableExtendSelectionVerticallyToAdjacentLineIntent:
-              enableExtendSelectionVerticallyToAdjacentLineIntent,
-          enableExtendSelectionToDocumentBoundaryIntent:
-              enableExtendSelectionToDocumentBoundaryIntent,
-          enableExtendSelectionToNextWordBoundaryOrCaretLocationIntent:
-              enableExtendSelectionToNextWordBoundaryOrCaretLocationIntent,
-          enableSelectAllTextIntent: enableSelectAllTextIntent,
-          enableCopySelectionTextIntent: enableCopySelectionTextIntent,
-          enablePasteTextIntent: enablePasteTextIntent,
-          enableHideSelectionToolbarIntent: enableHideSelectionToolbarIntent,
-          enableUndoTextIntent: enableUndoTextIntent,
-          enableRedoTextIntent: enableRedoTextIntent,
-          enableOpenSearchIntent: enableOpenSearchIntent,
-          enableToggleTextStyleIntent: enableToggleTextStyleIntent,
-          enableIndentSelectionIntent: enableIndentSelectionIntent,
-          enableApplyHeaderIntent: enableApplyHeaderIntent,
-          enableApplyCheckListIntent: enableApplyCheckListIntent,
-          enableApplyLinkIntent: enableApplyLinkIntent,
-          enableScrollToDocumentBoundaryIntent:
-              enableScrollToDocumentBoundaryIntent,
-          enableExtendSelectionVerticallyToAdjacentPageIntent:
-              enableExtendSelectionVerticallyToAdjacentPageIntent,
-          enableScrollIntent: enableScrollIntent,
-          enableExpandSelectionToDocumentBoundaryIntent:
-              enableExpandSelectionToDocumentBoundaryIntent,
-        );
+         enableDoNothingAndStopPropagationTextIntent:
+             enableDoNothingAndStopPropagationTextIntent,
+         enableReplaceTextIntent: enableReplaceTextIntent,
+         enableUpdateSelectionIntent: enableUpdateSelectionIntent,
+         enableDirectionalFocusIntent: enableDirectionalFocusIntent,
+         enableDeleteCharacterIntent: enableDeleteCharacterIntent,
+         enableDeleteToNextWordBoundaryIntent:
+             enableDeleteToNextWordBoundaryIntent,
+         enableDeleteToLineBreakIntent: enableDeleteToLineBreakIntent,
+         enableExtendSelectionByCharacterIntent:
+             enableExtendSelectionByCharacterIntent,
+         enableExtendSelectionToNextWordBoundaryIntent:
+             enableExtendSelectionToNextWordBoundaryIntent,
+         enableExtendSelectionToLineBreakIntent:
+             enableExtendSelectionToLineBreakIntent,
+         enableExtendSelectionVerticallyToAdjacentLineIntent:
+             enableExtendSelectionVerticallyToAdjacentLineIntent,
+         enableExtendSelectionToDocumentBoundaryIntent:
+             enableExtendSelectionToDocumentBoundaryIntent,
+         enableExtendSelectionToNextWordBoundaryOrCaretLocationIntent:
+             enableExtendSelectionToNextWordBoundaryOrCaretLocationIntent,
+         enableSelectAllTextIntent: enableSelectAllTextIntent,
+         enableCopySelectionTextIntent: enableCopySelectionTextIntent,
+         enablePasteTextIntent: enablePasteTextIntent,
+         enableHideSelectionToolbarIntent: enableHideSelectionToolbarIntent,
+         enableUndoTextIntent: enableUndoTextIntent,
+         enableRedoTextIntent: enableRedoTextIntent,
+         enableOpenSearchIntent: enableOpenSearchIntent,
+         enableToggleTextStyleIntent: enableToggleTextStyleIntent,
+         enableIndentSelectionIntent: enableIndentSelectionIntent,
+         enableApplyHeaderIntent: enableApplyHeaderIntent,
+         enableApplyCheckListIntent: enableApplyCheckListIntent,
+         enableApplyLinkIntent: enableApplyLinkIntent,
+         enableScrollToDocumentBoundaryIntent:
+             enableScrollToDocumentBoundaryIntent,
+         enableExtendSelectionVerticallyToAdjacentPageIntent:
+             enableExtendSelectionVerticallyToAdjacentPageIntent,
+         enableScrollIntent: enableScrollIntent,
+         enableExpandSelectionToDocumentBoundaryIntent:
+             enableExpandSelectionToDocumentBoundaryIntent,
+       );
 
   final bool enableDoNothingAndStopPropagationTextIntent;
   final bool enableReplaceTextIntent;

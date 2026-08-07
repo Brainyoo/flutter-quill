@@ -17,8 +17,9 @@ class InverseTextScale extends SingleChildRenderObjectWidget {
 
   @override
   void updateRenderObject(
-          BuildContext context, RenderInverseTextScale renderObject) =>
-      renderObject.scale = scale;
+    BuildContext context,
+    RenderInverseTextScale renderObject,
+  ) => renderObject.scale = scale;
 }
 
 class RenderInverseTextScale extends RenderBox
@@ -89,9 +90,13 @@ class RenderInverseTextScale extends RenderBox
 
   @override
   double? computeDryBaseline(
-      covariant BoxConstraints constraints, TextBaseline baseline) {
-    final distance =
-        child?.getDryBaseline(_childConstraints(constraints), baseline);
+    covariant BoxConstraints constraints,
+    TextBaseline baseline,
+  ) {
+    final distance = child?.getDryBaseline(
+      _childConstraints(constraints),
+      baseline,
+    );
     return distance == null ? null : distance / scale;
   }
 
@@ -119,8 +124,7 @@ class RenderInverseTextScale extends RenderBox
     return result.addWithPaintTransform(
       transform: _paintTransform,
       position: position,
-      hitTest: (result, position) =>
-          child.hitTest(result, position: position),
+      hitTest: (result, position) => child.hitTest(result, position: position),
     );
   }
 

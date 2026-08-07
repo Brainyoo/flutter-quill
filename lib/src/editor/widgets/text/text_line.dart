@@ -250,10 +250,12 @@ class _TextLineState extends State<TextLine> {
           final autoScale = spanFontSize == 0
               ? 1.0
               : MediaQuery.textScalerOf(context).scale(spanFontSize) /
-                  spanFontSize;
+                    spanFontSize;
           if (autoScale != 1.0) {
-            embedWidget =
-                InverseTextScale(scale: autoScale, child: embedWidget);
+            embedWidget = InverseTextScale(
+              scale: autoScale,
+              child: embedWidget,
+            );
           }
         }
         final embed = embedBuilder.buildWidgetSpan(embedWidget);
@@ -603,10 +605,16 @@ class _TextLineState extends State<TextLine> {
             var textColor = defaultStyles.color;
             if (color?.value is String) {
               textColor = stringToColor(
-                  color?.value, textColor, defaultStyles, onError);
+                color?.value,
+                textColor,
+                defaultStyles,
+                onError,
+              );
             }
-            res = _merge(res.copyWith(decorationColor: textColor),
-                s!.copyWith(decorationColor: textColor));
+            res = _merge(
+              res.copyWith(decorationColor: textColor),
+              s!.copyWith(decorationColor: textColor),
+            );
           } else if (k == Attribute.link.key && !isLink) {
             // null value for link should be ignored
             // i.e. nodeStyle.attributes[Attribute.link.key]!.value == null
@@ -619,8 +627,9 @@ class _TextLineState extends State<TextLine> {
       if (nodeStyle.containsKey(Attribute.script.key)) {
         if (nodeStyle.attributes.values.contains(Attribute.subscript)) {
           res = _merge(res, defaultStyles.subscript!);
-        } else if (nodeStyle.attributes.values
-            .contains(Attribute.superscript)) {
+        } else if (nodeStyle.attributes.values.contains(
+          Attribute.superscript,
+        )) {
           res = _merge(res, defaultStyles.superscript!);
         }
       }
@@ -650,12 +659,9 @@ class _TextLineState extends State<TextLine> {
             res = res.merge(defaultStyles.sizeHuge);
             break;
           default:
-            res = res.merge(TextStyle(
-              fontSize: getFontSize(
-                size.value,
-                onError: onError,
-              ),
-            ));
+            res = res.merge(
+              TextStyle(fontSize: getFontSize(size.value, onError: onError)),
+            );
         }
       }
 
@@ -667,7 +673,11 @@ class _TextLineState extends State<TextLine> {
           // instead of [Colors.transparent], which would make the text
           // invisible.
           textColor = stringToColor(
-              color.value, defaultStyles.color, defaultStyles, onError);
+            color.value,
+            defaultStyles.color,
+            defaultStyles,
+            onError,
+          );
         }
         if (textColor != null) {
           res = res.merge(TextStyle(color: textColor));
@@ -681,7 +691,11 @@ class _TextLineState extends State<TextLine> {
         // [stringToColor]'s fallback chain and render as a solid block
         // behind the text.
         final backgroundColor = stringToColor(
-            background.value, Colors.transparent, defaultStyles, onError);
+          background.value,
+          Colors.transparent,
+          defaultStyles,
+          onError,
+        );
         res = res.merge(TextStyle(backgroundColor: backgroundColor));
       }
 
@@ -692,7 +706,8 @@ class _TextLineState extends State<TextLine> {
         error: e,
         stackTrace: stack,
         context: 'inline text style',
-        message: 'flutter_quill: failed to compute inline text style – '
+        message:
+            'flutter_quill: failed to compute inline text style – '
             'returning partial style. ($e)',
       );
     }

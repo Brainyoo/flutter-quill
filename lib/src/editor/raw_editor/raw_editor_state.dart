@@ -72,16 +72,14 @@ class QuillRawEditorState extends EditorState
 
   QuillController get controller => widget.controller;
 
-  void _notifyHeaderLevelFallback(
-    Object? level,
-    String contextLabel,
-  ) {
+  void _notifyHeaderLevelFallback(Object? level, String contextLabel) {
     notifyQuillStyleError(
       handler: widget.config.onStyleError,
       error: ArgumentError.value(level, 'header level'),
       stackTrace: StackTrace.current,
       context: contextLabel,
-      message: 'flutter_quill: invalid header level $level – '
+      message:
+          'flutter_quill: invalid header level $level – '
           'falling back ($contextLabel).',
     );
   }
@@ -707,22 +705,24 @@ class QuillRawEditorState extends EditorState
       onStyleError: widget.config.onStyleError,
     );
     final editableTextLine = EditableTextLine(
-        node,
-        null,
-        textLine,
-        scaledHorizontalSpacing(
-            _getHorizontalSpacingForLine(node, _styles), context),
-        scaledVerticalSpacing(
-            _getVerticalSpacingForLine(node, _styles), context),
-        _textDirection,
-        controller.selection,
-        widget.config.selectionColor,
-        widget.config.enableInteractiveSelection,
-        _hasFocus,
-        MediaQuery.devicePixelRatioOf(context),
-        _cursorCont,
-        _styles!.inlineCode!,
-        _getDecoration(node, _styles, attrs));
+      node,
+      null,
+      textLine,
+      scaledHorizontalSpacing(
+        _getHorizontalSpacingForLine(node, _styles),
+        context,
+      ),
+      scaledVerticalSpacing(_getVerticalSpacingForLine(node, _styles), context),
+      _textDirection,
+      controller.selection,
+      widget.config.selectionColor,
+      widget.config.enableInteractiveSelection,
+      _hasFocus,
+      MediaQuery.devicePixelRatioOf(context),
+      _cursorCont,
+      _styles!.inlineCode!,
+      _getDecoration(node, _styles, attrs),
+    );
     return editableTextLine;
   }
 
@@ -953,8 +953,10 @@ class QuillRawEditorState extends EditorState
     super.didChangeDependencies();
     final parentStyles = QuillStyles.getStyles(context, true);
     final stylesOverride = widget.config.customStyles;
-    final defaultStyles = DefaultStyles.getInstance(context,
-        baseStyleOverride: stylesOverride?.defaultTextStyle);
+    final defaultStyles = DefaultStyles.getInstance(
+      context,
+      baseStyleOverride: stylesOverride?.defaultTextStyle,
+    );
     _styles = (parentStyles != null)
         ? defaultStyles.merge(parentStyles)
         : defaultStyles;

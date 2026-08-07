@@ -22,10 +22,7 @@ class QuillEditorWebVideoEmbedBuilder extends EmbedBuilder {
   bool get scaleWithText => false;
 
   @override
-  Widget build(
-    BuildContext context,
-    EmbedContext embedContext,
-  ) {
+  Widget build(BuildContext context, EmbedContext embedContext) {
     final videoUrl = embedContext.node.value.data;
 
     final (height, width, margin, alignment) = getWebElementAttributes(

@@ -7,14 +7,18 @@ void _reportFontSizeFailure({
   required String functionName,
   required String reason,
 }) {
-  final error =
-      ArgumentError.value(sizeValue, 'sizeValue', '$reason for $functionName');
+  final error = ArgumentError.value(
+    sizeValue,
+    'sizeValue',
+    '$reason for $functionName',
+  );
   notifyQuillStyleError(
     handler: onError,
     error: error,
     stackTrace: StackTrace.current,
     context: functionName,
-    message: 'flutter_quill: $reason font size value "$sizeValue" – '
+    message:
+        'flutter_quill: $reason font size value "$sizeValue" – '
         'falling back to default.',
   );
 }

@@ -39,22 +39,24 @@ void main() {
   tearDown(() => controller.dispose());
 
   Widget app(double factor) => MaterialApp(
-        home: QuillEditor.basic(
-          controller: controller,
-          config: QuillEditorConfig(textScaleFactor: factor),
-        ),
-      );
+    home: QuillEditor.basic(
+      controller: controller,
+      config: QuillEditorConfig(textScaleFactor: factor),
+    ),
+  );
 
   group('QuillEditorConfig.textScaleFactor', () {
-    testWidgets('composes ambient text scaler inside the editor subtree',
-        (tester) async {
+    testWidgets('composes ambient text scaler inside the editor subtree', (
+      tester,
+    ) async {
       await tester.pumpWidget(app(2));
       final context = tester.element(find.byType(QuillRawEditor));
       expect(MediaQuery.textScalerOf(context).scale(16), 32);
     });
 
-    testWidgets('factor 1.0 keeps the ambient scaler untouched',
-        (tester) async {
+    testWidgets('factor 1.0 keeps the ambient scaler untouched', (
+      tester,
+    ) async {
       await tester.pumpWidget(app(1));
       final context = tester.element(find.byType(QuillRawEditor));
       expect(MediaQuery.textScalerOf(context).scale(16), 16);
@@ -82,8 +84,9 @@ void main() {
   });
 
   group('structural metrics scale with the factor', () {
-    testWidgets('ordered list leading slot doubles at factor 2',
-        (tester) async {
+    testWidgets('ordered list leading slot doubles at factor 2', (
+      tester,
+    ) async {
       controller.document
         ..insert(0, 'One')
         ..format(3, 1, Attribute.ol);
@@ -96,8 +99,9 @@ void main() {
       expect(scaledWidth, moreOrLessEquals(normalWidth * 2));
     });
 
-    testWidgets('unordered list leading slot doubles at factor 2',
-        (tester) async {
+    testWidgets('unordered list leading slot doubles at factor 2', (
+      tester,
+    ) async {
       controller.document
         ..insert(0, 'One')
         ..format(3, 1, Attribute.ul);
@@ -110,8 +114,9 @@ void main() {
       expect(scaledWidth, moreOrLessEquals(normalWidth * 2));
     });
 
-    testWidgets('code block line-number leading slot doubles at factor 2',
-        (tester) async {
+    testWidgets('code block line-number leading slot doubles at factor 2', (
+      tester,
+    ) async {
       controller.document
         ..insert(0, 'code')
         ..format(4, 1, Attribute.codeBlock);
@@ -124,8 +129,7 @@ void main() {
       expect(scaledWidth, moreOrLessEquals(normalWidth * 2));
     });
 
-    testWidgets(
-        'indent attribute contribution to the leading offset '
+    testWidgets('indent attribute contribution to the leading offset '
         'scales with the factor', (tester) async {
       // defaultIndentWidthBuilder adds `fontSize * indent.value` on top of
       // the (here zero-by-default) block horizontal spacing, so comparing
@@ -141,13 +145,18 @@ void main() {
         return tester.getTopLeft(find.byType(RichText).first).dx;
       }
 
-      final delta1 = await lineLeft(1, indented: true) -
+      final delta1 =
+          await lineLeft(1, indented: true) -
           await lineLeft(1, indented: false);
-      final delta2 = await lineLeft(2, indented: true) -
+      final delta2 =
+          await lineLeft(2, indented: true) -
           await lineLeft(2, indented: false);
 
-      expect(delta1, greaterThan(0),
-          reason: 'Test setup broken: indent produces no offset');
+      expect(
+        delta1,
+        greaterThan(0),
+        reason: 'Test setup broken: indent produces no offset',
+      );
       expect(delta2, moreOrLessEquals(delta1 * 2, epsilon: 0.5));
     });
 
@@ -167,8 +176,9 @@ void main() {
       expect(await checkboxWidth(2), moreOrLessEquals(normalWidth * 2));
     });
 
-    testWidgets('block horizontal spacing scales with the factor',
-        (tester) async {
+    testWidgets('block horizontal spacing scales with the factor', (
+      tester,
+    ) async {
       const indent = 40.0;
       controller.document
         ..insert(0, 'Quote')
@@ -177,25 +187,27 @@ void main() {
       // The default is HorizontalSpacing(0, 0) — without an override the
       // scaling would not be measurable.
       DefaultStylesOverride quoteIndent(double left) => DefaultStylesOverride(
-            quote: (value) => DefaultTextBlockStyle(
-              value.style,
-              HorizontalSpacing(left, 0),
-              value.verticalSpacing,
-              value.lineSpacing,
-              value.decoration,
-            ),
-          );
+        quote: (value) => DefaultTextBlockStyle(
+          value.style,
+          HorizontalSpacing(left, 0),
+          value.verticalSpacing,
+          value.lineSpacing,
+          value.decoration,
+        ),
+      );
 
       Future<double> quoteLeft(double factor, double left) async {
-        await tester.pumpWidget(MaterialApp(
-          home: QuillEditor.basic(
-            controller: controller,
-            config: QuillEditorConfig(
-              textScaleFactor: factor,
-              customStyles: quoteIndent(left),
+        await tester.pumpWidget(
+          MaterialApp(
+            home: QuillEditor.basic(
+              controller: controller,
+              config: QuillEditorConfig(
+                textScaleFactor: factor,
+                customStyles: quoteIndent(left),
+              ),
             ),
           ),
-        ));
+        );
         await tester.pump();
         return tester.getTopLeft(find.byType(RichText).first).dx;
       }
@@ -205,8 +217,11 @@ void main() {
       final baseline = await quoteLeft(2, 0) - await quoteLeft(1, 0);
       final withIndent =
           await quoteLeft(2, indent) - await quoteLeft(1, indent);
-      expect(withIndent - baseline, moreOrLessEquals(indent, epsilon: 0.5),
-          reason: 'Block indent must grow from 40 to 80');
+      expect(
+        withIndent - baseline,
+        moreOrLessEquals(indent, epsilon: 0.5),
+        reason: 'Block indent must grow from 40 to 80',
+      );
     });
 
     testWidgets('vertical line spacing scales with the factor', (tester) async {
@@ -226,35 +241,39 @@ void main() {
       }
 
       final normalGap = await gapBetweenLines(1);
-      expect(normalGap, greaterThan(4),
-          reason: 'Test setup broken: gap between the lines is missing');
+      expect(
+        normalGap,
+        greaterThan(4),
+        reason: 'Test setup broken: gap between the lines is missing',
+      );
       final scaledGap = await gapBetweenLines(2);
       expect(scaledGap, moreOrLessEquals(normalGap * 2, epsilon: 0.5));
     });
   });
 
   group('scaleWithText', () {
-    Widget embedApp(
-            {required bool scale,
-            required double factor,
-            VoidCallback? onTap}) =>
-        MaterialApp(
-          home: QuillEditor.basic(
-            controller: controller,
-            config: QuillEditorConfig(
-              textScaleFactor: factor,
-              embedBuilders: [
-                _FixedSizeEmbedBuilder(scale: scale, onTap: onTap),
-              ],
-            ),
-          ),
-        );
+    Widget embedApp({
+      required bool scale,
+      required double factor,
+      VoidCallback? onTap,
+    }) => MaterialApp(
+      home: QuillEditor.basic(
+        controller: controller,
+        config: QuillEditorConfig(
+          textScaleFactor: factor,
+          embedBuilders: [_FixedSizeEmbedBuilder(scale: scale, onTap: onTap)],
+        ),
+      ),
+    );
 
     void insertInlineEmbed() {
-      final doc = Document.fromJson(jsonDecode(
-        '[{"insert":"before "},{"insert":{"fixedBox":"{}"}},'
-        '{"insert":" after\\n"}]',
-      ) as List);
+      final doc = Document.fromJson(
+        jsonDecode(
+              '[{"insert":"before "},{"insert":{"fixedBox":"{}"}},'
+              '{"insert":" after\\n"}]',
+            )
+            as List,
+      );
       controller.document = doc;
     }
 
@@ -267,8 +286,9 @@ void main() {
       expect(rect.height, moreOrLessEquals(20));
     });
 
-    testWidgets('default true lets the embed scale with the text',
-        (tester) async {
+    testWidgets('default true lets the embed scale with the text', (
+      tester,
+    ) async {
       insertInlineEmbed();
       await tester.pumpWidget(embedApp(scale: true, factor: 2));
       await tester.pump();
@@ -277,8 +297,7 @@ void main() {
       expect(rect.height, moreOrLessEquals(40));
     });
 
-    testWidgets(
-        'false also neutralises text inside the embed '
+    testWidgets('false also neutralises text inside the embed '
         '(e.g. error placeholders)', (tester) async {
       insertInlineEmbed();
       await tester.pumpWidget(embedApp(scale: false, factor: 2));
@@ -288,22 +307,22 @@ void main() {
     });
 
     testWidgets(
-        'true neutralises the inner MediaQuery too — the auto-transform is '
-        'the single source of scaling (no quadratic growth for text inside)',
-        (tester) async {
-      insertInlineEmbed();
-      await tester.pumpWidget(embedApp(scale: true, factor: 2));
-      await tester.pump();
-      // Inside 1× — the outer WidgetSpan transform provides the scaling.
-      final context = tester.element(find.byKey(const Key('fixed-box')));
-      expect(MediaQuery.textScalerOf(context).scale(16), 16);
-      // Outside: rendered at exactly ×2 (not ×4).
-      final rect = tester.getRect(find.byKey(const Key('fixed-box')));
-      expect(rect.width, moreOrLessEquals(80));
-    });
+      'true neutralises the inner MediaQuery too — the auto-transform is '
+      'the single source of scaling (no quadratic growth for text inside)',
+      (tester) async {
+        insertInlineEmbed();
+        await tester.pumpWidget(embedApp(scale: true, factor: 2));
+        await tester.pump();
+        // Inside 1× — the outer WidgetSpan transform provides the scaling.
+        final context = tester.element(find.byKey(const Key('fixed-box')));
+        expect(MediaQuery.textScalerOf(context).scale(16), 16);
+        // Outside: rendered at exactly ×2 (not ×4).
+        final rect = tester.getRect(find.byKey(const Key('fixed-box')));
+        expect(rect.width, moreOrLessEquals(80));
+      },
+    );
 
-    testWidgets(
-        'false still routes taps to the embed through '
+    testWidgets('false still routes taps to the embed through '
         'RenderInverseTextScale', (tester) async {
       insertInlineEmbed();
       var tapped = false;
@@ -321,60 +340,70 @@ void main() {
       await tester.tap(find.byKey(const Key('fixed-box')), warnIfMissed: false);
       await tester.pump();
 
-      expect(tapped, isTrue,
-          reason: 'tap must reach the embed through the inverse paint '
-              'transform / hit-test transform, not just land nearby');
+      expect(
+        tapped,
+        isTrue,
+        reason:
+            'tap must reach the embed through the inverse paint '
+            'transform / hit-test transform, not just land nearby',
+      );
     });
   });
 
   group('RenderInverseTextScale', () {
     testWidgets(
-        "computeDryBaseline scales the child's dry baseline by 1 / scale",
-        (tester) async {
-      // Deliberately goes through the public getDryBaseline() wrapper on
-      // both sides rather than calling computeDistanceToActualBaseline /
-      // computeDryBaseline directly: the "wet" baseline methods assert
-      // they're only called through Flutter's own calling convention
-      // (getDistanceToBaseline, invoked from a parent's performLayout /
-      // paint), which ad-hoc test code cannot satisfy. getDryBaseline has
-      // no such restriction — "it's ok to call this method when this
-      // RenderBox's layout is outdated" per its own doc comment — so it
-      // doubles as a safe, direct way to check the 1/scale formula here.
-      await tester.pumpWidget(
-        const MaterialApp(
-          home: Center(
-            child: InverseTextScale(
-              scale: 2,
-              child: Text('Q', style: TextStyle(fontSize: 20)),
+      "computeDryBaseline scales the child's dry baseline by 1 / scale",
+      (tester) async {
+        // Deliberately goes through the public getDryBaseline() wrapper on
+        // both sides rather than calling computeDistanceToActualBaseline /
+        // computeDryBaseline directly: the "wet" baseline methods assert
+        // they're only called through Flutter's own calling convention
+        // (getDistanceToBaseline, invoked from a parent's performLayout /
+        // paint), which ad-hoc test code cannot satisfy. getDryBaseline has
+        // no such restriction — "it's ok to call this method when this
+        // RenderBox's layout is outdated" per its own doc comment — so it
+        // doubles as a safe, direct way to check the 1/scale formula here.
+        await tester.pumpWidget(
+          const MaterialApp(
+            home: Center(
+              child: InverseTextScale(
+                scale: 2,
+                child: Text('Q', style: TextStyle(fontSize: 20)),
+              ),
             ),
           ),
-        ),
-      );
+        );
 
-      final renderObject = tester.renderObject<RenderInverseTextScale>(
-        find.byType(InverseTextScale),
-      );
-      final constraints = renderObject.constraints;
-      final childConstraints = BoxConstraints(
-        maxWidth: constraints.maxWidth.isFinite
-            ? constraints.maxWidth * renderObject.scale
-            : double.infinity,
-      );
+        final renderObject = tester.renderObject<RenderInverseTextScale>(
+          find.byType(InverseTextScale),
+        );
+        final constraints = renderObject.constraints;
+        final childConstraints = BoxConstraints(
+          maxWidth: constraints.maxWidth.isFinite
+              ? constraints.maxWidth * renderObject.scale
+              : double.infinity,
+        );
 
-      final childDryBaseline = renderObject.child!
-          .getDryBaseline(childConstraints, TextBaseline.alphabetic);
-      expect(childDryBaseline, isNotNull,
-          reason: 'Test setup broken: text provides no baseline');
+        final childDryBaseline = renderObject.child!.getDryBaseline(
+          childConstraints,
+          TextBaseline.alphabetic,
+        );
+        expect(
+          childDryBaseline,
+          isNotNull,
+          reason: 'Test setup broken: text provides no baseline',
+        );
 
-      final dryBaseline = renderObject.getDryBaseline(
-        constraints,
-        TextBaseline.alphabetic,
-      );
+        final dryBaseline = renderObject.getDryBaseline(
+          constraints,
+          TextBaseline.alphabetic,
+        );
 
-      expect(
-        dryBaseline,
-        moreOrLessEquals(childDryBaseline! / renderObject.scale),
-      );
-    });
+        expect(
+          dryBaseline,
+          moreOrLessEquals(childDryBaseline! / renderObject.scale),
+        );
+      },
+    );
   });
 }

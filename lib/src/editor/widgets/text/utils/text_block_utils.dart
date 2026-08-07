@@ -19,7 +19,9 @@ double ambientTextScale(BuildContext context) {
 /// Scales vertical paragraph/block spacing with the effective text scale so
 /// that the layout grows proportionally with the rendered text.
 VerticalSpacing scaledVerticalSpacing(
-    VerticalSpacing spacing, BuildContext context) {
+  VerticalSpacing spacing,
+  BuildContext context,
+) {
   final scale = ambientTextScale(context);
   return scale == 1.0
       ? spacing
@@ -30,7 +32,9 @@ VerticalSpacing scaledVerticalSpacing(
 /// block indent stays in proportion with the rendered text and the vertical
 /// spacing (see [scaledVerticalSpacing]).
 HorizontalSpacing scaledHorizontalSpacing(
-    HorizontalSpacing spacing, BuildContext context) {
+  HorizontalSpacing spacing,
+  BuildContext context,
+) {
   final scale = ambientTextScale(context);
   return scale == 1.0
       ? spacing
@@ -51,11 +55,13 @@ HorizontalSpacing scaledHorizontalSpacing(
 /// fixed while the marker glyphs grow with
 /// [QuillEditorConfig.textScaleFactor] / the OS accessibility setting, and the
 /// markers get clipped.
-typedef LeadingBlockIndentWidth = HorizontalSpacing Function(
-    Block block,
-    BuildContext context,
-    int count,
-    LeadingBlockNumberPointWidth numberPointWidthDelegate);
+typedef LeadingBlockIndentWidth =
+    HorizontalSpacing Function(
+      Block block,
+      BuildContext context,
+      int count,
+      LeadingBlockNumberPointWidth numberPointWidthDelegate,
+    );
 
 /// Computes the width of a number point leading for `count` list items.
 ///
@@ -64,8 +70,8 @@ typedef LeadingBlockIndentWidth = HorizontalSpacing Function(
 /// [TextBlockUtils.defaultIndentWidthBuilder] and the leading builder in
 /// `EditableTextBlock` apply the ambient [TextScaler] before calling this.
 /// Do not scale it a second time.
-typedef LeadingBlockNumberPointWidth = double Function(
-    double fontSize, int count);
+typedef LeadingBlockNumberPointWidth =
+    double Function(double fontSize, int count);
 
 typedef TextSpanBuilder =
     InlineSpan Function(

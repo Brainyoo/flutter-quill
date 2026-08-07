@@ -37,11 +37,8 @@ import 'search_config.dart';
 /// [context] is a short human-readable hint about what was being computed
 /// when the error occurred (e.g. `"inline text style"`,
 /// `"line vertical spacing"`).
-typedef QuillStyleErrorHandler = void Function(
-  Object error,
-  StackTrace stackTrace, {
-  String? context,
-});
+typedef QuillStyleErrorHandler =
+    void Function(Object error, StackTrace stackTrace, {String? context});
 
 /// The configuration of the editor widget.
 @immutable
@@ -109,18 +106,20 @@ class QuillEditorConfig {
     this.shortcutConfiguration = const QuillShortcutConfiguration(),
     this.onStyleError,
     double textScaleFactor = 1.0,
-  })  : assert(textScaleFactor > 0 && textScaleFactor < double.infinity,
-            'textScaleFactor must be a finite value > 0'),
-        // `assert` is stripped in release builds, so an invalid value
-        // (<= 0, NaN, or infinite) would otherwise reach the render tree
-        // unchecked and collapse or blow up every scaled dimension. Fall
-        // back to the neutral 1.0 instead of trusting the raw input.
-        // Comparisons only — property access such as `.isFinite` is not
-        // allowed in a const expression.
-        textScaleFactor =
-            textScaleFactor > 0 && textScaleFactor < double.infinity
-                ? textScaleFactor
-                : 1.0;
+  }) : assert(
+         textScaleFactor > 0 && textScaleFactor < double.infinity,
+         'textScaleFactor must be a finite value > 0',
+       ),
+       // `assert` is stripped in release builds, so an invalid value
+       // (<= 0, NaN, or infinite) would otherwise reach the render tree
+       // unchecked and collapse or blow up every scaled dimension. Fall
+       // back to the neutral 1.0 instead of trusting the raw input.
+       // Comparisons only — property access such as `.isFinite` is not
+       // allowed in a const expression.
+       textScaleFactor =
+           textScaleFactor > 0 && textScaleFactor < double.infinity
+           ? textScaleFactor
+           : 1.0;
 
   /// Invoked when the editor recovers from an unsupported style or
   /// attribute value (e.g. unknown color names, malformed font sizes,
