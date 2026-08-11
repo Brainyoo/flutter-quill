@@ -416,6 +416,19 @@ mixin RawEditorStateTextInputClientMixin on EditorState
   }
 
   @override
+  bool onFocusReceived() {
+    // Mirrors EditableTextState.onFocusReceived: the platform moved focus back
+    // to this input (e.g. iOS Safari blurs and refocuses during autofill).
+    if (mounted &&
+        !widget.config.focusNode.hasFocus &&
+        widget.config.focusNode.canRequestFocus) {
+      widget.config.focusNode.requestFocus();
+      return true;
+    }
+    return false;
+  }
+
+  @override
   void connectionClosed() {
     if (!hasConnection) {
       return;
@@ -424,9 +437,6 @@ mixin RawEditorStateTextInputClientMixin on EditorState
     _textInputConnection = null;
     _lastKnownRemoteTextEditingValue = null;
   }
-
-  @override
-  bool onFocusReceived() => false;
 
   void _updateSizeAndTransform() {
     if (hasConnection) {
