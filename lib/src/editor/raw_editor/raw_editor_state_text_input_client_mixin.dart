@@ -252,8 +252,13 @@ mixin RawEditorStateTextInputClientMixin on EditorState
     // newline: a legitimate IME edit that consumes the tail (e.g. backspace
     // merging an empty last line, old "abc\n\n" -> new "abc\n") still ends
     // with the document's terminal newline and must be applied unchanged.
+    //
+    // Gated on !kReleaseMode: synthetic updates only occur in debug/profile
+    // tooling (driver tests), so release builds keep the exact pre-existing
+    // behavior — the compiler removes this branch entirely.
     var deletedLength = diff.deleted.length;
-    if (deletedLength > 0 &&
+    if (!kReleaseMode &&
+        deletedLength > 0 &&
         diff.start + deletedLength >= oldText.length &&
         oldText.endsWith('\n') &&
         !text.endsWith('\n')) {
