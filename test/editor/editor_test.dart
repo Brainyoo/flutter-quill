@@ -34,6 +34,56 @@ void main() {
       expect(controller.document.toPlainText(), 'test\n');
     });
 
+    testWidgets(
+        'text entry emulation without trailing newline is stored in document',
+        (tester) async {
+      // Flutter Driver's text entry emulation (`enter_text`) replaces the
+      // whole editing value WITHOUT the document's trailing newline. The
+      // resulting diff must not delete that final newline (illegal in a
+      // Quill document — used to throw inside Document.compose and silently
+      // drop the input).
+      await tester.pumpWidget(
+        MaterialApp(
+          home: QuillEditor.basic(
+            controller: controller,
+            config: const QuillEditorConfig(),
+          ),
+        ),
+      );
+      await tester.tap(find.byType(QuillEditor));
+      await tester.pumpAndSettle();
+
+      tester.testTextInput.updateEditingValue(
+        const TextEditingValue(
+          text: 'hello',
+          selection: TextSelection.collapsed(offset: 5),
+        ),
+      );
+      await tester.pump();
+      expect(controller.document.toPlainText(), 'hello\n');
+
+      // Full replacement of a non-empty document, again without newline.
+      tester.testTextInput.updateEditingValue(
+        const TextEditingValue(
+          text: 'replaced',
+          selection: TextSelection.collapsed(offset: 8),
+        ),
+      );
+      await tester.pump();
+      expect(controller.document.toPlainText(), 'replaced\n');
+
+      // Incremental typing like a real IME (based on the remote value
+      // including the trailing newline) must keep working.
+      tester.testTextInput.updateEditingValue(
+        const TextEditingValue(
+          text: 'replaced!\n',
+          selection: TextSelection.collapsed(offset: 9),
+        ),
+      );
+      await tester.pump();
+      expect(controller.document.toPlainText(), 'replaced!\n');
+    });
+
     testWidgets('insertContent is handled correctly', (tester) async {
       String? latestUri;
       await tester.pumpWidget(

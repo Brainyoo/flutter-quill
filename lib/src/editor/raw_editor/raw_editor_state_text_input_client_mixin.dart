@@ -243,12 +243,22 @@ mixin RawEditorStateTextInputClientMixin on EditorState
     final text = value.text;
     final cursorPosition = value.selection.extentOffset;
     final diff = getDiff(oldText, text, cursorPosition);
-    if (diff.deleted.isEmpty && diff.inserted.isEmpty) {
+    // A synthetic IME update (e.g. Flutter Driver's text entry emulation)
+    // may replace the whole text without the document's trailing newline.
+    // Deleting that final newline is illegal in a Quill document and would
+    // throw deep inside Document.compose — trim it from the deletion.
+    var deletedLength = diff.deleted.length;
+    if (deletedLength > 0 &&
+        diff.start + deletedLength >= oldText.length &&
+        oldText.endsWith('\n')) {
+      deletedLength -= 1;
+    }
+    if (deletedLength == 0 && diff.inserted.isEmpty) {
       widget.controller.updateSelection(value.selection, ChangeSource.local);
     } else {
       widget.controller.replaceText(
         diff.start,
-        diff.deleted.length,
+        deletedLength,
         diff.inserted,
         value.selection,
       );
