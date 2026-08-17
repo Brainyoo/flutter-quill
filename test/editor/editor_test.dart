@@ -84,6 +84,44 @@ void main() {
       expect(controller.document.toPlainText(), 'replaced!\n');
     });
 
+    testWidgets(
+        'IME backspace merging an empty trailing line still deletes it',
+        (tester) async {
+      // Regression guard for the trailing-newline trim: a legitimate IME
+      // edit that consumes the tail of the old text but still ends with the
+      // terminal newline (old "abc\n\n" -> new "abc\n") must be applied,
+      // not turned into a no-op.
+      controller.replaceText(
+        0,
+        0,
+        'abc\n',
+        const TextSelection.collapsed(offset: 4),
+      );
+      await tester.pumpWidget(
+        MaterialApp(
+          home: QuillEditor.basic(
+            controller: controller,
+            config: const QuillEditorConfig(),
+          ),
+        ),
+      );
+      expect(controller.document.toPlainText(), 'abc\n\n');
+
+      await tester.tap(find.byType(QuillEditor));
+      await tester.pumpAndSettle();
+
+      // Backspace on the empty line: cursor was at 4, deletes the char
+      // before it, cursor ends up at 3 — exactly what a real IME sends.
+      tester.testTextInput.updateEditingValue(
+        const TextEditingValue(
+          text: 'abc\n',
+          selection: TextSelection.collapsed(offset: 3),
+        ),
+      );
+      await tester.pump();
+      expect(controller.document.toPlainText(), 'abc\n');
+    });
+
     testWidgets('insertContent is handled correctly', (tester) async {
       String? latestUri;
       await tester.pumpWidget(

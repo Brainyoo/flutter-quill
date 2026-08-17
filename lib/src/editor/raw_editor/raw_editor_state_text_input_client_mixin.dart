@@ -247,10 +247,16 @@ mixin RawEditorStateTextInputClientMixin on EditorState
     // may replace the whole text without the document's trailing newline.
     // Deleting that final newline is illegal in a Quill document and would
     // throw deep inside Document.compose — trim it from the deletion.
+    //
+    // Only do this when the updated text itself no longer ends with a
+    // newline: a legitimate IME edit that consumes the tail (e.g. backspace
+    // merging an empty last line, old "abc\n\n" -> new "abc\n") still ends
+    // with the document's terminal newline and must be applied unchanged.
     var deletedLength = diff.deleted.length;
     if (deletedLength > 0 &&
         diff.start + deletedLength >= oldText.length &&
-        oldText.endsWith('\n')) {
+        oldText.endsWith('\n') &&
+        !text.endsWith('\n')) {
       deletedLength -= 1;
     }
     if (deletedLength == 0 && diff.inserted.isEmpty) {
